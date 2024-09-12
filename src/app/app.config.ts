@@ -14,6 +14,7 @@ import { IconSetService } from '@coreui/icons-angular';
 import { routes } from './app.routes';
 import { MessageService } from 'primeng/api';
 import { provideHttpClient } from '@angular/common/http';
+import { AuthGuard } from 'src/app/shared/guards/auth.guard';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -34,5 +35,6 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     provideHttpClient(),
     MessageService,
+    AuthGuard
   ]
 };

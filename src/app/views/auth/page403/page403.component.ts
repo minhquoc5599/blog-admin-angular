@@ -3,12 +3,13 @@ import { IconDirective } from '@coreui/icons-angular';
 import { ContainerComponent, RowComponent, ColComponent, InputGroupComponent, InputGroupTextDirective, FormControlDirective, ButtonDirective } from '@coreui/angular';
 
 @Component({
-    selector: 'app-user',
-    templateUrl: './user.component.html',
+    selector: 'app-page403',
+    templateUrl: './page403.component.html',
+    styleUrls: ['./page403.component.scss'],
     standalone: true,
     imports: [ContainerComponent, RowComponent, ColComponent, InputGroupComponent, InputGroupTextDirective, IconDirective, FormControlDirective, ButtonDirective]
 })
-export class UserComponent {
+export class Page403Component {
 
   constructor() { }
 

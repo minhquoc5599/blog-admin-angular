@@ -8,6 +8,9 @@ export const navItems: INavData[] = [
     badge: {
       color: 'info',
       text: 'NEW'
+    },
+    attributes: {
+      policyName: 'Permissions.Dashboard.View'
     }
   },
   {
@@ -18,22 +21,34 @@ export const navItems: INavData[] = [
       {
         name: 'Categories',
         url: '/content/post-categories',
-        icon: 'nav-icon-bullet'
+        icon: 'nav-icon-bullet',
+        attributes: {
+          policyName: 'Permissions.PostCategories.View'
+        }
       },
       {
         name: 'Posts',
         url: '/content/posts',
-        icon: 'nav-icon-bullet'
+        icon: 'nav-icon-bullet',
+        attributes: {
+          policyName: 'Permissions.Posts.View'
+        }
       },
       {
         name: 'Series',
         url: '/content/series',
-        icon: 'nav-icon-bullet'
+        icon: 'nav-icon-bullet',
+        attributes:{
+          policyName: 'Permissions.Series.View'
+        }
       },
       {
         name: 'Royalty',
         url: '/content/royalty',
-        icon: 'nav-icon-bullet'
+        icon: 'nav-icon-bullet',
+        attributes:{
+          policyName: 'Permissions.Royalty.View'
+        }
       },
     ]
   },
@@ -45,12 +60,18 @@ export const navItems: INavData[] = [
       {
         name: 'Roles',
         url: '/system/roles',
-        icon: 'nav-icon-bullet'
+        icon: 'nav-icon-bullet',
+        attributes:{
+          policyName: 'Permissions.Roles.View'
+        }
       },
       {
         name: 'Users',
         url: '/system/users',
-        icon: 'nav-icon-bullet'
+        icon: 'nav-icon-bullet',
+        attributes:{
+          policyName: 'Permissions.Users.View'
+        }
       },
     ]
   },

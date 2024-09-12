@@ -14,6 +14,13 @@ export const routes: Routes = [
     }
   },
   {
+    path: '403',
+    loadComponent: () => import('./page403/page403.component').then(m => m.Page403Component),
+    data: {
+      title: 'Page 403'
+    }
+  },
+  {
     path: '500',
     loadComponent: () => import('./page500/page500.component').then(m => m.Page500Component),
     data: {

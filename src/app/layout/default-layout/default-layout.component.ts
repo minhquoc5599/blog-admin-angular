@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { NgScrollbar } from 'ngx-scrollbar';
 
 import { IconDirective } from '@coreui/icons-angular';
@@ -17,6 +17,8 @@ import {
 
 import { DefaultFooterComponent, DefaultHeaderComponent } from './';
 import { navItems } from './_nav';
+import { StorageService } from 'src/app/shared/services/storage.service';
+import { Url } from 'src/app/shared/constants/url.constant';
 
 function isOverflown(element: HTMLElement) {
   return (
@@ -48,8 +50,27 @@ function isOverflown(element: HTMLElement) {
     DefaultFooterComponent
   ]
 })
-export class DefaultLayoutComponent {
-  public navItems = navItems;
+export class DefaultLayoutComponent implements OnInit {
+  public navItems = [];
+
+  constructor(private storage: StorageService, private router: Router) {
+
+  }
+
+  ngOnInit(): void {
+    let user = this.storage.getUser()
+    if (user == null) this.router.navigate([Url.LOGIN])
+    let permissions = JSON.parse(user?.permissions)
+    for (let i = 0; i < navItems.length; i++) {
+      for (let child = 0; child < navItems[i].children?.length; child++) {
+        if (navItems[i].children[child].attributes
+          && permissions.filter((p: string) => p === navItems[i].children[child].attributes['policyName']).length === 0) {
+          navItems[i].children[child].class = 'hidden'
+        }
+      }
+    }
+    this.navItems = navItems
+  }
 
   onScrollbarUpdate($event: any) {
     // if ($event.verticalUsed) {
