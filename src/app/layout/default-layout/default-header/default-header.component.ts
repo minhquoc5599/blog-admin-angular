@@ -1,6 +1,6 @@
 import { NgStyle, NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject, input } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 import {
   AvatarComponent,
@@ -27,6 +27,8 @@ import {
 } from '@coreui/angular';
 
 import { IconDirective } from '@coreui/icons-angular';
+import { Url } from 'src/app/shared/constants/url.constant';
+import { StorageService } from 'src/app/shared/services/storage.service';
 
 @Component({
   selector: 'app-default-header',
@@ -50,8 +52,13 @@ export class DefaultHeaderComponent extends HeaderComponent {
     return this.colorModes.find(mode => mode.name === currentMode)?.icon ?? 'cilSun';
   });
 
-  constructor() {
+  constructor(private storage: StorageService, private router: Router) {
     super();
+  }
+
+  logout(): void {
+    this.storage.signOut()
+    this.router.navigate([Url.LOGIN])
   }
 
   sidebarId = input('sidebar1');
