@@ -2,7 +2,7 @@ import { StorageService } from 'src/app/shared/services/storage.service';
 import { Url } from 'src/app/shared/constants/url.constant';
 import { environment } from 'src/enviroments/environment';
 import { AlertService } from 'src/app/shared/services/alert.service';
-import { ADMIN_API_BASE_URL, AdminApiAuthApiClient, LoginRequest, LoginResult } from 'src/app/api/admin-api.service.generated'
+import { ADMIN_API_BASE_URL, AdminApiAuthApiClient, LoginRequest, AuthenticatedResult } from 'src/app/api/admin-api.service.generated'
 import { Component, OnDestroy } from '@angular/core'
 import { NgStyle } from '@angular/common'
 import { IconDirective } from '@coreui/icons-angular'
@@ -23,7 +23,7 @@ import {
 import { FormBuilder, FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms'
 import { ToastModule } from 'primeng/toast'
 import { Router } from '@angular/router';
-import { Subject, take, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -66,7 +66,7 @@ export class LoginComponent implements OnDestroy {
     private authApi: AdminApiAuthApiClient,
     private alertService: AlertService,
     private router: Router,
-    private storage: StorageService) {
+    private storageService: StorageService) {
     this.loginForm = this.fb.group({
       username: new FormControl('', Validators.required),
       password: new FormControl('', Validators.required)
@@ -87,11 +87,11 @@ export class LoginComponent implements OnDestroy {
     this.authApi.login(request)
       .pipe(takeUntil(this.ngUnsubsribe))
       .subscribe({
-        next: (res: LoginResult) => {
+        next: (res: AuthenticatedResult) => {
           // Store token and refresh token to local storage
-          this.storage.saveToken(res.token)
-          this.storage.saveRefreshToken(res.refreshToken)
-          this.storage.saveUser(res)
+          this.storageService.saveToken(res.token)
+          this.storageService.saveRefreshToken(res.refreshToken)
+          this.storageService.saveUser(res)
           this.router.navigate([Url.DASHBOARD])
         },
         error: (error: any) => {
