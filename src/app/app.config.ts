@@ -1,4 +1,3 @@
-import { GlobalHttpInterceptorService } from './shared/interceptors/error.interceptor';
 import { TokenInterceptor } from './shared/interceptors/token.interceptor';
 import { ApplicationConfig, importProvidersFrom } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
@@ -15,9 +14,11 @@ import { DropdownModule, SidebarModule } from '@coreui/angular';
 import { IconSetService } from '@coreui/icons-angular';
 import { routes } from './app.routes';
 import { MessageService } from 'primeng/api';
-import { HTTP_INTERCEPTORS, provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { AuthGuard } from 'src/app/shared/guards/auth.guard';
-import { AdminApiAuthApiClient, AdminApiTokenApiClient } from 'src/app/api/admin-api.service.generated';
+import { ADMIN_API_BASE_URL } from 'src/app/api/admin-api.service.generated';
+import { environment } from 'src/enviroments/environment';
+import { AlertService } from 'src/app/shared/services/alert.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -36,19 +37,24 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(SidebarModule, DropdownModule),
     IconSetService,
     provideAnimations(),
-    provideHttpClient(),
+    provideHttpClient(
+      withInterceptors([TokenInterceptor]),
+    ),
+
+    // Shared service
     MessageService,
+    AlertService,
     AuthGuard,
-    AdminApiTokenApiClient,
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: TokenInterceptor,
-      multi: true
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: GlobalHttpInterceptorService,
-      multi: true
-    },
+    { provide: ADMIN_API_BASE_URL, useValue: environment.API_URL },
+    // {
+    //   provide: HTTP_INTERCEPTORS,
+    //   useClass: TokenInterceptor,
+    //   multi: true
+    // },
+    // {
+    //   provide: HTTP_INTERCEPTORS,
+    //   useClass: GlobalHttpInterceptorService,
+    //   multi: true
+    // },
   ]
 };

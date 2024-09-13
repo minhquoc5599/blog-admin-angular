@@ -1,8 +1,7 @@
 import { StorageService } from 'src/app/shared/services/storage.service';
 import { Url } from 'src/app/shared/constants/url.constant';
-import { environment } from 'src/enviroments/environment';
 import { AlertService } from 'src/app/shared/services/alert.service';
-import { ADMIN_API_BASE_URL, AdminApiAuthApiClient, LoginRequest, AuthenticatedResult } from 'src/app/api/admin-api.service.generated'
+import { AdminApiAuthApiClient, LoginRequest, AuthenticatedResult } from 'src/app/api/admin-api.service.generated'
 import { Component, OnDestroy } from '@angular/core'
 import { NgStyle } from '@angular/common'
 import { IconDirective } from '@coreui/icons-angular'
@@ -49,7 +48,6 @@ import { Subject, takeUntil } from 'rxjs';
     ToastModule,
   ],
   providers: [
-    { provide: ADMIN_API_BASE_URL, useValue: environment.API_URL },
     AlertService,
     AdminApiAuthApiClient,
     StorageService
