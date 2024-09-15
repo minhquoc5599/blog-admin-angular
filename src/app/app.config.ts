@@ -13,7 +13,7 @@ import {
 import { DropdownModule, SidebarModule } from '@coreui/angular';
 import { IconSetService } from '@coreui/icons-angular';
 import { routes } from './app.routes';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { AuthGuard } from 'src/app/shared/guards/auth.guard';
 import { ADMIN_API_BASE_URL } from 'src/app/api/admin-api.service.generated';
@@ -45,6 +45,7 @@ export const appConfig: ApplicationConfig = {
     MessageService,
     AlertService,
     AuthGuard,
+    ConfirmationService,
     { provide: ADMIN_API_BASE_URL, useValue: environment.API_URL },
     // {
     //   provide: HTTP_INTERCEPTORS,

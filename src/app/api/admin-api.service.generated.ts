@@ -440,7 +440,7 @@ export class AdminApiRoleApiClient {
      * @param ids (optional) 
      * @return Success
      */
-    deleteRole(ids?: string[] | null | undefined): Observable<void> {
+    deleteRoles(ids?: string[] | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/admin/role?";
         if (ids !== undefined && ids !== null)
             ids && ids.forEach(item => { url_ += "ids=" + encodeURIComponent("" + item) + "&"; });
@@ -454,11 +454,11 @@ export class AdminApiRoleApiClient {
         };
 
         return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processDeleteRole(response_);
+            return this.processDeleteRoles(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processDeleteRole(response_ as any);
+                    return this.processDeleteRoles(response_ as any);
                 } catch (e) {
                     return _observableThrow(e) as any as Observable<void>;
                 }
@@ -467,7 +467,7 @@ export class AdminApiRoleApiClient {
         }));
     }
 
-    protected processDeleteRole(response: HttpResponseBase): Observable<void> {
+    protected processDeleteRoles(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :

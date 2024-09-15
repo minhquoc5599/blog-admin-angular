@@ -8,14 +8,16 @@ import { ColorModeService } from '@coreui/angular';
 import { IconSetService } from '@coreui/icons-angular';
 import { iconSubset } from './icons/icon-subset';
 import { ToastModule } from 'primeng/toast';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-root',
   template: `
   <p-toast position="top-center"></p-toast>
+  <p-confirmDialog />
   <router-outlet />`,
   standalone: true,
-  imports: [RouterOutlet, ToastModule]
+  imports: [RouterOutlet, ToastModule, ConfirmDialogModule]
 })
 export class AppComponent implements OnInit {
   title = 'Blog Admin';

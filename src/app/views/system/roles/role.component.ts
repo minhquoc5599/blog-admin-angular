@@ -1,11 +1,11 @@
-import { AdminApiRoleApiClient, RoleDtoPagingResult } from './../../../api/admin-api.service.generated';
+import { Message } from 'src/app/shared/constants/message.constant';
+import { RolesDetailComponent } from './roles-detail/roles-detail.component';
+import { AdminApiRoleApiClient, RoleDtoPagingResult } from 'src/app/api/admin-api.service.generated';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { IconDirective } from '@coreui/icons-angular';
-import { ContainerComponent, RowComponent, ColComponent, InputGroupComponent, InputGroupTextDirective, FormControlDirective, ButtonDirective } from '@coreui/angular';
 import { Subject, takeUntil } from 'rxjs';
 import { RoleDto } from 'src/app/api/admin-api.service.generated';
 import { AlertService } from 'src/app/shared/services/alert.service';
-import { DialogService } from 'primeng/dynamicdialog'
+import { DialogService, DynamicDialogComponent } from 'primeng/dynamicdialog'
 import { ConfirmationService } from 'primeng/api';
 import { TableModule } from 'primeng/table'
 import { ProgressSpinnerModule } from 'primeng/progressspinner'
@@ -21,14 +21,6 @@ import { InputTextModule } from 'primeng/inputtext';
   templateUrl: './role.component.html',
   standalone: true,
   imports: [
-    // ContainerComponent,
-    // RowComponent,
-    // ColComponent,
-    // InputGroupComponent,
-    // InputGroupTextDirective,
-    // IconDirective,
-    // FormControlDirective,
-    // ButtonDirective,
     CommonModule,
     TableModule,
     ProgressSpinnerModule,
@@ -40,8 +32,7 @@ import { InputTextModule } from 'primeng/inputtext';
   ],
   providers: [
     AdminApiRoleApiClient,
-    DialogService,
-    ConfirmationService,
+    DialogService
   ]
 })
 export class RoleComponent implements OnInit, OnDestroy {
@@ -60,7 +51,7 @@ export class RoleComponent implements OnInit, OnDestroy {
 
   constructor(
     private roleService: AdminApiRoleApiClient,
-    alertService: AlertService,
+    private alertService: AlertService,
     private dialogService: DialogService,
     private confirmationService: ConfirmationService) { }
 
@@ -105,9 +96,89 @@ export class RoleComponent implements OnInit, OnDestroy {
   //   }
   // }
 
-  showPermissionModal(id: string, name: string): void { }
-  showEditModal(): void { }
-  showAddModal(): void { }
-  deleteItems(): void { }
+  showAddModal(): void {
+    const ref = this.dialogService.open(RolesDetailComponent, {
+      header: 'Add role',
+      width: '70%',
+    });
+    const dialogRef = this.dialogService.dialogComponentRefMap.get(ref);
+    const dynamicComponent = dialogRef?.instance as DynamicDialogComponent;
+    const ariaLabelledBy = dynamicComponent.getAriaLabelledBy();
+    dynamicComponent.getAriaLabelledBy = () => ariaLabelledBy;
+    ref.onClose.subscribe((data: RoleDto) => {
+      if (data) {
+        this.alertService.showSuccess(Message.CREATED_OK_MSG);
+        this.selectedItems = [];
+        this.getData();
+      }
+    });
+  }
 
+  showPermissionModal(id: string, name: string): void { }
+
+  showEditModal(): void {
+    if (this.selectedItems.length == 0) {
+      this.alertService.showError(Message.NOT_CHOOSE_ANY_RECORD);
+      return;
+    }
+    var id = this.selectedItems[0].id;
+    const ref = this.dialogService.open(RolesDetailComponent, {
+      data: {
+        id: id,
+      },
+      header: 'Edit Role',
+      width: '70%',
+    });
+    const dialogRef = this.dialogService.dialogComponentRefMap.get(ref);
+    const dynamicComponent = dialogRef?.instance as DynamicDialogComponent;
+    const ariaLabelledBy = dynamicComponent.getAriaLabelledBy();
+    dynamicComponent.getAriaLabelledBy = () => ariaLabelledBy;
+    ref.onClose.subscribe((data: RoleDto) => {
+      if (data) {
+        this.alertService.showSuccess(Message.UPDATED_OK_MSG);
+        this.selectedItems = [];
+        this.getData();
+      }
+    });
+  }
+
+  deleteItems(): void {
+    if (this.selectedItems.length == 0) {
+      this.alertService.showError(Message.NOT_CHOOSE_ANY_RECORD);
+      return;
+    }
+    var ids = [];
+    this.selectedItems.forEach((element) => {
+      ids.push(element.id);
+    });
+    
+    this.confirmationService.confirm({
+      header: 'Confirmation',
+      message: Message.CONFIRM_DELETE_MSG,
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Yes',
+      rejectLabel: 'No',
+      accept: () => {
+        this.deleteItemsConfirm(ids);
+      },
+    });
+  }
+
+  deleteItemsConfirm(ids: any[]) {
+    this.isloading = true;
+
+    this.roleService.deleteRoles(ids).subscribe({
+      next: () => {
+        this.alertService.showSuccess(
+          Message.DELETED_OK_MSG
+        );
+        this.getData();
+        this.selectedItems = [];
+        this.isloading = false;
+      },
+      error: () => {
+        this.isloading = false;
+      },
+    });
+  }
 }

@@ -19,3 +19,12 @@
 .hidden {
   display: none;
 }
+
+// custom primeng
+.p-button {
+  border-radius: 6px;
+}
+
+.p-confirm-dialog .p-button {
+  margin: 0 0.5rem 0 0;
+}

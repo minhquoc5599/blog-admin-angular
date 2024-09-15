@@ -2,22 +2,21 @@
   <p-header> Roles </p-header>
   <div class="row">
     <div class="col">
-      <button appPermission appPolicy="Permissons.Roles.Create" pButton type="button" label="Add" icon="fa fa-plus"
-        (click)="showAddModal()" class="p-button-sm p-button-success"></button>
-      <button appPermission appPolicy="Permissons.Roles.Delete" pButton type="button" label="Delete" icon="fa fa-trash"
-        *ngIf="selectedItems.length > 0" (click)="deleteItems()" class="p-button-sm p-button-danger ms-1"></button>
-      <button appPermission appPolicy="Permissons.Roles.Edit" pButton type="button" label="Edit" icon="fa fa-edit"
-        *ngIf="selectedItems.length == 1" (click)="showEditModal()"
-        class="p-button-sm p-button-warning ms-1"></button>
+      <button appPermission appPolicy="Permissions.Roles.Create" pButton (click)="showAddModal()"
+        class="p-button-sm p-button-success"><i class="pi pi-plus"></i>&nbsp;Add</button>
+      <button appPermission appPolicy="Permissions.Roles.Delete" pButton *ngIf="selectedItems.length > 0"
+        (click)="deleteItems()" class="p-button-sm p-button-danger ms-1"><i class="pi pi-trash"></i>&nbsp;Delete</button>
+      <button appPermission appPolicy="Permissions.Roles.Edit" pButton *ngIf="selectedItems.length == 1" 
+      (click)="showEditModal()" class="p-button-sm p-button-warning ms-1"><i class="pi pi-pencil"></i>&nbsp;Edit</button>
     </div>
     <div class="col">
-      <div class="row">
+      <div class="row align-items-center">
         <div class="col">
-          <input id="txtKeyword" pInputText (keyup.enter)="getData()" [(ngModel)]="keyword"
-            placeholder="Name..." type="text" />
+          <input id="txtKeyword" pInputText (keyup.enter)="getData()" [(ngModel)]="keyword" placeholder="Name..."
+            type="text" />
         </div>
         <div class="col">
-          <button type="button" pButton (click)="getData()">Search</button>
+          <button type="button" pButton (click)="getData()"><i class="pi pi-search"></i></button>
         </div>
       </div>
     </div>
@@ -31,12 +30,12 @@
             <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
           </th>
           <th>Name</th>
-          <th>DisplayName</th>
+          <th>Display name</th>
           <th></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-row>
-        <tr [pSelectableRow]="row">
+        <tr>
           <td style="width: 10px">
             <span class="ui-column-title"></span>
             <p-tableCheckbox [value]="row"></p-tableCheckbox>
@@ -44,7 +43,7 @@
           <td>{{ row.name }}</td>
           <td>{{ row.displayName }}</td>
           <td>
-            <button pButton class="p-button-sm" (click)="showPermissionModal(row.id, row.name)">Permission</button>
+            <button pButton class="p-button-sm" (click)="showPermissionModal(row.id, row.name)"><i class="pi pi-cog"></i></button>
           </td>
         </tr>
       </ng-template>
