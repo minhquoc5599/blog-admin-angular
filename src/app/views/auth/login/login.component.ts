@@ -1,7 +1,7 @@
 import { StorageService } from 'src/app/shared/services/storage.service';
 import { Url } from 'src/app/shared/constants/url.constant';
 import { AlertService } from 'src/app/shared/services/alert.service';
-import { AdminApiAuthApiClient, LoginRequest, AuthenticatedResult } from 'src/app/api/admin-api.service.generated'
+import { AdminApiAuthApiClient, LoginRequest, AuthenticatedResponse } from 'src/app/api/admin-api.service.generated'
 import { Component, OnDestroy } from '@angular/core'
 import { NgStyle } from '@angular/common'
 import { IconDirective } from '@coreui/icons-angular'
@@ -85,7 +85,7 @@ export class LoginComponent implements OnDestroy {
     this.authApi.login(request)
       .pipe(takeUntil(this.ngUnsubsribe))
       .subscribe({
-        next: (res: AuthenticatedResult) => {
+        next: (res: AuthenticatedResponse) => {
           // Store token and refresh token to local storage
           this.storageService.saveToken(res.token)
           this.storageService.saveRefreshToken(res.refreshToken)

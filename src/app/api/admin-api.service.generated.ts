@@ -30,7 +30,7 @@ export class AdminApiAuthApiClient {
      * @param body (optional) 
      * @return Success
      */
-    login(body?: LoginRequest | undefined): Observable<AuthenticatedResult> {
+    login(body?: LoginRequest | undefined): Observable<AuthenticatedResponse> {
         let url_ = this.baseUrl + "/api/admin/auth";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -53,14 +53,14 @@ export class AdminApiAuthApiClient {
                 try {
                     return this.processLogin(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<AuthenticatedResult>;
+                    return _observableThrow(e) as any as Observable<AuthenticatedResponse>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<AuthenticatedResult>;
+                return _observableThrow(response_) as any as Observable<AuthenticatedResponse>;
         }));
     }
 
-    protected processLogin(response: HttpResponseBase): Observable<AuthenticatedResult> {
+    protected processLogin(response: HttpResponseBase): Observable<AuthenticatedResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -71,7 +71,7 @@ export class AdminApiAuthApiClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = AuthenticatedResult.fromJS(resultData200);
+            result200 = AuthenticatedResponse.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -544,7 +544,7 @@ export class AdminApiRoleApiClient {
     /**
      * @return Success
      */
-    getRoleById(id: string): Observable<RoleDto> {
+    getRoleById(id: string): Observable<RoleResponse> {
         let url_ = this.baseUrl + "/api/admin/role/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -566,14 +566,14 @@ export class AdminApiRoleApiClient {
                 try {
                     return this.processGetRoleById(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<RoleDto>;
+                    return _observableThrow(e) as any as Observable<RoleResponse>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<RoleDto>;
+                return _observableThrow(response_) as any as Observable<RoleResponse>;
         }));
     }
 
-    protected processGetRoleById(response: HttpResponseBase): Observable<RoleDto> {
+    protected processGetRoleById(response: HttpResponseBase): Observable<RoleResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -584,7 +584,7 @@ export class AdminApiRoleApiClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = RoleDto.fromJS(resultData200);
+            result200 = RoleResponse.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -601,7 +601,7 @@ export class AdminApiRoleApiClient {
      * @param pageSize (optional) 
      * @return Success
      */
-    getRolesPaging(keyword?: string | null | undefined, pageIndex?: number | undefined, pageSize?: number | undefined): Observable<RoleDtoPagingResult> {
+    getRolesPaging(keyword?: string | null | undefined, pageIndex?: number | undefined, pageSize?: number | undefined): Observable<RoleResponsePagingResponse> {
         let url_ = this.baseUrl + "/api/admin/role/paging?";
         if (keyword !== undefined && keyword !== null)
             url_ += "keyword=" + encodeURIComponent("" + keyword) + "&";
@@ -630,14 +630,14 @@ export class AdminApiRoleApiClient {
                 try {
                     return this.processGetRolesPaging(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<RoleDtoPagingResult>;
+                    return _observableThrow(e) as any as Observable<RoleResponsePagingResponse>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<RoleDtoPagingResult>;
+                return _observableThrow(response_) as any as Observable<RoleResponsePagingResponse>;
         }));
     }
 
-    protected processGetRolesPaging(response: HttpResponseBase): Observable<RoleDtoPagingResult> {
+    protected processGetRolesPaging(response: HttpResponseBase): Observable<RoleResponsePagingResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -648,7 +648,7 @@ export class AdminApiRoleApiClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = RoleDtoPagingResult.fromJS(resultData200);
+            result200 = RoleResponsePagingResponse.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -662,7 +662,7 @@ export class AdminApiRoleApiClient {
     /**
      * @return Success
      */
-    getAllRoles(): Observable<RoleDto[]> {
+    getAllRoles(): Observable<RoleResponse[]> {
         let url_ = this.baseUrl + "/api/admin/role/all";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -681,14 +681,14 @@ export class AdminApiRoleApiClient {
                 try {
                     return this.processGetAllRoles(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<RoleDto[]>;
+                    return _observableThrow(e) as any as Observable<RoleResponse[]>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<RoleDto[]>;
+                return _observableThrow(response_) as any as Observable<RoleResponse[]>;
         }));
     }
 
-    protected processGetAllRoles(response: HttpResponseBase): Observable<RoleDto[]> {
+    protected processGetAllRoles(response: HttpResponseBase): Observable<RoleResponse[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -702,12 +702,118 @@ export class AdminApiRoleApiClient {
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200!.push(RoleDto.fromJS(item));
+                    result200!.push(RoleResponse.fromJS(item));
             }
             else {
                 result200 = <any>null;
             }
             return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    getAllRolePermissions(roleId: string | null): Observable<PermissionModel> {
+        let url_ = this.baseUrl + "/api/admin/role/{roleId}/permissions";
+        if (roleId === undefined || roleId === null)
+            throw new Error("The parameter 'roleId' must be defined.");
+        url_ = url_.replace("{roleId}", encodeURIComponent("" + roleId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllRolePermissions(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllRolePermissions(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PermissionModel>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PermissionModel>;
+        }));
+    }
+
+    protected processGetAllRolePermissions(response: HttpResponseBase): Observable<PermissionModel> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PermissionModel.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    savePermission(body?: PermissionModel | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/admin/role/permissions";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSavePermission(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSavePermission(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processSavePermission(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
@@ -733,7 +839,7 @@ export class AdminApiTokenApiClient {
      * @param body (optional) 
      * @return Success
      */
-    refresh(body?: TokenRequest | undefined): Observable<AuthenticatedResult> {
+    refresh(body?: TokenRequest | undefined): Observable<AuthenticatedResponse> {
         let url_ = this.baseUrl + "/api/admin/token/refresh";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -756,14 +862,14 @@ export class AdminApiTokenApiClient {
                 try {
                     return this.processRefresh(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<AuthenticatedResult>;
+                    return _observableThrow(e) as any as Observable<AuthenticatedResponse>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<AuthenticatedResult>;
+                return _observableThrow(response_) as any as Observable<AuthenticatedResponse>;
         }));
     }
 
-    protected processRefresh(response: HttpResponseBase): Observable<AuthenticatedResult> {
+    protected processRefresh(response: HttpResponseBase): Observable<AuthenticatedResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -774,7 +880,7 @@ export class AdminApiTokenApiClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = AuthenticatedResult.fromJS(resultData200);
+            result200 = AuthenticatedResponse.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -833,11 +939,11 @@ export class AdminApiTokenApiClient {
     }
 }
 
-export class AuthenticatedResult implements IAuthenticatedResult {
+export class AuthenticatedResponse implements IAuthenticatedResponse {
     token?: string | undefined;
     refreshToken?: string | undefined;
 
-    constructor(data?: IAuthenticatedResult) {
+    constructor(data?: IAuthenticatedResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -853,9 +959,9 @@ export class AuthenticatedResult implements IAuthenticatedResult {
         }
     }
 
-    static fromJS(data: any): AuthenticatedResult {
+    static fromJS(data: any): AuthenticatedResponse {
         data = typeof data === 'object' ? data : {};
-        let result = new AuthenticatedResult();
+        let result = new AuthenticatedResponse();
         result.init(data);
         return result;
     }
@@ -868,7 +974,7 @@ export class AuthenticatedResult implements IAuthenticatedResult {
     }
 }
 
-export interface IAuthenticatedResult {
+export interface IAuthenticatedResponse {
     token?: string | undefined;
     refreshToken?: string | undefined;
 }
@@ -1019,6 +1125,54 @@ export class LoginRequest implements ILoginRequest {
 export interface ILoginRequest {
     userName?: string | undefined;
     password?: string | undefined;
+}
+
+export class PermissionModel implements IPermissionModel {
+    roleId?: string | undefined;
+    roleClaims?: RoleClaimsDto[] | undefined;
+
+    constructor(data?: IPermissionModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.roleId = _data["roleId"];
+            if (Array.isArray(_data["roleClaims"])) {
+                this.roleClaims = [] as any;
+                for (let item of _data["roleClaims"])
+                    this.roleClaims!.push(RoleClaimsDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): PermissionModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new PermissionModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["roleId"] = this.roleId;
+        if (Array.isArray(this.roleClaims)) {
+            data["roleClaims"] = [];
+            for (let item of this.roleClaims)
+                data["roleClaims"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IPermissionModel {
+    roleId?: string | undefined;
+    roleClaims?: RoleClaimsDto[] | undefined;
 }
 
 export class PostDto implements IPostDto {
@@ -1190,12 +1344,60 @@ export enum PostStatus {
     _6 = 6,
 }
 
-export class RoleDto implements IRoleDto {
+export class RoleClaimsDto implements IRoleClaimsDto {
+    type?: string | undefined;
+    value?: string | undefined;
+    displayName?: string | undefined;
+    selected?: boolean;
+
+    constructor(data?: IRoleClaimsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.type = _data["type"];
+            this.value = _data["value"];
+            this.displayName = _data["displayName"];
+            this.selected = _data["selected"];
+        }
+    }
+
+    static fromJS(data: any): RoleClaimsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new RoleClaimsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["type"] = this.type;
+        data["value"] = this.value;
+        data["displayName"] = this.displayName;
+        data["selected"] = this.selected;
+        return data;
+    }
+}
+
+export interface IRoleClaimsDto {
+    type?: string | undefined;
+    value?: string | undefined;
+    displayName?: string | undefined;
+    selected?: boolean;
+}
+
+export class RoleResponse implements IRoleResponse {
     id?: string;
     name?: string | undefined;
     displayName?: string | undefined;
 
-    constructor(data?: IRoleDto) {
+    constructor(data?: IRoleResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1212,9 +1414,9 @@ export class RoleDto implements IRoleDto {
         }
     }
 
-    static fromJS(data: any): RoleDto {
+    static fromJS(data: any): RoleResponse {
         data = typeof data === 'object' ? data : {};
-        let result = new RoleDto();
+        let result = new RoleResponse();
         result.init(data);
         return result;
     }
@@ -1228,13 +1430,13 @@ export class RoleDto implements IRoleDto {
     }
 }
 
-export interface IRoleDto {
+export interface IRoleResponse {
     id?: string;
     name?: string | undefined;
     displayName?: string | undefined;
 }
 
-export class RoleDtoPagingResult implements IRoleDtoPagingResult {
+export class RoleResponsePagingResponse implements IRoleResponsePagingResponse {
     currentPage?: number;
     pageCount?: number;
     pageSize?: number;
@@ -1242,9 +1444,9 @@ export class RoleDtoPagingResult implements IRoleDtoPagingResult {
     readonly firstRowOnPage?: number;
     readonly lastRowOnPage?: number;
     additionalData?: string | undefined;
-    results?: RoleDto[] | undefined;
+    results?: RoleResponse[] | undefined;
 
-    constructor(data?: IRoleDtoPagingResult) {
+    constructor(data?: IRoleResponsePagingResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1265,14 +1467,14 @@ export class RoleDtoPagingResult implements IRoleDtoPagingResult {
             if (Array.isArray(_data["results"])) {
                 this.results = [] as any;
                 for (let item of _data["results"])
-                    this.results!.push(RoleDto.fromJS(item));
+                    this.results!.push(RoleResponse.fromJS(item));
             }
         }
     }
 
-    static fromJS(data: any): RoleDtoPagingResult {
+    static fromJS(data: any): RoleResponsePagingResponse {
         data = typeof data === 'object' ? data : {};
-        let result = new RoleDtoPagingResult();
+        let result = new RoleResponsePagingResponse();
         result.init(data);
         return result;
     }
@@ -1295,7 +1497,7 @@ export class RoleDtoPagingResult implements IRoleDtoPagingResult {
     }
 }
 
-export interface IRoleDtoPagingResult {
+export interface IRoleResponsePagingResponse {
     currentPage?: number;
     pageCount?: number;
     pageSize?: number;
@@ -1303,7 +1505,7 @@ export interface IRoleDtoPagingResult {
     firstRowOnPage?: number;
     lastRowOnPage?: number;
     additionalData?: string | undefined;
-    results?: RoleDto[] | undefined;
+    results?: RoleResponse[] | undefined;
 }
 
 export class TokenRequest implements ITokenRequest {

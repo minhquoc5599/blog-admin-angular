@@ -1,9 +1,10 @@
+import { PermissionComponent } from './permission/permission.component';
 import { Message } from 'src/app/shared/constants/message.constant';
 import { RolesDetailComponent } from './roles-detail/roles-detail.component';
-import { AdminApiRoleApiClient, RoleDtoPagingResult } from 'src/app/api/admin-api.service.generated';
+import { AdminApiRoleApiClient, RoleResponsePagingResponse } from 'src/app/api/admin-api.service.generated';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
-import { RoleDto } from 'src/app/api/admin-api.service.generated';
+import { RoleResponse } from 'src/app/api/admin-api.service.generated';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { DialogService, DynamicDialogComponent } from 'primeng/dynamicdialog'
 import { ConfirmationService } from 'primeng/api';
@@ -45,8 +46,8 @@ export class RoleComponent implements OnInit, OnDestroy {
   total: number
 
   //Query
-  data: RoleDto[]
-  selectedItems: RoleDto[] = []
+  data: RoleResponse[]
+  selectedItems: RoleResponse[] = []
   keyword: string = ''
 
   constructor(
@@ -69,7 +70,7 @@ export class RoleComponent implements OnInit, OnDestroy {
     this.roleService.getRolesPaging(this.keyword, this.pageIndex, this.pageSize)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
-        next: (response: RoleDtoPagingResult) => {
+        next: (response: RoleResponsePagingResponse) => {
           this.data = response.results
           this.total = response.rowCount
           this.isloading = false
@@ -105,7 +106,7 @@ export class RoleComponent implements OnInit, OnDestroy {
     const dynamicComponent = dialogRef?.instance as DynamicDialogComponent;
     const ariaLabelledBy = dynamicComponent.getAriaLabelledBy();
     dynamicComponent.getAriaLabelledBy = () => ariaLabelledBy;
-    ref.onClose.subscribe((data: RoleDto) => {
+    ref.onClose.subscribe((data: RoleResponse) => {
       if (data) {
         this.alertService.showSuccess(Message.CREATED_OK_MSG);
         this.selectedItems = [];
@@ -113,8 +114,6 @@ export class RoleComponent implements OnInit, OnDestroy {
       }
     });
   }
-
-  showPermissionModal(id: string, name: string): void { }
 
   showEditModal(): void {
     if (this.selectedItems.length == 0) {
@@ -133,9 +132,32 @@ export class RoleComponent implements OnInit, OnDestroy {
     const dynamicComponent = dialogRef?.instance as DynamicDialogComponent;
     const ariaLabelledBy = dynamicComponent.getAriaLabelledBy();
     dynamicComponent.getAriaLabelledBy = () => ariaLabelledBy;
-    ref.onClose.subscribe((data: RoleDto) => {
+    ref.onClose.subscribe((data: RoleResponse) => {
       if (data) {
         this.alertService.showSuccess(Message.UPDATED_OK_MSG);
+        this.selectedItems = [];
+        this.getData();
+      }
+    });
+  }
+
+  showPermissionModal(id: string, name: string): void {
+    const ref = this.dialogService.open(PermissionComponent, {
+      data: {
+        id: id,
+      },
+      header: name,
+      width: '70%',
+    });
+    const dialogRef = this.dialogService.dialogComponentRefMap.get(ref);
+    const dynamicComponent = dialogRef?.instance as DynamicDialogComponent;
+    const ariaLabelledBy = dynamicComponent.getAriaLabelledBy();
+    dynamicComponent.getAriaLabelledBy = () => ariaLabelledBy;
+    ref.onClose.subscribe((data: RoleResponse) => {
+      if (data) {
+        this.alertService.showSuccess(
+          Message.UPDATED_OK_MSG
+        );
         this.selectedItems = [];
         this.getData();
       }
@@ -151,7 +173,7 @@ export class RoleComponent implements OnInit, OnDestroy {
     this.selectedItems.forEach((element) => {
       ids.push(element.id);
     });
-    
+
     this.confirmationService.confirm({
       header: 'Confirmation',
       message: Message.CONFIRM_DELETE_MSG,

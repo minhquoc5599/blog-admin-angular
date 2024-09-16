@@ -1,4 +1,4 @@
-import { AdminApiTokenApiClient, TokenRequest, AuthenticatedResult } from 'src/app/api/admin-api.service.generated';
+import { AdminApiTokenApiClient, TokenRequest, AuthenticatedResponse } from 'src/app/api/admin-api.service.generated';
 import { StorageService } from 'src/app/shared/services/storage.service';
 import { HttpErrorResponse, HttpEvent, HttpHandlerFn, HttpInterceptorFn, HttpRequest } from '@angular/common/http'
 import { inject } from '@angular/core'
@@ -25,7 +25,7 @@ const handle401Error = (request: HttpRequest<any>, next: HttpHandlerFn,
     });
     if (token)
       return tokenApiClient.refresh(tokenRequest).pipe(
-        switchMap((authenResponse: AuthenticatedResult) => {
+        switchMap((authenResponse: AuthenticatedResponse) => {
           isRefreshing = false;
 
           storageService.saveToken(authenResponse.token!);

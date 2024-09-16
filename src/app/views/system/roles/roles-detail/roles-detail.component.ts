@@ -1,5 +1,5 @@
 import { ValidateMessageComponent } from 'src/app/shared/validates/validate-message/validate-message.component';
-import { AdminApiRoleApiClient, RoleDto } from 'src/app/api/admin-api.service.generated';
+import { AdminApiRoleApiClient, RoleResponse } from 'src/app/api/admin-api.service.generated';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
@@ -38,7 +38,7 @@ export class RolesDetailComponent implements OnInit, OnDestroy {
   public btnDisabled = false;
   public saveBtnName: string;
   public closeBtnName: string;
-  selectedEntity = {} as RoleDto;
+  selectedEntity = {} as RoleResponse;
 
   formSavedEventEmitter: EventEmitter<any> = new EventEmitter();
 
@@ -106,7 +106,7 @@ export class RolesDetailComponent implements OnInit, OnDestroy {
     this.roleService.getRoleById(id)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
-        next: (response: RoleDto) => {
+        next: (response: RoleResponse) => {
           this.selectedEntity = response;
           this.buildForm();
 
