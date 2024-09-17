@@ -1,21 +1,21 @@
-import { PermissionComponent } from './permission/permission.component';
-import { Message } from 'src/app/shared/constants/message.constant';
-import { RolesDetailComponent } from './roles-detail/roles-detail.component';
-import { AdminApiRoleApiClient, RoleResponsePagingResponse } from 'src/app/api/admin-api.service.generated';
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subject, takeUntil } from 'rxjs';
-import { RoleResponse } from 'src/app/api/admin-api.service.generated';
-import { AlertService } from 'src/app/shared/services/alert.service';
+import { PermissionComponent } from './permission/permission.component'
+import { Message } from 'src/app/shared/constants/message.constant'
+import { RoleDetailComponent } from './role-detail/role-detail.component'
+import { AdminApiRoleApiClient, RoleResponsePagingResponse } from 'src/app/api/admin-api.service.generated'
+import { Component, OnDestroy, OnInit } from '@angular/core'
+import { Subject, takeUntil } from 'rxjs'
+import { RoleResponse } from 'src/app/api/admin-api.service.generated'
+import { AlertService } from 'src/app/shared/services/alert.service'
 import { DialogService, DynamicDialogComponent } from 'primeng/dynamicdialog'
-import { ConfirmationService } from 'primeng/api';
+import { ConfirmationService } from 'primeng/api'
 import { TableModule } from 'primeng/table'
 import { ProgressSpinnerModule } from 'primeng/progressspinner'
 import { BlockUIModule } from 'primeng/blockui'
 import { PaginatorModule } from 'primeng/paginator'
 import { PanelModule } from 'primeng/panel'
-import { CommonModule } from '@angular/common';
-import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
+import { CommonModule } from '@angular/common'
+import { ButtonModule } from 'primeng/button'
+import { InputTextModule } from 'primeng/inputtext'
 
 @Component({
   selector: 'app-role',
@@ -38,7 +38,7 @@ import { InputTextModule } from 'primeng/inputtext';
 })
 export class RoleComponent implements OnInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>()
-  isloading: boolean = false
+  isLoading: boolean = false
 
   //Page setting
   pageIndex: number = 1
@@ -66,79 +66,79 @@ export class RoleComponent implements OnInit, OnDestroy {
   }
 
   getData() {
-    this.isloading = true
+    this.isLoading = true
     this.roleService.getRolesPaging(this.keyword, this.pageIndex, this.pageSize)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (response: RoleResponsePagingResponse) => {
           this.data = response.results
           this.total = response.rowCount
-          this.isloading = false
+          this.isLoading = false
         },
         error: (e) => {
-          this.isloading = false
+          this.isLoading = false
         }
       })
   }
 
   pageChanged(event: any): void {
-    this.pageIndex = event.page;
-    this.pageSize = event.rows;
-    this.getData();
+    this.pageIndex = event.page
+    this.pageSize = event.rows
+    this.getData()
   }
 
   // private loadingUI(enable: boolean) {
   //   if (enable) {
-  //     this.isloading = true 
+  //     this.isLoading = true 
   //   } else {
   //     setTimeout(() => {
-  //       this.isloading = false
+  //       this.isLoading = false
   //     }, 1000)
   //   }
   // }
 
   showAddModal(): void {
-    const ref = this.dialogService.open(RolesDetailComponent, {
+    const ref = this.dialogService.open(RoleDetailComponent, {
       header: 'Add role',
-      width: '70%',
-    });
-    const dialogRef = this.dialogService.dialogComponentRefMap.get(ref);
-    const dynamicComponent = dialogRef?.instance as DynamicDialogComponent;
-    const ariaLabelledBy = dynamicComponent.getAriaLabelledBy();
-    dynamicComponent.getAriaLabelledBy = () => ariaLabelledBy;
+      width: '30%',
+    })
+    const dialogRef = this.dialogService.dialogComponentRefMap.get(ref)
+    const dynamicComponent = dialogRef?.instance as DynamicDialogComponent
+    const ariaLabelledBy = dynamicComponent.getAriaLabelledBy()
+    dynamicComponent.getAriaLabelledBy = () => ariaLabelledBy
     ref.onClose.subscribe((data: RoleResponse) => {
       if (data) {
-        this.alertService.showSuccess(Message.CREATED_OK_MSG);
-        this.selectedItems = [];
-        this.getData();
+        this.alertService.showSuccess(Message.CREATED_OK_MSG)
+        this.selectedItems = []
+        this.getData()
       }
-    });
+    })
   }
 
   showEditModal(): void {
     if (this.selectedItems.length == 0) {
-      this.alertService.showError(Message.NOT_CHOOSE_ANY_RECORD);
-      return;
+      this.alertService.showError(Message.NOT_CHOOSE_ANY_RECORD)
+      return
     }
-    var id = this.selectedItems[0].id;
-    const ref = this.dialogService.open(RolesDetailComponent, {
+    var id = this.selectedItems[0].id
+    const ref = this.dialogService.open(RoleDetailComponent, {
       data: {
         id: id,
       },
       header: 'Edit Role',
-      width: '70%',
-    });
-    const dialogRef = this.dialogService.dialogComponentRefMap.get(ref);
-    const dynamicComponent = dialogRef?.instance as DynamicDialogComponent;
-    const ariaLabelledBy = dynamicComponent.getAriaLabelledBy();
-    dynamicComponent.getAriaLabelledBy = () => ariaLabelledBy;
+      width: '30%',
+    })
+    const dialogRef = this.dialogService.dialogComponentRefMap.get(ref)
+    const dynamicComponent = dialogRef?.instance as DynamicDialogComponent
+    const ariaLabelledBy = dynamicComponent.getAriaLabelledBy()
+    dynamicComponent.getAriaLabelledBy = () => ariaLabelledBy
     ref.onClose.subscribe((data: RoleResponse) => {
       if (data) {
-        this.alertService.showSuccess(Message.UPDATED_OK_MSG);
-        this.selectedItems = [];
-        this.getData();
+        this.alertService.showSuccess(Message.UPDATED_OK_MSG)
+        this.selectedItems = []
+        this.getData()
       }
-    });
+    })
   }
 
   showPermissionModal(id: string, name: string): void {
@@ -146,33 +146,33 @@ export class RoleComponent implements OnInit, OnDestroy {
       data: {
         id: id,
       },
-      header: name,
-      width: '70%',
-    });
-    const dialogRef = this.dialogService.dialogComponentRefMap.get(ref);
-    const dynamicComponent = dialogRef?.instance as DynamicDialogComponent;
-    const ariaLabelledBy = dynamicComponent.getAriaLabelledBy();
-    dynamicComponent.getAriaLabelledBy = () => ariaLabelledBy;
+      header: `Role permissions for ${name}`,
+      width: '50%',
+    })
+    const dialogRef = this.dialogService.dialogComponentRefMap.get(ref)
+    const dynamicComponent = dialogRef?.instance as DynamicDialogComponent
+    const ariaLabelledBy = dynamicComponent.getAriaLabelledBy()
+    dynamicComponent.getAriaLabelledBy = () => ariaLabelledBy
     ref.onClose.subscribe((data: RoleResponse) => {
       if (data) {
         this.alertService.showSuccess(
           Message.UPDATED_OK_MSG
-        );
-        this.selectedItems = [];
-        this.getData();
+        )
+        this.selectedItems = []
+        this.getData()
       }
-    });
+    })
   }
 
   deleteItems(): void {
     if (this.selectedItems.length == 0) {
-      this.alertService.showError(Message.NOT_CHOOSE_ANY_RECORD);
-      return;
+      this.alertService.showError(Message.NOT_CHOOSE_ANY_RECORD)
+      return
     }
-    var ids = [];
+    var ids = []
     this.selectedItems.forEach((element) => {
-      ids.push(element.id);
-    });
+      ids.push(element.id)
+    })
 
     this.confirmationService.confirm({
       header: 'Confirmation',
@@ -181,26 +181,26 @@ export class RoleComponent implements OnInit, OnDestroy {
       acceptLabel: 'Yes',
       rejectLabel: 'No',
       accept: () => {
-        this.deleteItemsConfirm(ids);
+        this.deleteItemsConfirm(ids)
       },
-    });
+    })
   }
 
   deleteItemsConfirm(ids: any[]) {
-    this.isloading = true;
+    this.isLoading = true
 
     this.roleService.deleteRoles(ids).subscribe({
       next: () => {
         this.alertService.showSuccess(
           Message.DELETED_OK_MSG
-        );
-        this.getData();
-        this.selectedItems = [];
-        this.isloading = false;
+        )
+        this.getData()
+        this.selectedItems = []
+        this.isLoading = false
       },
       error: () => {
-        this.isloading = false;
+        this.isLoading = false
       },
-    });
+    })
   }
 }

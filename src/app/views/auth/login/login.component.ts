@@ -1,6 +1,6 @@
-import { StorageService } from 'src/app/shared/services/storage.service';
-import { Url } from 'src/app/shared/constants/url.constant';
-import { AlertService } from 'src/app/shared/services/alert.service';
+import { StorageService } from 'src/app/shared/services/storage.service'
+import { Url } from 'src/app/shared/constants/url.constant'
+import { AlertService } from 'src/app/shared/services/alert.service'
 import { AdminApiAuthApiClient, LoginRequest, AuthenticatedResponse } from 'src/app/api/admin-api.service.generated'
 import { Component, OnDestroy } from '@angular/core'
 import { NgStyle } from '@angular/common'
@@ -21,8 +21,8 @@ import {
 } from '@coreui/angular'
 import { FormBuilder, FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms'
 import { ToastModule } from 'primeng/toast'
-import { Router } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { Router } from '@angular/router'
+import { Subject, takeUntil } from 'rxjs'
 
 @Component({
   selector: 'app-login',
@@ -68,7 +68,7 @@ export class LoginComponent implements OnDestroy {
     this.loginForm = this.fb.group({
       username: new FormControl('', Validators.required),
       password: new FormControl('', Validators.required)
-    });
+    })
   }
 
   ngOnDestroy(): void {

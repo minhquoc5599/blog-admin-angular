@@ -1,22 +1,86 @@
-<div class="bg-light dark:bg-transparent min-vh-100 d-flex flex-row align-items-center">
-  <c-container>
-    <c-row class="justify-content-center">
-      <c-col md="6">
-        <div class="clearfix">
-          <h1 class="float-start display-3 me-4">User</h1>
-          <h4 class="pt-3">User</h4>
-          <p class="text-body-secondary float-start">
-            User
-          </p>
+<div class="animated fadeIn">
+  <p-panel [style]="{ 'margin-bottom': '10px' }">
+    <p-header>Users</p-header>
+    <div class="row">
+      <div class="col">
+        <button appPermission appPolicy="Permissons.Users.Create" pButton (click)="showAddModal()"
+          class="p-button-sm p-button-success"><i class="pi pi-plus"></i>&nbsp;Add</button>
+
+        <button appPermission appPolicy="Permissons.Users.Delete" pButton  *ngIf="selectedItems.length > 0"
+          (click)="deleteItems()" class="p-button-sm p-button-danger ms-1"><i class="pi pi-trash"></i>&nbsp;Delete</button>
+
+        <button appPermission appPolicy="Permissons.Users.Edit" pButton *ngIf="selectedItems.length == 1" (click)="showEditModal()"
+          class="p-button-sm p-button-warning ms-1"><i class="pi pi-pencil"></i>&nbsp;Edit</button>
+      </div>
+      <div class="col">
+        <div class="row">
+          <div class="col">
+            <input id="txtKeyword" pInputText (keyup.enter)="getData()" [(ngModel)]="keyword"
+              placeholder="Enter keyword..." type="text" />
+          </div>
+          <div class="col">
+            <button type="button" pButton (click)="getData()">Search</button>
+          </div>
         </div>
-        <c-input-group class="input-prepend">
-          <span cInputGroupText>
-            <svg cIcon name="cilMagnifyingGlass"></svg>
-          </span>
-          <input cFormControl placeholder="What are you looking for?" type="text" />
-          <button cButton color="info">Search</button>
-        </c-input-group>
-      </c-col>
-    </c-row>
-  </c-container>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <p-table #dt [value]="items" selectionMode="multiple" dataKey="id" [(selection)]="selectedItems"
+        [metaKeySelection]="true">
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 10px">
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th>
+            <th>Name</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Phone number</th>
+            <th>Date created</th>
+            <th style="width: 150px">Status</th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-row>
+          <tr>
+            <td style="width: 10px">
+              <span class="ui-column-title"></span>
+              <p-tableCheckbox [value]="row"></p-tableCheckbox>
+            </td>
+            <td>{{ row.firstName }}</td>
+            <td>{{ row.userName }}</td>
+            <td>{{ row.email }}</td>
+            <td>{{ row.phoneNumber }}</td>
+            <td>{{ row.dateCreated | date: 'dd-MM-yyyy hh:mm' }}</td>
+            <td style="width: 150px">
+              <p-badge *ngIf="row.isActive == 1" value="Active" severity="success"></p-badge>
+              <p-badge *ngIf="row.isActive == 0" value="UnActive" severity="danger"></p-badge>
+            </td>
+            <td>
+              <button pButton pRipple type="button" icon="pi pi-key" pTooltip="Set password" tooltipPosition="top"
+                class="p-button-rounded p-button-text" (click)="setPassword(row.id, row.userName)"></button>
+
+              <button pButton pRipple type="button" icon="pi pi-envelope" pTooltip="Change email" tooltipPosition="top"
+                (click)="changeEmail(row.id)" class="p-button-rounded p-button-text"></button>
+
+              <button pButton pRipple type="button" icon="pi pi-users" pTooltip="Role assign" tooltipPosition="top"
+                (click)="assignRole(row.id)" class="p-button-rounded p-button-text"></button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+          <div style="text-align: left">Total: {{ totalCount | number }}</div>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <p-paginator [rows]="pageSize" [totalRecords]="totalCount" (onPageChange)="pageChanged($event)"
+      [rowsPerPageOptions]="[10, 20, 50, 100]"></p-paginator>
+
+      <p-blockUI [blocked]="isLoading">
+        <div class="card flex justify-content-center bg-transparent" [style]="{border: 'none'}">
+          <p-progressSpinner strokeWidth="2" animationDuration="1s" />
+        </div>
+      </p-blockUI>
+  </p-panel>
 </div>

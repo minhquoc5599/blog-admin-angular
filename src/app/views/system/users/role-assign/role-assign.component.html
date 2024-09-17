@@ -1,0 +1,21 @@
+<div class="mb-3">
+  <p-pickList [source]="availableRoles" [target]="seletedRoles" sourceHeader="Available roles"
+    targetHeader="Chosen roles" [dragdrop]="true">
+    <ng-template let-role pTemplate="item">
+      <div>
+        {{ role}}
+      </div>
+    </ng-template>
+  </p-pickList>
+</div>
+<div class="flex justify-content-end">
+  <button type="button" (click)="save()" pButton [disabled]="btnDisabled">
+    Update
+  </button>
+</div>
+
+<p-blockUI [blocked]="isLoading">
+  <div class="card flex justify-content-center bg-transparent" [style]="{border: 'none'}">
+    <p-progressSpinner strokeWidth="2" animationDuration="1s" />
+  </div>
+</p-blockUI>

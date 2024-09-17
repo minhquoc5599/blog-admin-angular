@@ -1,14 +1,14 @@
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { AdminApiRoleApiClient, RoleClaimsDto, PermissionModel } from 'src/app/api/admin-api.service.generated';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
-import { Subject, takeUntil } from 'rxjs';
-import { PanelModule } from 'primeng/panel'
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { AdminApiRoleApiClient, RoleClaimsDto, PermissionModel } from 'src/app/api/admin-api.service.generated'
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms'
+import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core'
+import { Subject, takeUntil } from 'rxjs'
 import { BlockUIModule } from 'primeng/blockui'
 import { ProgressSpinnerModule } from 'primeng/progressspinner'
-import { CheckboxModule } from 'primeng/checkbox';
-import { CommonModule } from '@angular/common';
-import { ButtonModule } from 'primeng/button';
+import { CheckboxModule } from 'primeng/checkbox'
+import { CommonModule } from '@angular/common'
+import { ButtonModule } from 'primeng/button'
+import { AlertService } from 'src/app/shared/services/alert.service'
 
 @Component({
   selector: 'app-permission',
@@ -18,7 +18,6 @@ import { ButtonModule } from 'primeng/button';
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
-    PanelModule,
     BlockUIModule,
     ProgressSpinnerModule,
     CheckboxModule,
@@ -26,98 +25,105 @@ import { ButtonModule } from 'primeng/button';
   ]
 })
 export class PermissionComponent implements OnInit, OnDestroy {
-  private ngUnsubscribe = new Subject<void>();
+  private ngUnsubscribe = new Subject<void>()
 
   // Default
-  public isLoading: boolean = false;
-  public form: FormGroup;
-  public title: string;
-  public btnDisabled = false;
-  public saveBtnName: string;
-  public closeBtnName: string;
-  public permissions: RoleClaimsDto[] = [];
-  public selectedPermissions: RoleClaimsDto[] = [];
-  public id: string;
-  formSavedEventEmitter: EventEmitter<any> = new EventEmitter();
+  public isLoading: boolean = false
+  public form: FormGroup
+  public btnDisabled = false
+  public permissions: RoleClaimsDto[] = []
+  public selectedPermissions: RoleClaimsDto[] = []
+  formSavedEventEmitter: EventEmitter<any> = new EventEmitter()
 
   constructor(
     public ref: DynamicDialogRef,
     public config: DynamicDialogConfig,
-    private roleService: AdminApiRoleApiClient,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private alertService: AlertService,
+
+    // Api
+    private roleApiClient: AdminApiRoleApiClient,
   ) { }
 
   ngOnDestroy(): void {
     if (this.ref) {
-      this.ref.close();
+      this.ref.close()
     }
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
+    this.ngUnsubscribe.next()
+    this.ngUnsubscribe.complete()
   }
 
   ngOnInit() {
-    this.buildForm();
-    this.loadDetail(this.config.data.id);
-    this.saveBtnName = 'Update';
-    this.closeBtnName = 'Cancel';
+    this.buildForm()
+    this.loadDetail(this.config.data.id)
   }
 
   loadDetail(roleId: string) {
-    this.isLoading = true;
-    this.roleService
+    this.loading(true)
+    this.roleApiClient
       .getAllRolePermissions(roleId)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (response: PermissionModel) => {
-          this.permissions = response.roleClaims ? response.roleClaims : [];
-          this.buildForm();
-          this.isLoading = false;
+          this.permissions = response.roleClaims ? response.roleClaims : []
+          this.buildForm()
+          this.loading(false)
         },
         error: () => {
-          this.isLoading = false;
+          this.loading(false)
         },
-      });
+      })
   }
 
   buildForm() {
-    this.form = this.fb.group({});
+    this.form = this.fb.group({})
 
     for (let index = 0; index < this.permissions.length; index++) {
-      const permission = this.permissions[index];
+      const permission = this.permissions[index]
       if (permission.selected) {
         this.selectedPermissions.push(new RoleClaimsDto({
           selected: true,
           displayName: permission.displayName,
           type: permission.type,
           value: permission.value
-        }));
+        }))
       }
     }
   }
 
   save() {
-    this.isLoading = true
-    var roleClaims: RoleClaimsDto[] = [];
+    this.loading(true)
+    var roleClaims: RoleClaimsDto[] = []
     for (let index = 0; index < this.permissions.length; index++) {
-      const isGranted = this.selectedPermissions.filter((x) => x.value == this.permissions[index].value).length > 0;
+      const isGranted = this.selectedPermissions.filter((x) => x.value == this.permissions[index].value).length > 0
 
       roleClaims.push(new RoleClaimsDto({
         type: this.permissions[index].type,
         selected: isGranted,
         value: this.permissions[index].value
-      }));
+      }))
     }
     var updateValues = new PermissionModel({
       roleId: this.config.data.id,
       roleClaims: roleClaims,
-    });
-    this.roleService
+    })
+    this.roleApiClient
       .savePermission(updateValues)
       .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(() => {
-        this.isLoading = false;
-        this.ref.close(this.form.value);
-      });
+      .subscribe({
+        next: () => {
+          this.loading(false)
+          this.ref.close(this.form.value)
+        },
+        error: (error) => {
+          this.loading(false)
+          this.alertService.showError(error)
+        }
+      })
   }
 
+  private loading(enable: boolean) {
+    this.isLoading = enable
+    this.btnDisabled = enable
+  }
 }
