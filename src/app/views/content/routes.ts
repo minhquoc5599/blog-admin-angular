@@ -15,4 +15,13 @@ export const routes: Routes = [
     },
     canActivate: [AuthGuard]
   },
+  {
+    path: 'post-categories',
+    loadComponent: () => import('./post-categories/post-category.component').then(m => m.PostCategoryComponent),
+    data: {
+      title: 'PostCategories',
+      requiredPolicy: 'Permissions.PostCategories.View'
+    },
+    canActivate: [AuthGuard]
+  },
 ]

@@ -1,0 +1,72 @@
+<p-panel [style]="{'margin-bottom':'10px'}">
+  <p-header> Post Categories</p-header>
+  <div class="row">
+    <div class="col">
+      <button appPermission appPolicy="Permissions.PostCategories.Create" pButton (click)="showAddModal()"
+        class="p-button-sm p-button-success"><i class="pi pi-plus"></i>&nbsp;Add</button>
+      <button appPermission appPolicy="Permissions.PostCategories.Delete" pButton *ngIf="selectedItems.length > 0"
+        (click)="deleteItems()" class="p-button-sm p-button-danger ms-1"><i
+          class="pi pi-trash"></i>&nbsp;Delete</button>
+      <button appPermission appPolicy="Permissions.PostCategories.Edit" pButton *ngIf="selectedItems.length == 1"
+        (click)="showEditModal()" class="p-button-sm p-button-warning ms-1"><i
+          class="pi pi-pencil"></i>&nbsp;Edit</button>
+    </div>
+    <div class="col">
+      <div class="row">
+        <div class="col">
+          <input id="txtKeyword" pInputText (keyup.enter)="getData()" pInputText [(ngModel)]="keyword"
+            placeholder="Enter a keyword..." type="text">
+        </div>
+        <div class="col">
+          <button type="button" pButton (click)="getData()">Search</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="row mt-3">
+    <p-table #dt [value]="items" selectionMode="multiple" dataKey="id" [(selection)]="selectedItems"
+      [metaKeySelection]="true">
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 10px">
+            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+          </th>
+          <th>Name</th>
+          <th>Url</th>
+          <th>No</th>
+          <th style="width: 150px">Status</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td style="width: 10px"><span class="ui-column-title"></span>
+            <p-tableCheckbox [value]="row"></p-tableCheckbox>
+          </td>
+          <td>{{row.name}}</td>
+          <td>{{row.slug}}</td>
+          <td>{{row.sortOrder | number}}</td>
+          <td style="width: 150px">
+            <p-badge *ngIf="row.isActive == 1" value="Active" severity="success"></p-badge>
+            <p-badge *ngIf="row.isActive == 0" value="UnActive" severity="danger"></p-badge>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="summary">
+        <div style="text-align: left">
+          Total: {{totalCount | number}}
+        </div>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <p-paginator [rows]="pageSize" [totalRecords]="totalCount" (onPageChange)="pageChanged($event)"
+    [rowsPerPageOptions]="[10, 20, 50, 100]"></p-paginator>
+
+
+  <p-blockUI [blocked]="isLoading">
+    <div class="card flex justify-content-center bg-transparent" [style]="{border: 'none'}">
+      <p-progressSpinner strokeWidth="2" animationDuration="1s" />
+    </div>
+  </p-blockUI>
+</p-panel>

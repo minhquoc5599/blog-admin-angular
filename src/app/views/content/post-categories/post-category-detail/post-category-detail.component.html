@@ -1,0 +1,42 @@
+<form class="form-horizontal form-label-left" skipValidation [formGroup]="form" (ngSubmit)="save()">
+  <div class="mb-3">
+    <label for="name">Name <span class="required">*</span></label>
+    <input id="name" type="text" pInputText [pKeyFilter]="noSpecial" formControlName="name" (keyup)="generateSlug()"
+      [style]="{ width: '100%' }" />
+    <app-validate-message [entityForm]="form" fieldName="name"
+      [validationMessages]="validationMessages"></app-validate-message>
+  </div>
+  <div class="mb-3">
+    <label for="slug">Slug<span class="required">*</span></label>
+    <input id="slug" type="text" pInputText [pKeyFilter]="noSpecial" formControlName="slug"
+      [style]="{ width: '100%' }" />
+    <app-validate-message [entityForm]="form" fieldName="slug"
+      [validationMessages]="validationMessages"></app-validate-message>
+  </div>
+  <div class="mb-3">
+    <label for="sortOrder">No <span class="required">*</span></label>
+    <p-inputNumber id="sortOrder" formControlName="sortOrder" [style]="{ width: '100%' }">
+    </p-inputNumber>
+  </div>
+
+  <div class="mb-3">
+    <label for="shortDesc">Description SEO</label>
+    <textarea id="shortDesc" type="text" rows="4" pInputTextarea [pKeyFilter]="noSpecial"
+      formControlName="seoDescription" [style]="{ width: '100%' }"></textarea>
+  </div>
+  <div class="mb-4">
+    <p-checkbox formControlName="isActive" [binary]="true" id="isActive"></p-checkbox>
+    <label for="isActive">Active</label>
+  </div>
+  <div class="flex justify-content-end">
+    <button type="submit" class="btn btn-primary" [disabled]="!form.valid || btnDisabled">
+      {{ saveBtnName }}
+    </button>
+  </div>
+
+  <p-blockUI [blocked]="isLoading">
+    <div class="card flex justify-content-center bg-transparent" [style]="{border: 'none'}">
+      <p-progressSpinner strokeWidth="2" animationDuration="1s" />
+    </div>
+  </p-blockUI>
+</form>

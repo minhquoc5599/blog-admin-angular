@@ -6,7 +6,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core'
 import { Subject, takeUntil } from 'rxjs'
 import { RoleResponse } from 'src/app/api/admin-api.service.generated'
 import { AlertService } from 'src/app/shared/services/alert.service'
-import { DialogService, DynamicDialogComponent } from 'primeng/dynamicdialog'
+import { DialogService } from 'primeng/dynamicdialog'
 import { ConfirmationService } from 'primeng/api'
 import { TableModule } from 'primeng/table'
 import { ProgressSpinnerModule } from 'primeng/progressspinner'
@@ -75,8 +75,9 @@ export class RoleComponent implements OnInit, OnDestroy {
           this.total = response.rowCount
           this.isLoading = false
         },
-        error: (e) => {
+        error: (error) => {
           this.isLoading = false
+          this.alertService.showError(error)
         }
       })
   }
@@ -87,25 +88,12 @@ export class RoleComponent implements OnInit, OnDestroy {
     this.getData()
   }
 
-  // private loadingUI(enable: boolean) {
-  //   if (enable) {
-  //     this.isLoading = true 
-  //   } else {
-  //     setTimeout(() => {
-  //       this.isLoading = false
-  //     }, 1000)
-  //   }
-  // }
-
   showAddModal(): void {
     const ref = this.dialogService.open(RoleDetailComponent, {
       header: 'Add role',
       width: '30%',
     })
-    const dialogRef = this.dialogService.dialogComponentRefMap.get(ref)
-    const dynamicComponent = dialogRef?.instance as DynamicDialogComponent
-    const ariaLabelledBy = dynamicComponent.getAriaLabelledBy()
-    dynamicComponent.getAriaLabelledBy = () => ariaLabelledBy
+
     ref.onClose.subscribe((data: RoleResponse) => {
       if (data) {
         this.alertService.showSuccess(Message.CREATED_OK_MSG)
@@ -128,10 +116,7 @@ export class RoleComponent implements OnInit, OnDestroy {
       header: 'Edit Role',
       width: '30%',
     })
-    const dialogRef = this.dialogService.dialogComponentRefMap.get(ref)
-    const dynamicComponent = dialogRef?.instance as DynamicDialogComponent
-    const ariaLabelledBy = dynamicComponent.getAriaLabelledBy()
-    dynamicComponent.getAriaLabelledBy = () => ariaLabelledBy
+
     ref.onClose.subscribe((data: RoleResponse) => {
       if (data) {
         this.alertService.showSuccess(Message.UPDATED_OK_MSG)
@@ -149,10 +134,7 @@ export class RoleComponent implements OnInit, OnDestroy {
       header: `Role permissions for ${name}`,
       width: '50%',
     })
-    const dialogRef = this.dialogService.dialogComponentRefMap.get(ref)
-    const dynamicComponent = dialogRef?.instance as DynamicDialogComponent
-    const ariaLabelledBy = dynamicComponent.getAriaLabelledBy()
-    dynamicComponent.getAriaLabelledBy = () => ariaLabelledBy
+
     ref.onClose.subscribe((data: RoleResponse) => {
       if (data) {
         this.alertService.showSuccess(

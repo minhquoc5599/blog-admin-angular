@@ -4,7 +4,7 @@ import { SetPasswordComponent } from './set-password/set-password.component'
 import { UserDetailComponent } from './user-detail/user-detail.component'
 import { Component, OnDestroy, OnInit } from '@angular/core'
 import { ConfirmationService } from 'primeng/api'
-import { DialogService, DynamicDialogComponent } from 'primeng/dynamicdialog'
+import { DialogService } from 'primeng/dynamicdialog'
 import { Subject, takeUntil } from 'rxjs'
 import { AdminApiUserApiClient, UserResponse, UserResponsePagingResponse } from 'src/app/api/admin-api.service.generated'
 import { AlertService } from 'src/app/shared/services/alert.service'
@@ -88,8 +88,9 @@ export class UserComponent implements OnInit, OnDestroy {
           }
           this.isLoading = false
         },
-        error: () => {
+        error: (error) => {
           this.isLoading = false
+          this.alertService.showError(error)
         },
       })
   }
@@ -105,10 +106,7 @@ export class UserComponent implements OnInit, OnDestroy {
       header: 'Add user',
       width: '40%',
     })
-    const dialogRef = this.dialogService.dialogComponentRefMap.get(ref)
-    const dynamicComponent = dialogRef?.instance as DynamicDialogComponent
-    const ariaLabelledBy = dynamicComponent.getAriaLabelledBy()
-    dynamicComponent.getAriaLabelledBy = () => ariaLabelledBy
+
     ref.onClose.subscribe((data: UserResponse) => {
       if (data) {
         this.alertService.showSuccess(
@@ -135,10 +133,7 @@ export class UserComponent implements OnInit, OnDestroy {
       header: 'Update user',
       width: '40%',
     })
-    const dialogRef = this.dialogService.dialogComponentRefMap.get(ref)
-    const dynamicComponent = dialogRef?.instance as DynamicDialogComponent
-    const ariaLabelledBy = dynamicComponent.getAriaLabelledBy()
-    dynamicComponent.getAriaLabelledBy = () => ariaLabelledBy
+
     ref.onClose.subscribe((data: UserResponse) => {
       if (data) {
         this.alertService.showSuccess(
@@ -198,10 +193,7 @@ export class UserComponent implements OnInit, OnDestroy {
       header: `Set password for ${userName}`,
       width: '30%',
     })
-    const dialogRef = this.dialogService.dialogComponentRefMap.get(ref)
-    const dynamicComponent = dialogRef?.instance as DynamicDialogComponent
-    const ariaLabelledBy = dynamicComponent.getAriaLabelledBy()
-    dynamicComponent.getAriaLabelledBy = () => ariaLabelledBy
+
     ref.onClose.subscribe((result: boolean) => {
       if (result) {
         this.alertService.showSuccess(
@@ -221,10 +213,7 @@ export class UserComponent implements OnInit, OnDestroy {
       header: 'Change email',
       width: '30%',
     })
-    const dialogRef = this.dialogService.dialogComponentRefMap.get(ref)
-    const dynamicComponent = dialogRef?.instance as DynamicDialogComponent
-    const ariaLabelledBy = dynamicComponent.getAriaLabelledBy()
-    dynamicComponent.getAriaLabelledBy = () => ariaLabelledBy
+
     ref.onClose.subscribe((result: boolean) => {
       if (result) {
         this.alertService.showSuccess(
@@ -238,23 +227,20 @@ export class UserComponent implements OnInit, OnDestroy {
 
   assignRole(id: string) {
     const ref = this.dialogService.open(RoleAssignComponent, {
-        data: {
-            id: id,
-        },
-        header: 'Role Assign',
-        width: '60%',
+      data: {
+        id: id,
+      },
+      header: 'Role Assign',
+      width: '60%',
     })
-    const dialogRef = this.dialogService.dialogComponentRefMap.get(ref)
-    const dynamicComponent = dialogRef?.instance as DynamicDialogComponent
-    const ariaLabelledBy = dynamicComponent.getAriaLabelledBy()
-    dynamicComponent.getAriaLabelledBy = () => ariaLabelledBy
+
     ref.onClose.subscribe((result: boolean) => {
-        if (result) {
-            this.alertService.showSuccess(
-                Message.ROLE_ASSIGN_SUCCESS_MSG
-            )
-            this.getData()
-        }
+      if (result) {
+        this.alertService.showSuccess(
+          Message.ROLE_ASSIGN_SUCCESS_MSG
+        )
+        this.getData()
+      }
     })
-}
+  }
 }

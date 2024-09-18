@@ -11,6 +11,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner'
 import { InputTextModule } from 'primeng/inputtext'
 import { DialogModule } from 'primeng/dialog'
 import { AlertService } from 'src/app/shared/services/alert.service'
+import { ButtonModule } from 'primeng/button'
 
 
 @Component({
@@ -25,6 +26,7 @@ import { AlertService } from 'src/app/shared/services/alert.service'
     KeyFilterModule,
     BlockUIModule,
     ProgressSpinnerModule,
+    ButtonModule,
     ValidateMessageComponent],
   providers: [
     UtilityService
