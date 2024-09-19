@@ -24,4 +24,13 @@ export const routes: Routes = [
     },
     canActivate: [AuthGuard]
   },
+  {
+    path: 'series',
+    loadComponent: () => import('./series/series.component').then(m => m.SeriesComponent),
+    data: {
+      title: 'Series',
+      requiredPolicy: 'Permissions.Series.View'
+    },
+    canActivate: [AuthGuard]
+  },
 ]

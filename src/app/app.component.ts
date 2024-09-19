@@ -1,3 +1,4 @@
+import { PermissionDirective } from './shared/directives/permission.directive';
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Title } from '@angular/platform-browser';
@@ -17,7 +18,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
   <p-confirmDialog />
   <router-outlet />`,
   standalone: true,
-  imports: [RouterOutlet, ToastModule, ConfirmDialogModule]
+  imports: [RouterOutlet, ToastModule, ConfirmDialogModule, PermissionDirective]
 })
 export class AppComponent implements OnInit {
   title = 'Blog Admin';

@@ -1,3 +1,4 @@
+import { ErrorInterceptor } from './shared/interceptors/error.interceptor';
 import { TokenInterceptor } from './shared/interceptors/token.interceptor';
 import { ApplicationConfig, importProvidersFrom } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
@@ -38,7 +39,7 @@ export const appConfig: ApplicationConfig = {
     IconSetService,
     provideAnimations(),
     provideHttpClient(
-      withInterceptors([TokenInterceptor]),
+      withInterceptors([TokenInterceptor, ErrorInterceptor]),
     ),
 
     // Shared service
