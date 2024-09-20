@@ -5,15 +5,16 @@
   <div class="row">
     <div class="col-6">
       <button appPermission appPolicy="Permissions.Series.Create" pButton (click)="showAddModal()"
-      class="p-button-sm p-button-success"><i class="pi pi-plus"></i>&nbsp;Add</button>
-    <button appPermission appPolicy="Permissions.Series.Delete" pButton *ngIf="selectedItems.length > 0"
-      (click)="deleteItems()" class="p-button-sm p-button-danger ms-1"><i
-        class="pi pi-trash"></i>&nbsp;Delete</button>
-    <button appPermission appPolicy="Permissions.Series.Edit" pButton *ngIf="selectedItems.length == 1"
-      (click)="showEditModal()" class="p-button-sm p-button-warning ms-1"><i
-        class="pi pi-pencil"></i>&nbsp;Edit</button>
-        <button appPermission appPolicy="Permissons.Series.Edit" pButton type="button" label="Bài viết" icon="fa fa-edit"
-        class="p-button-sm ms-1 p-button-info" *ngIf="selectedItems.length== 1" (click)="showPosts()"></button>
+        class="p-button-sm p-button-success"><i class="pi pi-plus"></i>&nbsp;Add</button>
+      <button appPermission appPolicy="Permissions.Series.Delete" pButton *ngIf="selectedItems.length > 0"
+        (click)="deleteItems()" class="p-button-sm p-button-danger ms-1"><i
+          class="pi pi-trash"></i>&nbsp;Delete</button>
+      <button appPermission appPolicy="Permissions.Series.Edit" pButton *ngIf="selectedItems.length == 1"
+        (click)="showEditModal()" class="p-button-sm p-button-warning ms-1"><i
+          class="pi pi-pencil"></i>&nbsp;Edit</button>
+      <button appPermission appPolicy="Permissons.Series.Edit" pButton type="button"
+        class="p-button-sm ms-1 p-button-info" *ngIf="selectedItems.length== 1" (click)="showPosts()"><i
+          class="pi pi-pencil"></i>&nbsp;Edit</button>
     </div>
     <div class="col-6">
       <div class="row">
@@ -43,7 +44,7 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-row>
-        <tr [pSelectableRow]="row">
+        <tr>
           <td style="width: 10px"><span class="ui-column-title"></span>
             <p-tableCheckbox [value]="row"></p-tableCheckbox>
           </td>
@@ -66,9 +67,9 @@
   <p-paginator [rows]="pageSize" [totalRecords]="totalCount" (onPageChange)="pageChanged($event)"
     [rowsPerPageOptions]="[10, 20, 50, 100]"></p-paginator>
 
-    <p-blockUI [blocked]="isLoading">
-      <div class="card flex justify-content-center bg-transparent" [style]="{border: 'none'}">
-        <p-progressSpinner strokeWidth="2" animationDuration="1s" />
-      </div>
-    </p-blockUI>
+  <p-blockUI [blocked]="isLoading">
+    <div class="card flex justify-content-center bg-transparent" [style]="{border: 'none'}">
+      <p-progressSpinner strokeWidth="2" animationDuration="1s" />
+    </div>
+  </p-blockUI>
 </p-panel>

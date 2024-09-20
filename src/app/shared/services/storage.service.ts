@@ -1,6 +1,6 @@
-import { UserModel } from 'src/app/shared/models/user.model';
 import { Injectable } from '@angular/core';
 import { isUndefined } from 'lodash-es';
+import { UserModel } from 'src/app/shared/models/user.model';
 const TOKEN = 'token'
 const REFRESH_TOKEN = 'refresh-token'
 const USER = 'user'

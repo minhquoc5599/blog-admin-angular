@@ -41,9 +41,9 @@
     <textarea id="shortDesc" type="text" rows="4" pInputTextarea [pKeyFilter]="noSpecial"
       formControlName="seoDescription" [style]="{ width: '100%' }"></textarea>
   </div>
-  <div class="mb-4">
+  <div class="mb-4" [style]="{display: 'flex'}">
     <p-checkbox formControlName="isActive" [binary]="true" id="isActive"></p-checkbox>
-    <label for="isActive">Active</label>
+    <label for="isActive" class="mx-1">Active</label>
   </div>
   <div class="flex justify-content-end">
     <button type="submit" class="btn btn-primary" [disabled]="!form.valid || btnDisabled">

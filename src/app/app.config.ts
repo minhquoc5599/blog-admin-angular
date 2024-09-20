@@ -1,5 +1,3 @@
-import { ErrorInterceptor } from './shared/interceptors/error.interceptor';
-import { TokenInterceptor } from './shared/interceptors/token.interceptor';
 import { ApplicationConfig, importProvidersFrom } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import {
@@ -10,16 +8,18 @@ import {
   withRouterConfig,
   withViewTransitions
 } from '@angular/router';
+import { ErrorInterceptor } from './shared/interceptors/error.interceptor';
+import { TokenInterceptor } from './shared/interceptors/token.interceptor';
 
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { DropdownModule, SidebarModule } from '@coreui/angular';
 import { IconSetService } from '@coreui/icons-angular';
-import { routes } from './app.routes';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { AuthGuard } from 'src/app/shared/guards/auth.guard';
 import { ADMIN_API_BASE_URL } from 'src/app/api/admin-api.service.generated';
-import { environment } from 'src/enviroments/environment';
+import { AuthGuard } from 'src/app/shared/guards/auth.guard';
 import { AlertService } from 'src/app/shared/services/alert.service';
+import { environment } from 'src/enviroments/environment';
+import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [

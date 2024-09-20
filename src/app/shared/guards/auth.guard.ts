@@ -1,15 +1,15 @@
 import { Url } from 'src/app/shared/constants/url.constant';
 import { StorageService } from 'src/app/shared/services/storage.service';
 
-import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import { Injectable } from '@angular/core';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 @Injectable()
 export class AuthGuard {
 
   constructor(private router: Router, private storage: StorageService) {
 
   }
-  
+
   canActivate(actionRoute: ActivatedRouteSnapshot, routerState: RouterStateSnapshot): boolean {
     let requiredPolicy = actionRoute.data['requiredPolicy'] as string
     let loggedInUser = this.storage.getUser();

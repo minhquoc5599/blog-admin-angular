@@ -1,10 +1,10 @@
-import { inject } from '@angular/core';
 import {
   HttpEvent,
   HttpHandlerFn,
   HttpInterceptorFn,
   HttpRequest,
 } from '@angular/common/http';
+import { inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/services/alert.service';

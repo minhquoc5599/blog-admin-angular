@@ -1,11 +1,10 @@
-import { PostCategoryDetailComponent } from './post-category-detail/post-category-detail.component'
 import { CommonModule } from '@angular/common'
 import { Component, OnDestroy, OnInit } from '@angular/core'
-import { ButtonModule } from 'primeng/button'
 import { ConfirmationService } from 'primeng/api'
 import { BadgeModule } from 'primeng/badge'
 import { BlockUIModule } from 'primeng/blockui'
-import { DialogService, DynamicDialogComponent } from 'primeng/dynamicdialog'
+import { ButtonModule } from 'primeng/button'
+import { DialogService } from 'primeng/dynamicdialog'
 import { InputTextModule } from 'primeng/inputtext'
 import { PaginatorModule } from 'primeng/paginator'
 import { PanelModule } from 'primeng/panel'
@@ -17,8 +16,9 @@ import {
   PostCategoryResponse,
   PostCategoryResponsePagingResponse
 } from 'src/app/api/admin-api.service.generated'
-import { AlertService } from 'src/app/shared/services/alert.service'
 import { Message } from 'src/app/shared/constants/message.constant'
+import { AlertService } from 'src/app/shared/services/alert.service'
+import { PostCategoryDetailComponent } from './post-category-detail/post-category-detail.component'
 
 @Component({
   selector: 'app-post-category',

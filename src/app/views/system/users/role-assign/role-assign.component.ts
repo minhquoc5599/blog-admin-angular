@@ -1,14 +1,14 @@
-import { AdminApiUserApiClient, AdminApiRoleApiClient, RoleResponse, UserResponse } from 'src/app/api/admin-api.service.generated'
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core'
-import { forkJoin, Subject, takeUntil } from 'rxjs'
 import { BlockUIModule } from 'primeng/blockui'
-import { ProgressSpinnerModule } from 'primeng/progressspinner'
-import { InputTextModule } from 'primeng/inputtext'
-import { ValidateMessageComponent } from 'src/app/shared/validates/validate-message/validate-message.component'
 import { ButtonModule } from 'primeng/button'
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { InputTextModule } from 'primeng/inputtext'
 import { PickListModule } from 'primeng/picklist'
+import { ProgressSpinnerModule } from 'primeng/progressspinner'
+import { forkJoin, Subject, takeUntil } from 'rxjs'
+import { AdminApiRoleApiClient, AdminApiUserApiClient, RoleResponse, UserResponse } from 'src/app/api/admin-api.service.generated'
 import { AlertService } from 'src/app/shared/services/alert.service'
+import { ValidateMessageComponent } from 'src/app/shared/validates/validate-message/validate-message.component'
 
 @Component({
   selector: 'app-role-assign',

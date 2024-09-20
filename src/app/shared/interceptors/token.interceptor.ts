@@ -1,8 +1,8 @@
-import { AdminApiTokenApiClient, TokenRequest, AuthenticatedResponse } from 'src/app/api/admin-api.service.generated';
+import { HttpErrorResponse, HttpEvent, HttpHandlerFn, HttpInterceptorFn, HttpRequest } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { BehaviorSubject, catchError, filter, Observable, switchMap, take, throwError } from 'rxjs';
+import { AdminApiTokenApiClient, AuthenticatedResponse, TokenRequest } from 'src/app/api/admin-api.service.generated';
 import { StorageService } from 'src/app/shared/services/storage.service';
-import { HttpErrorResponse, HttpEvent, HttpHandlerFn, HttpInterceptorFn, HttpRequest } from '@angular/common/http'
-import { inject } from '@angular/core'
-import { BehaviorSubject, catchError, filter, Observable, switchMap, take, throwError } from 'rxjs'
 
 // Using with standalone
 // Variable

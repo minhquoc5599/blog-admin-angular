@@ -1,7 +1,6 @@
 import { DOCUMENT, NgStyle } from '@angular/common';
 import { Component, DestroyRef, effect, inject, OnInit, Renderer2, signal, WritableSignal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ChartOptions } from 'chart.js';
 import {
   AvatarComponent,
   ButtonDirective,
@@ -21,6 +20,7 @@ import {
 } from '@coreui/angular';
 import { ChartjsComponent } from '@coreui/angular-chartjs';
 import { IconDirective } from '@coreui/icons-angular';
+import { ChartOptions } from 'chart.js';
 
 import { WidgetsBrandComponent } from '../widgets/widgets-brand/widgets-brand.component';
 import { WidgetsDropdownComponent } from '../widgets/widgets-dropdown/widgets-dropdown.component';

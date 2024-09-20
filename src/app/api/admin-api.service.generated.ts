@@ -3448,6 +3448,7 @@ export class PostDetailResponse implements IPostDetailResponse {
     categoryName?: string | undefined;
     authorUserName?: string | undefined;
     authorName?: string | undefined;
+    status?: PostStatus;
     categoryId?: string;
     content?: string | undefined;
     authorUserId?: string;
@@ -3457,7 +3458,6 @@ export class PostDetailResponse implements IPostDetailResponse {
     dateModified?: Date | undefined;
     isPaid?: boolean;
     royaltyAmount?: number;
-    status?: PostStatus;
 
     constructor(data?: IPostDetailResponse) {
         if (data) {
@@ -3481,6 +3481,7 @@ export class PostDetailResponse implements IPostDetailResponse {
             this.categoryName = _data["categoryName"];
             this.authorUserName = _data["authorUserName"];
             this.authorName = _data["authorName"];
+            this.status = _data["status"];
             this.categoryId = _data["categoryId"];
             this.content = _data["content"];
             this.authorUserId = _data["authorUserId"];
@@ -3490,7 +3491,6 @@ export class PostDetailResponse implements IPostDetailResponse {
             this.dateModified = _data["dateModified"] ? new Date(_data["dateModified"].toString()) : <any>undefined;
             this.isPaid = _data["isPaid"];
             this.royaltyAmount = _data["royaltyAmount"];
-            this.status = _data["status"];
         }
     }
 
@@ -3514,6 +3514,7 @@ export class PostDetailResponse implements IPostDetailResponse {
         data["categoryName"] = this.categoryName;
         data["authorUserName"] = this.authorUserName;
         data["authorName"] = this.authorName;
+        data["status"] = this.status;
         data["categoryId"] = this.categoryId;
         data["content"] = this.content;
         data["authorUserId"] = this.authorUserId;
@@ -3523,7 +3524,6 @@ export class PostDetailResponse implements IPostDetailResponse {
         data["dateModified"] = this.dateModified ? this.dateModified.toISOString() : <any>undefined;
         data["isPaid"] = this.isPaid;
         data["royaltyAmount"] = this.royaltyAmount;
-        data["status"] = this.status;
         return data;
     }
 }
@@ -3540,6 +3540,7 @@ export interface IPostDetailResponse {
     categoryName?: string | undefined;
     authorUserName?: string | undefined;
     authorName?: string | undefined;
+    status?: PostStatus;
     categoryId?: string;
     content?: string | undefined;
     authorUserId?: string;
@@ -3549,7 +3550,6 @@ export interface IPostDetailResponse {
     dateModified?: Date | undefined;
     isPaid?: boolean;
     royaltyAmount?: number;
-    status?: PostStatus;
 }
 
 export class PostResponse implements IPostResponse {
@@ -3564,6 +3564,7 @@ export class PostResponse implements IPostResponse {
     categoryName?: string | undefined;
     authorUserName?: string | undefined;
     authorName?: string | undefined;
+    status?: PostStatus;
 
     constructor(data?: IPostResponse) {
         if (data) {
@@ -3587,6 +3588,7 @@ export class PostResponse implements IPostResponse {
             this.categoryName = _data["categoryName"];
             this.authorUserName = _data["authorUserName"];
             this.authorName = _data["authorName"];
+            this.status = _data["status"];
         }
     }
 
@@ -3610,6 +3612,7 @@ export class PostResponse implements IPostResponse {
         data["categoryName"] = this.categoryName;
         data["authorUserName"] = this.authorUserName;
         data["authorName"] = this.authorName;
+        data["status"] = this.status;
         return data;
     }
 }
@@ -3626,6 +3629,7 @@ export interface IPostResponse {
     categoryName?: string | undefined;
     authorUserName?: string | undefined;
     authorName?: string | undefined;
+    status?: PostStatus;
 }
 
 export enum PostStatus {

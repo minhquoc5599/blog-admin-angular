@@ -1,5 +1,5 @@
-import { StorageService } from './../services/storage.service';
 import { Directive, ElementRef, Input, OnInit } from '@angular/core';
+import { StorageService } from './../services/storage.service';
 
 @Directive({
   selector: '[appPermission]',

@@ -1,20 +1,20 @@
-import { UtilityService } from 'src/app/shared/services/utility.service'
-import { AdminApiRoleApiClient, AdminApiUserApiClient, RoleResponse, UserResponse } from 'src/app/api/admin-api.service.generated'
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
-import { ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit } from '@angular/core'
-import { forkJoin, Subject, takeUntil } from 'rxjs'
-import { DomSanitizer } from '@angular/platform-browser'
 import { formatDate } from '@angular/common'
-import { ValidateMessageComponent } from 'src/app/shared/validates/validate-message/validate-message.component'
+import { ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit } from '@angular/core'
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
+import { DomSanitizer } from '@angular/platform-browser'
 import { BlockUIModule } from 'primeng/blockui'
-import { ProgressSpinnerModule } from 'primeng/progressspinner'
+import { ButtonModule } from 'primeng/button'
 import { CheckboxModule } from 'primeng/checkbox'
-import { KeyFilterModule } from 'primeng/keyfilter'
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { ImageModule } from 'primeng/image'
 import { InputTextModule } from 'primeng/inputtext'
-import { ButtonModule } from 'primeng/button'
+import { KeyFilterModule } from 'primeng/keyfilter'
+import { ProgressSpinnerModule } from 'primeng/progressspinner'
+import { forkJoin, Subject, takeUntil } from 'rxjs'
+import { AdminApiRoleApiClient, AdminApiUserApiClient, RoleResponse, UserResponse } from 'src/app/api/admin-api.service.generated'
 import { AlertService } from 'src/app/shared/services/alert.service'
+import { UtilityService } from 'src/app/shared/services/utility.service'
+import { ValidateMessageComponent } from 'src/app/shared/validates/validate-message/validate-message.component'
 
 @Component({
   selector: 'app-user-detail',
@@ -121,7 +121,7 @@ export class UserDetailComponent implements OnInit, OnDestroy {
           this.loading(false)
         },
       })
-      this.cd.detectChanges()
+    this.cd.detectChanges()
   }
 
   buildForm() {

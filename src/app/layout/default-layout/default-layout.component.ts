@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { NgScrollbar } from 'ngx-scrollbar';
 
-import { IconDirective } from '@coreui/icons-angular';
 import {
   ContainerComponent,
   ShadowOnScrollDirective,
@@ -14,11 +13,12 @@ import {
   SidebarToggleDirective,
   SidebarTogglerDirective
 } from '@coreui/angular';
+import { IconDirective } from '@coreui/icons-angular';
 
+import { Url } from 'src/app/shared/constants/url.constant';
+import { StorageService } from 'src/app/shared/services/storage.service';
 import { DefaultFooterComponent, DefaultHeaderComponent } from './';
 import { navItems } from './_nav';
-import { StorageService } from 'src/app/shared/services/storage.service';
-import { Url } from 'src/app/shared/constants/url.constant';
 
 function isOverflown(element: HTMLElement) {
   return (

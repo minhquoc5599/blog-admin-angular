@@ -1,21 +1,21 @@
-import { SeriesPostsComponent } from './series-posts/series-posts.component';
-import { SeriesDetailComponent } from './series-detail/series-detail.component';
-import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ConfirmationService } from 'primeng/api';
-import { BadgeModule } from 'primeng/badge';
-import { BlockUIModule } from 'primeng/blockui';
-import { ButtonModule } from 'primeng/button';
-import { DialogService } from 'primeng/dynamicdialog';
-import { InputTextModule } from 'primeng/inputtext';
-import { PaginatorModule } from 'primeng/paginator';
-import { PanelModule } from 'primeng/panel';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { TableModule } from 'primeng/table';
-import { Subject, takeUntil } from 'rxjs';
-import { AdminApiSeriesApiClient, SeriesResponse, SeriesResponsePagingResponse } from 'src/app/api/admin-api.service.generated';
-import { Message } from 'src/app/shared/constants/message.constant';
-import { AlertService } from 'src/app/shared/services/alert.service';
+import { CommonModule } from '@angular/common'
+import { Component, OnDestroy, OnInit } from '@angular/core'
+import { ConfirmationService } from 'primeng/api'
+import { BadgeModule } from 'primeng/badge'
+import { BlockUIModule } from 'primeng/blockui'
+import { ButtonModule } from 'primeng/button'
+import { DialogService } from 'primeng/dynamicdialog'
+import { InputTextModule } from 'primeng/inputtext'
+import { PaginatorModule } from 'primeng/paginator'
+import { PanelModule } from 'primeng/panel'
+import { ProgressSpinnerModule } from 'primeng/progressspinner'
+import { TableModule } from 'primeng/table'
+import { Subject, takeUntil } from 'rxjs'
+import { AdminApiSeriesApiClient, SeriesResponse, SeriesResponsePagingResponse } from 'src/app/api/admin-api.service.generated'
+import { Message } from 'src/app/shared/constants/message.constant'
+import { AlertService } from 'src/app/shared/services/alert.service'
+import { SeriesDetailComponent } from './series-detail/series-detail.component'
+import { SeriesPostsComponent } from './series-posts/series-posts.component'
 
 @Component({
   selector: 'app-series',
@@ -70,77 +70,77 @@ export class SeriesComponent implements OnInit, OnDestroy {
   }
 
   getData(selectionId = null) {
-    this.isLoading = true;
+    this.isLoading = true
 
     this.seriesApiClient.getSeriesPaging(this.keyword, this.pageIndex, this.pageSize)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (response: SeriesResponsePagingResponse) => {
-          this.items = response.results;
-          this.totalCount = response.rowCount;
-          this.isLoading = false;
+          this.items = response.results
+          this.totalCount = response.rowCount
+          this.isLoading = false
         }
         ,
         error: (error) => {
-          this.isLoading = false;
+          this.isLoading = false
           this.alertService.showError(error)
         }
-      });
+      })
   }
 
   pageChanged(event: any): void {
-    this.pageIndex = event.page;
-    this.pageSize = event.rows;
-    this.getData();
+    this.pageIndex = event.page
+    this.pageSize = event.rows
+    this.getData()
   }
 
   showAddModal(): void {
     const ref = this.dialogService.open(SeriesDetailComponent, {
       header: 'Add series',
       width: '40%'
-    });
+    })
 
     ref.onClose.subscribe((data: SeriesResponse) => {
       if (data) {
-        this.alertService.showSuccess(Message.CREATED_OK_MSG);
-        this.selectedItems = [];
-        this.getData();
+        this.alertService.showSuccess(Message.CREATED_OK_MSG)
+        this.selectedItems = []
+        this.getData()
       }
-    });
+    })
   }
 
   showEditModal(): void {
     if (this.selectedItems.length == 0) {
-      this.alertService.showError(Message.NOT_CHOOSE_ANY_RECORD);
-      return;
+      this.alertService.showError(Message.NOT_CHOOSE_ANY_RECORD)
+      return
     }
-    var id = this.selectedItems[0].id;
+    var id = this.selectedItems[0].id
     const ref = this.dialogService.open(SeriesDetailComponent, {
       data: {
         id: id
       },
       header: 'Update series',
       width: '40%'
-    });
+    })
 
     ref.onClose.subscribe((data: SeriesResponse) => {
       if (data) {
-        this.alertService.showSuccess(Message.UPDATED_OK_MSG);
-        this.selectedItems = [];
-        this.getData(data.id);
+        this.alertService.showSuccess(Message.UPDATED_OK_MSG)
+        this.selectedItems = []
+        this.getData(data.id)
       }
-    });
+    })
   }
 
   deleteItems() {
     if (this.selectedItems.length == 0) {
-      this.alertService.showError(Message.NOT_CHOOSE_ANY_RECORD);
-      return;
+      this.alertService.showError(Message.NOT_CHOOSE_ANY_RECORD)
+      return
     }
-    var ids = [];
+    var ids = []
     this.selectedItems.forEach(element => {
-      ids.push(element.id);
-    });
+      ids.push(element.id)
+    })
     this.confirmationService.confirm({
       header: 'Confirmation',
       message: Message.CONFIRM_DELETE_MSG,
@@ -150,47 +150,47 @@ export class SeriesComponent implements OnInit, OnDestroy {
       accept: () => {
         this.deleteItemsConfirm(ids)
       }
-    });
+    })
   }
 
   deleteItemsConfirm(ids: any[]) {
-    this.isLoading = true;
+    this.isLoading = true
 
     this.seriesApiClient.deleteSeries(ids)
       .subscribe({
         next: () => {
-          this.alertService.showSuccess(Message.DELETED_OK_MSG);
-          this.getData();
-          this.selectedItems = [];
-          this.isLoading = false;
+          this.alertService.showSuccess(Message.DELETED_OK_MSG)
+          this.getData()
+          this.selectedItems = []
+          this.isLoading = false
         },
         error: () => {
-          this.isLoading = false;
+          this.isLoading = false
         }
-      });
+      })
   }
 
   showPosts(): void {
     if (this.selectedItems.length == 0) {
-      this.alertService.showError(Message.NOT_CHOOSE_ANY_RECORD);
-      return;
+      this.alertService.showError(Message.NOT_CHOOSE_ANY_RECORD)
+      return
     }
-    var id = this.selectedItems[0].id;
+    var id = this.selectedItems[0].id
     const ref = this.dialogService.open(SeriesPostsComponent, {
       data: {
         id: id
       },
       header: 'Post list',
       width: '70%'
-    });
+    })
     
     ref.onClose.subscribe((data: SeriesResponse) => {
       if (data) {
-        this.alertService.showSuccess(Message.UPDATED_OK_MSG);
-        this.selectedItems = [];
-        this.getData(data.id);
+        this.alertService.showSuccess(Message.UPDATED_OK_MSG)
+        this.selectedItems = []
+        this.getData(data.id)
       }
-    });
+    })
   }
 
 }

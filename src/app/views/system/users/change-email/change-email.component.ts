@@ -1,15 +1,15 @@
-import { AdminApiUserApiClient, UserResponse } from 'src/app/api/admin-api.service.generated'
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
 import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core'
-import { Subject, takeUntil } from 'rxjs'
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
 import { BlockUIModule } from 'primeng/blockui'
-import { ProgressSpinnerModule } from 'primeng/progressspinner'
-import { KeyFilterModule } from 'primeng/keyfilter'
-import { ValidateMessageComponent } from 'src/app/shared/validates/validate-message/validate-message.component'
 import { ButtonModule } from 'primeng/button'
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { InputTextModule } from 'primeng/inputtext'
+import { KeyFilterModule } from 'primeng/keyfilter'
+import { ProgressSpinnerModule } from 'primeng/progressspinner'
+import { Subject, takeUntil } from 'rxjs'
+import { AdminApiUserApiClient, UserResponse } from 'src/app/api/admin-api.service.generated'
 import { AlertService } from 'src/app/shared/services/alert.service'
+import { ValidateMessageComponent } from 'src/app/shared/validates/validate-message/validate-message.component'
 
 @Component({
   selector: 'app-change-email',

@@ -4,10 +4,10 @@ import { ButtonModule } from '@coreui/angular'
 import { BlockUIModule } from 'primeng/blockui'
 import { CheckboxModule } from 'primeng/checkbox'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
-import { InputTextModule } from 'primeng/inputtext'
-import { KeyFilterModule } from 'primeng/keyfilter'
 import { InputNumberModule } from 'primeng/inputnumber'
+import { InputTextModule } from 'primeng/inputtext'
 import { InputTextareaModule } from 'primeng/inputtextarea'
+import { KeyFilterModule } from 'primeng/keyfilter'
 import { ProgressSpinnerModule } from 'primeng/progressspinner'
 import { Subject, takeUntil } from 'rxjs'
 import { AdminApiPostCategoryApiClient, PostCategoryResponse } from 'src/app/api/admin-api.service.generated'
@@ -31,7 +31,7 @@ import { ValidateMessageComponent } from 'src/app/shared/validates/validate-mess
     ButtonModule,
     ValidateMessageComponent
   ],
-  providers:[
+  providers: [
     UtilityService
   ]
 })
@@ -95,7 +95,7 @@ export class PostCategoryDetailComponent implements OnInit, OnDestroy {
   public generateSlug() {
     var slug = this.utilityService.makeSeoTitle(this.form.get('name').value);
     this.form.controls['slug'].setValue(slug)
-}
+  }
 
   buildForm() {
     this.form = this.fb.group({
