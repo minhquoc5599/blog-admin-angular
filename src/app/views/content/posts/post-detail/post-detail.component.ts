@@ -4,6 +4,7 @@ import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } 
 import { ButtonModule } from '@coreui/angular'
 import { BlockUIModule } from 'primeng/blockui'
 import { CheckboxModule } from 'primeng/checkbox'
+import { DropdownModule } from 'primeng/dropdown'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { EditorModule } from 'primeng/editor'
 import { ImageModule } from 'primeng/image'
@@ -13,7 +14,7 @@ import { InputTextareaModule } from 'primeng/inputtextarea'
 import { KeyFilterModule } from 'primeng/keyfilter'
 import { ProgressSpinnerModule } from 'primeng/progressspinner'
 import { Subject, takeUntil } from 'rxjs'
-import { AdminApiSeriesApiClient, PostCategoryResponse, SeriesDetailResponse } from 'src/app/api/admin-api.service.generated'
+import { AdminApiPostApiClient, AdminApiPostCategoryApiClient, PostDetailResponse } from 'src/app/api/admin-api.service.generated'
 import { UploadApiService } from 'src/app/api/upload-api.service'
 import { AlertService } from 'src/app/shared/services/alert.service'
 import { UtilityService } from 'src/app/shared/services/utility.service'
@@ -21,8 +22,8 @@ import { ValidateMessageComponent } from 'src/app/shared/validates/validate-mess
 import { environment } from 'src/enviroments/environment'
 
 @Component({
-  selector: 'app-series-detail',
-  templateUrl: './series-detail.component.html',
+  selector: 'app-post-detail',
+  templateUrl: './post-detail.component.html',
   standalone: true,
   imports: [
     CommonModule,
@@ -37,13 +38,14 @@ import { environment } from 'src/enviroments/environment'
     ButtonModule,
     ImageModule,
     EditorModule,
+    DropdownModule,
     ValidateMessageComponent
   ],
   providers: [
     UtilityService
   ]
 })
-export class SeriesDetailComponent implements OnInit, OnDestroy {
+export class PostDetailComponent implements OnInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>()
 
   // Default
@@ -52,27 +54,22 @@ export class SeriesDetailComponent implements OnInit, OnDestroy {
   btnDisabled = false
   saveBtnName: string
   postCategories: any[] = []
-  contentTypes: any[] = []
   series: any[] = []
-  selectedEntity = {} as SeriesDetailResponse
-  thumbnailImage
+  selectedEntity = {} as PostDetailResponse
+  thumbnailImage: any
 
   formSavedEventEmitter: EventEmitter<any> = new EventEmitter()
 
   // Validate
   noSpecial: RegExp = /^[^<>*!_~]+$/
   validationMessages = {
-    'name': [
+    name: [
       { type: 'required', message: 'You must enter name' },
       { type: 'minlength', message: 'You must enter at least 3 characters' },
       { type: 'maxlength', message: 'You cannot enter more than 255 characters' }
     ],
-    'slug': [
-      { type: 'required', message: 'You must enter a unique code' }
-    ],
-    'description': [
-      { type: 'required', message: 'You must enter description' }
-    ]
+    slug: [{ type: 'required', message: 'You must enter a unique code' }],
+    description: [{ type: 'required', message: 'You must enter description' }]
   }
 
   constructor(
@@ -84,7 +81,8 @@ export class SeriesDetailComponent implements OnInit, OnDestroy {
 
     // Api
     private uploadApiService: UploadApiService,
-    private seriesApiClient: AdminApiSeriesApiClient
+    private postApiClient: AdminApiPostApiClient,
+    private postCategoryApiClient: AdminApiPostCategoryApiClient
   ) { }
 
   ngOnDestroy(): void {
@@ -96,13 +94,16 @@ export class SeriesDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.loading(true)
     this.buildForm()
+    this.loadPostCategories();
     if (this.utilityService.isEmpty(this.config.data?.id) == false) {
       this.loadDetail(this.config.data.id)
       this.saveBtnName = 'Update'
     } else {
       this.saveBtnName = 'Add'
     }
+    this.loading(false)
   }
 
   generateSlug() {
@@ -118,10 +119,11 @@ export class SeriesDetailComponent implements OnInit, OnDestroy {
         Validators.minLength(3)
       ])),
       slug: new FormControl(this.selectedEntity.slug || null, Validators.required),
+      categoryId: new FormControl(this.selectedEntity.categoryId || null, Validators.required),
       description: new FormControl(this.selectedEntity.description || null, Validators.required),
       seoDescription: new FormControl(this.selectedEntity.seoDescription || null),
+      tags: new FormControl(this.selectedEntity.tags || null),
       content: new FormControl(this.selectedEntity.content || null),
-      isActive: new FormControl(this.selectedEntity.isActive || null),
       thumbnail: new FormControl(this.selectedEntity.thumbnail || null),
     })
     if (this.selectedEntity.thumbnail) {
@@ -129,19 +131,28 @@ export class SeriesDetailComponent implements OnInit, OnDestroy {
     }
   }
 
+  loadPostCategories(): void {
+    this.postCategoryApiClient.getPostCategories()
+      .subscribe((response: PostDetailResponse[]) => {
+        response.forEach(item => {
+          this.postCategories.push({
+            value: item.id,
+            label: item.name
+          })
+        })
+      })
+  }
+
   loadDetail(id: any) {
-    this.loading(true)
-    this.seriesApiClient.getSeriesById(id)
+    this.postApiClient.getPostById(id)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
-        next: (response: PostCategoryResponse) => {
+        next: (response: PostDetailResponse) => {
           this.selectedEntity = response
           this.buildForm()
-          this.loading(false)
 
         }
         , error: () => {
-          this.loadDetail(false)
         }
       })
   }
@@ -164,7 +175,7 @@ export class SeriesDetailComponent implements OnInit, OnDestroy {
   save() {
     this.loading(true)
     if (this.utilityService.isEmpty(this.config.data?.id)) {
-      this.seriesApiClient.createSeries(this.form.value)
+      this.postApiClient.createPost(this.form.value)
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: () => {
@@ -178,7 +189,7 @@ export class SeriesDetailComponent implements OnInit, OnDestroy {
         })
     }
     else {
-      this.seriesApiClient.updateSeries(this.config.data.id, this.form.value)
+      this.postApiClient.updatePost(this.config.data.id, this.form.value)
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: () => {

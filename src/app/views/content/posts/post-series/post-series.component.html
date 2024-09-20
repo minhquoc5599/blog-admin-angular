@@ -1,0 +1,52 @@
+<form class="form-horizontal form-label-left" skipValidation [formGroup]="form" (ngSubmit)="addPostToSeries()" class="mb-1">
+  <div class="row">
+    <div class="field col-4 md:col-4">
+      <p-dropdown id="seriesId" [options]="series" formControlName="seriesId" [showClear]="true"
+        placeholder="Chọn loạt bài" autoWidth="false" [style]="{ width: '100%' }">
+      </p-dropdown>
+    </div>
+    <div class="field col-6 md:col-6">
+      <label for="sortOrder">Thứ tự <span class="required">*</span></label>
+      <p-inputNumber id="sortOrder" formControlName="sortOrder" [style]="{ width: '100%' }">
+      </p-inputNumber>
+    </div>
+    <div class="field col-2 md:col-2">
+      <button type="submit" class="btn btn-primary" [disabled]="!form.valid || btnDisabled">
+        Add
+      </button>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <p-table [value]="postSeries" selectionMode="multiple" dataKey="id" [metaKeySelection]="true">
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 10px">
+            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+          </th>
+          <th>Title</th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td style="width: 10px">
+            <span class="ui-column-title"></span>
+            <p-tableCheckbox [value]="row"></p-tableCheckbox>
+          </td>
+          <td>{{ row.name }}</td>
+          <td>
+            <button pButton pRipple icon="pi pi-trash" pTooltip="Remove" tooltipPosition="top"
+              (click)="removeSeries(row.id)" class="p-button-rounded p-button-text p-button-danger"
+              appPermission appPolicy="Permissons.Series.DeletePostInSeries"></button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <p-blockUI [blocked]="isLoading">
+    <div class="card flex justify-content-center bg-transparent" [style]="{border: 'none'}">
+      <p-progressSpinner strokeWidth="2" animationDuration="1s" />
+    </div>
+  </p-blockUI>
+</form>

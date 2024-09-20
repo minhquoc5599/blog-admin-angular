@@ -320,7 +320,7 @@ export class AdminApiPostApiClient {
         let url_ = this.baseUrl + "/api/admin/post/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{Id}", encodeURIComponent("" + id));
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -374,7 +374,7 @@ export class AdminApiPostApiClient {
      * @param pageSize (optional) 
      * @return Success
      */
-    getPostsPaging(keyword?: string | null | undefined, categoryId?: string | null | undefined, pageIndex?: number | undefined, pageSize?: number | undefined): Observable<PostResponse> {
+    getPostsPaging(keyword?: string | null | undefined, categoryId?: string | null | undefined, pageIndex?: number | undefined, pageSize?: number | undefined): Observable<PostResponsePagingResponse> {
         let url_ = this.baseUrl + "/api/admin/post/paging?";
         if (keyword !== undefined && keyword !== null)
             url_ += "keyword=" + encodeURIComponent("" + keyword) + "&";
@@ -405,14 +405,14 @@ export class AdminApiPostApiClient {
                 try {
                     return this.processGetPostsPaging(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<PostResponse>;
+                    return _observableThrow(e) as any as Observable<PostResponsePagingResponse>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<PostResponse>;
+                return _observableThrow(response_) as any as Observable<PostResponsePagingResponse>;
         }));
     }
 
-    protected processGetPostsPaging(response: HttpResponseBase): Observable<PostResponse> {
+    protected processGetPostsPaging(response: HttpResponseBase): Observable<PostResponsePagingResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -423,7 +423,7 @@ export class AdminApiPostApiClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = PostResponse.fromJS(resultData200);
+            result200 = PostResponsePagingResponse.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -3630,6 +3630,78 @@ export interface IPostResponse {
     authorUserName?: string | undefined;
     authorName?: string | undefined;
     status?: PostStatus;
+}
+
+export class PostResponsePagingResponse implements IPostResponsePagingResponse {
+    currentPage?: number;
+    pageCount?: number;
+    pageSize?: number;
+    rowCount?: number;
+    readonly firstRowOnPage?: number;
+    readonly lastRowOnPage?: number;
+    additionalData?: string | undefined;
+    results?: PostResponse[] | undefined;
+
+    constructor(data?: IPostResponsePagingResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.currentPage = _data["currentPage"];
+            this.pageCount = _data["pageCount"];
+            this.pageSize = _data["pageSize"];
+            this.rowCount = _data["rowCount"];
+            (<any>this).firstRowOnPage = _data["firstRowOnPage"];
+            (<any>this).lastRowOnPage = _data["lastRowOnPage"];
+            this.additionalData = _data["additionalData"];
+            if (Array.isArray(_data["results"])) {
+                this.results = [] as any;
+                for (let item of _data["results"])
+                    this.results!.push(PostResponse.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): PostResponsePagingResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new PostResponsePagingResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["currentPage"] = this.currentPage;
+        data["pageCount"] = this.pageCount;
+        data["pageSize"] = this.pageSize;
+        data["rowCount"] = this.rowCount;
+        data["firstRowOnPage"] = this.firstRowOnPage;
+        data["lastRowOnPage"] = this.lastRowOnPage;
+        data["additionalData"] = this.additionalData;
+        if (Array.isArray(this.results)) {
+            data["results"] = [];
+            for (let item of this.results)
+                data["results"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IPostResponsePagingResponse {
+    currentPage?: number;
+    pageCount?: number;
+    pageSize?: number;
+    rowCount?: number;
+    firstRowOnPage?: number;
+    lastRowOnPage?: number;
+    additionalData?: string | undefined;
+    results?: PostResponse[] | undefined;
 }
 
 export enum PostStatus {

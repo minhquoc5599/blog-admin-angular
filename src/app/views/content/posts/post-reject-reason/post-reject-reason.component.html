@@ -1,0 +1,21 @@
+<form class="form-horizontal form-label-left" skipValidation [formGroup]="form" (ngSubmit)="save()">
+  <div class="flex align-items-center mb-3">
+    <label for="reason" class="block">Description <span class="required">*</span></label>
+    <textarea id="reason" type="text" rows="4" pInputTextarea formControlName="reason"
+      [style]="{ width: '100%' }"></textarea>
+    <app-validate-message [entityForm]="form" fieldName="reason"
+      [validationMessages]="validationMessages"></app-validate-message>
+  </div>
+
+  <div class="flex justify-content-end">
+    <button type="submit" pButton [disabled]="!form.valid || btnDisabled">
+      Update
+    </button>
+  </div>
+
+  <p-blockUI [blocked]="isLoading">
+    <div class="card flex justify-content-center bg-transparent" [style]="{border: 'none'}">
+      <p-progressSpinner strokeWidth="2" animationDuration="1s" />
+    </div>
+  </p-blockUI>
+</form>

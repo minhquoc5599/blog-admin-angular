@@ -1,22 +1,99 @@
-<div class="bg-light dark:bg-transparent min-vh-100 d-flex flex-row align-items-center">
-  <c-container>
-    <c-row class="justify-content-center">
-      <c-col md="6">
-        <div class="clearfix">
-          <h1 class="float-start display-3 me-4">Post</h1>
-          <h4 class="pt-3">User</h4>
-          <p class="text-body-secondary float-start">
-            Post
-          </p>
+<p-panel [style]="{ 'margin-bottom': '10px' }">
+  <p-header>Posts </p-header>
+  <div class="row">
+    <div class="col-4">
+      <button appPermission appPolicy="Permissions.Posts.Create" pButton (click)="showAddModal()" icon="pi pi-plus"
+        label="Add" severity="success"></button>
+      <button appPermission appPolicy="Permissions.Posts.Delete" pButton *ngIf="selectedItems.length > 0"
+        (click)="deleteItems()" class="ms-1" icon="pi pi-trash" label="Delete" severity="danger"></button>
+      <button appPermission appPolicy="Permissions.Posts.Edit" pButton *ngIf="selectedItems.length == 1"
+        (click)="showEditModal()" class="ms-1" icon="pi pi-pencil" label="Edit" severity="warning"></button>
+    </div>
+    <div class="col-8">
+      <div class="row">
+        <div class="col">
+          <input id="txtKeyword" pInputText (keyup.enter)="getData()" [(ngModel)]="keyword"
+            placeholder="Enter a keyword..." type="text" />
         </div>
-        <c-input-group class="input-prepend">
-          <span cInputGroupText>
-            <svg cIcon name="cilMagnifyingGlass"></svg>
-          </span>
-          <input cFormControl placeholder="What are you looking for?" type="text" />
-          <button cButton color="info">Search</button>
-        </c-input-group>
-      </c-col>
-    </c-row>
-  </c-container>
-</div>
+        <div class="col">
+          <p-dropdown [options]="postCategories" [style]="{ width: '100%' }" placeholder="Choose category"
+            [showClear]="true" [(ngModel)]="postCategoryId">
+          </p-dropdown>
+        </div>
+        <div class="col">
+          <button pButton (click)="getData()">Search</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <p-table #dt [value]="items" selectionMode="multiple" dataKey="id" [(selection)]="selectedItems"
+      [metaKeySelection]="true">
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 10px">
+            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+          </th>
+          <th>Title</th>
+          <th>Category</th>
+          <th>View</th>
+          <th>Date created</th>
+          <th style="width: 150px">Published</th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td style="width: 10px">
+            <span class="ui-column-title"></span>
+            <p-tableCheckbox [value]="row"></p-tableCheckbox>
+          </td>
+          <td>{{ row.name }}</td>
+          <td>{{ row.categoryName }}</td>
+          <td>{{ row.viewCount | number }}</td>
+          <td>{{ row.dateCreated | date : 'dd-MM-yyyy hh:mm' }}</td>
+          <td style="width: 150px">
+            <p-badge *ngIf="row.status == 0" value="Draft" severity="info"></p-badge>
+            <p-badge *ngIf="row.status == 1" value="Waiting" severity="warning"></p-badge>
+            <p-badge *ngIf="row.status == 2" value="Reject" severity="danger"></p-badge>
+            <p-badge *ngIf="row.status == 3" value="Published" severity="success"></p-badge>
+          </td>
+          <td>
+            <button pButton pRipple icon="pi pi-list" pTooltip="Add to series" tooltipPosition="top"
+              (click)="showAddPostToSeriesModal(row.id, row.name)" class="p-button-rounded p-button-text"></button>
+
+            <button *ngIf="row.status != 3" pButton appPermission appPolicy="Permissons.Posts.Approve" pRipple
+              icon="pi pi-check" pTooltip="Approve" tooltipPosition="top" (click)="approve(row.id)"
+              class="p-button-rounded p-button-text p-button-success"></button>
+
+            <button *ngIf="row.status != 3 && row.status != 1" pButton pRipple icon="pi pi-forward"
+              pTooltip="Send to approve" tooltipPosition="top" (click)="sendToApprove(row.id)" appPermission
+              appPolicy="Permissons.Posts.SubmitForApproval"
+              class="p-button-rounded p-button-text p-button-danger"></button>
+
+            <button *ngIf="row.status != 3" pButton pRipple icon="pi pi-backward" pTooltip="Reject"
+              tooltipPosition="top" (click)="reject(row.id, row.name)" appPermission appPolicy="Permissons.Posts.Reject"
+              class="p-button-rounded p-button-text p-button-danger"></button>
+
+            <button pButton pRipple icon="pi pi-history" pTooltip="Post Activity logs" tooltipPosition="top"
+              (click)="showPostActivityLogs(row.id, row.name)" appPermission appPolicy="Permissons.Posts.GetPostActivityLogs"
+              class="p-button-rounded p-button-text p-button-info"></button>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="summary">
+        <div style="text-align: left">Total: {{ totalCount | number }}</div>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <p-paginator [rows]="pageSize" [totalRecords]="totalCount" (onPageChange)="pageChanged($event)"
+    [rowsPerPageOptions]="[10, 20, 50, 100]"></p-paginator>
+
+
+  <p-blockUI [blocked]="isLoading">
+    <div class="card flex justify-content-center bg-transparent" [style]="{border: 'none'}">
+      <p-progressSpinner strokeWidth="2" animationDuration="1s" />
+    </div>
+  </p-blockUI>
+</p-panel>

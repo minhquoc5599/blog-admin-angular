@@ -10,4 +10,6 @@ export class Message {
   public static CHANGE_PASSWORD_SUCCCESS_MSG = 'Password changed successfully';
   public static CHANGE_EMAIL_SUCCCESS_MSG = 'Email changed successfully';
   public static ROLE_ASSIGN_SUCCESS_MSG = 'Role assigned successfully';
+
+  public static POST_ADDED_TO_SERIES_SUCCESS_MSG = 'Post added to series successfully'
 }
