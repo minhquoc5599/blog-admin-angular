@@ -29,10 +29,10 @@ export class SetPasswordComponent implements OnInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>()
 
   // Default
-  public isLoading: boolean = false
-  public form: FormGroup
-  public btnDisabled = false
-  public email: string
+  isLoading: boolean = false
+  form: FormGroup
+  btnDisabled = false
+  email: string
   formSavedEventEmitter: EventEmitter<any> = new EventEmitter()
 
   // Validate

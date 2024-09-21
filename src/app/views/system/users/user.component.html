@@ -1,86 +1,84 @@
-<div class="animated fadeIn">
-  <p-panel [style]="{ 'margin-bottom': '10px' }">
-    <p-header>Users</p-header>
-    <div class="row">
-      <div class="col">
-        <button appPermission appPolicy="Permissons.Users.Create" pButton (click)="showAddModal()"
-          class="p-button-sm p-button-success"><i class="pi pi-plus"></i>&nbsp;Add</button>
+<p-panel [style]="{ 'margin-bottom': '10px' }">
+  <p-header>Users</p-header>
+  <div class="row">
+    <div class="col">
+      <p-button icon="pi pi-plus" severity="success" label="Add" appPermission appPolicy="Permissions.Users.Create"
+        (click)="showAddModal()"></p-button>
 
-        <button appPermission appPolicy="Permissons.Users.Delete" pButton  *ngIf="selectedItems.length > 0"
-          (click)="deleteItems()" class="p-button-sm p-button-danger ms-1"><i class="pi pi-trash"></i>&nbsp;Delete</button>
+      <p-button icon="pi pi-trash" severity="danger" label="Delete" class="ms-1" appPermission
+        appPolicy="Permissions.Users.Delete" *ngIf="selectedItems.length > 0" (click)="deleteItems()"></p-button>
 
-        <button appPermission appPolicy="Permissons.Users.Edit" pButton *ngIf="selectedItems.length == 1" (click)="showEditModal()"
-          class="p-button-sm p-button-warning ms-1"><i class="pi pi-pencil"></i>&nbsp;Edit</button>
-      </div>
-      <div class="col">
-        <div class="row">
-          <div class="col">
-            <input id="txtKeyword" pInputText (keyup.enter)="getData()" [(ngModel)]="keyword"
-              placeholder="Enter keyword..." type="text" />
-          </div>
-          <div class="col">
-            <button type="button" pButton (click)="getData()">Search</button>
-          </div>
+      <p-button icon="pi pi-pencil" severity="warning" label="Edit" class="ms-1" appPermission
+        appPolicy="Permissions.Users.Edit" *ngIf="selectedItems.length == 1" (click)="showEditModal()"></p-button>
+    </div>
+    <div class="col">
+      <div class="row">
+        <div class="col">
+          <input type="text" pInputText id="txtKeyword" placeholder="Enter keywords..." (keyup.enter)="getData()"
+            [(ngModel)]="keyword" />
+        </div>
+        <div class="col">
+          <p-button icon="pi pi-search" (click)="getData()"></p-button>
         </div>
       </div>
     </div>
-    <div class="row mt-3">
-      <p-table #dt [value]="items" selectionMode="multiple" dataKey="id" [(selection)]="selectedItems"
-        [metaKeySelection]="true">
-        <ng-template pTemplate="header">
-          <tr>
-            <th style="width: 10px">
-              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-            </th>
-            <th>Name</th>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Phone number</th>
-            <th>Date created</th>
-            <th style="width: 150px">Status</th>
-            <th></th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-row>
-          <tr>
-            <td style="width: 10px">
-              <span class="ui-column-title"></span>
-              <p-tableCheckbox [value]="row"></p-tableCheckbox>
-            </td>
-            <td>{{ row.firstName }}</td>
-            <td>{{ row.userName }}</td>
-            <td>{{ row.email }}</td>
-            <td>{{ row.phoneNumber }}</td>
-            <td>{{ row.dateCreated | date: 'dd-MM-yyyy hh:mm' }}</td>
-            <td style="width: 150px">
-              <p-badge *ngIf="row.isActive == 1" value="Active" severity="success"></p-badge>
-              <p-badge *ngIf="row.isActive == 0" value="UnActive" severity="danger"></p-badge>
-            </td>
-            <td>
-              <button pButton pRipple type="button" icon="pi pi-key" pTooltip="Set password" tooltipPosition="top"
-                class="p-button-rounded p-button-text" (click)="setPassword(row.id, row.userName)"></button>
+  </div>
+  <div class="row mt-3">
+    <p-table #dt [value]="items" selectionMode="multiple" dataKey="id" [(selection)]="selectedItems"
+      [metaKeySelection]="true">
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 10px">
+            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+          </th>
+          <th>Name</th>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Phone number</th>
+          <th>Date created</th>
+          <th style="width: 150px">Status</th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td style="width: 10px">
+            <span class="ui-column-title"></span>
+            <p-tableCheckbox [value]="row"></p-tableCheckbox>
+          </td>
+          <td>{{ row.firstName }}</td>
+          <td>{{ row.userName }}</td>
+          <td>{{ row.email }}</td>
+          <td>{{ row.phoneNumber }}</td>
+          <td>{{ row.dateCreated | date: 'dd-MM-yyyy hh:mm' }}</td>
+          <td style="width: 150px">
+            <p-badge value="Active" severity="success" *ngIf="row.isActive == 1"></p-badge>
+            <p-badge value="UnActive" severity="danger" *ngIf="row.isActive == 0"></p-badge>
+          </td>
+          <td>
+            <p-button icon="pi pi-key" pTooltip="Set password" tooltipPosition="top" [rounded]="true" [text]="true"
+              (click)="setPassword(row.id, row.userName)"></p-button>
 
-              <button pButton pRipple type="button" icon="pi pi-envelope" pTooltip="Change email" tooltipPosition="top"
-                (click)="changeEmail(row.id)" class="p-button-rounded p-button-text"></button>
+            <p-button icon="pi pi-envelope" pTooltip="Change email" tooltipPosition="top" [rounded]="true" [text]="true"
+              (click)="changeEmail(row.id)"></p-button>
 
-              <button pButton pRipple type="button" icon="pi pi-users" pTooltip="Role assign" tooltipPosition="top"
-                (click)="assignRole(row.id)" class="p-button-rounded p-button-text"></button>
-            </td>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="summary">
-          <div style="text-align: left">Total: {{ totalCount | number }}</div>
-        </ng-template>
-      </p-table>
+            <p-button icon="pi pi-users" pTooltip="Role assign" tooltipPosition="top" [rounded]="true" [text]="true"
+              (click)="assignRole(row.id)"></p-button>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="summary">
+        <div style="text-align: left">Total: {{ totalCount | number }}</div>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <p-paginator [rows]="pageSize" [totalRecords]="totalCount" (onPageChange)="pageChanged($event)"
+    [rowsPerPageOptions]="[10, 20, 50, 100]"></p-paginator>
+
+  <p-blockUI [blocked]="isLoading">
+    <div class="card flex justify-content-center bg-transparent" [style]="{border: 'none'}">
+      <p-progressSpinner strokeWidth="2" animationDuration="1s" />
     </div>
-
-    <p-paginator [rows]="pageSize" [totalRecords]="totalCount" (onPageChange)="pageChanged($event)"
-      [rowsPerPageOptions]="[10, 20, 50, 100]"></p-paginator>
-
-      <p-blockUI [blocked]="isLoading">
-        <div class="card flex justify-content-center bg-transparent" [style]="{border: 'none'}">
-          <p-progressSpinner strokeWidth="2" animationDuration="1s" />
-        </div>
-      </p-blockUI>
-  </p-panel>
-</div>
+  </p-blockUI>
+</p-panel>

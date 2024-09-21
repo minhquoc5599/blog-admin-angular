@@ -1,4 +1,4 @@
-import { formatDate } from '@angular/common'
+import { CommonModule, formatDate } from '@angular/common'
 import { ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit } from '@angular/core'
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
 import { DomSanitizer } from '@angular/platform-browser'
@@ -21,6 +21,7 @@ import { ValidateMessageComponent } from 'src/app/shared/validates/validate-mess
   templateUrl: './user-detail.component.html',
   standalone: true,
   imports: [
+    CommonModule,
     ReactiveFormsModule,
     InputTextModule,
     BlockUIModule,
@@ -33,7 +34,6 @@ import { ValidateMessageComponent } from 'src/app/shared/validates/validate-mess
   ],
   providers: [
     AdminApiRoleApiClient,
-    AdminApiUserApiClient,
     UtilityService
   ]
 })
@@ -41,13 +41,13 @@ export class UserDetailComponent implements OnInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>()
 
   // Default
-  public isLoading: boolean = false
-  public form: FormGroup
-  public btnDisabled = false
-  public saveBtnName: string
-  public roles: any[] = []
+  isLoading: boolean = false
+  form: FormGroup
+  btnDisabled = false
+  saveBtnName: string
+  roles: any[] = []
   selectedEntity = {} as UserResponse
-  public avatarImage
+  avatarImage: any
   formSavedEventEmitter: EventEmitter<any> = new EventEmitter()
 
   // Validate

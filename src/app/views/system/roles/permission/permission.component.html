@@ -7,9 +7,7 @@
   </div>
 
   <div class="flex justify-content-end mt-3">
-    <button pButton type="submit" class="btn btn-primary" [disabled]="!form.valid || btnDisabled">
-      Update
-    </button>
+    <p-button type="submit" [disabled]="!form.valid || btnDisabled" label="Update"></p-button>
   </div>
 
   <p-blockUI [blocked]="isLoading">

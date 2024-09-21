@@ -8,7 +8,7 @@
   </div>
 
   <div class="flex align-items-center mb-4">
-    <label for="displayName">DisplayName<span class="required">*</span></label>
+    <label for="displayName">DisplayName <span class="required">*</span></label>
     <input id="displayName" type="text" pInputText [pKeyFilter]="noSpecial" formControlName="displayName"
       [style]="{ width: '100%' }" />
     <app-validate-message [entityForm]="form" fieldName="displayName"
@@ -16,9 +16,7 @@
   </div>
 
   <div class="flex justify-content-end">
-    <button pButton type="submit" [disabled]="!form.valid || btnDisabled">
-      {{ saveBtnName }}
-    </button>
+    <p-button type="submit" [disabled]="!form.valid || btnDisabled" [label]="saveBtnName"></p-button>
   </div>
 
   <p-blockUI [blocked]="isLoading">

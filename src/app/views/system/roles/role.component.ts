@@ -50,10 +50,13 @@ export class RoleComponent implements OnInit, OnDestroy {
   keyword: string = ''
 
   constructor(
-    private roleService: AdminApiRoleApiClient,
     private alertService: AlertService,
     private dialogService: DialogService,
-    private confirmationService: ConfirmationService) { }
+    private confirmationService: ConfirmationService,
+    
+    // Api
+    private roleApiClient: AdminApiRoleApiClient,
+  ) { }
 
   ngOnDestroy(): void {
     this.ngUnsubscribe.next()
@@ -66,7 +69,7 @@ export class RoleComponent implements OnInit, OnDestroy {
 
   getData() {
     this.isLoading = true
-    this.roleService.getRolesPaging(this.keyword, this.pageIndex, this.pageSize)
+    this.roleApiClient.getRolesPaging(this.keyword, this.pageIndex, this.pageSize)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (response: RoleResponsePagingResponse) => {
@@ -170,7 +173,7 @@ export class RoleComponent implements OnInit, OnDestroy {
   deleteItemsConfirm(ids: any[]) {
     this.isLoading = true
 
-    this.roleService.deleteRoles(ids).subscribe({
+    this.roleApiClient.deleteRoles(ids).subscribe({
       next: () => {
         this.alertService.showSuccess(
           Message.DELETED_OK_MSG

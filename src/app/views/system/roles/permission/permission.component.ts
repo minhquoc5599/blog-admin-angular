@@ -28,11 +28,11 @@ export class PermissionComponent implements OnInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>()
 
   // Default
-  public isLoading: boolean = false
-  public form: FormGroup
-  public btnDisabled = false
-  public permissions: RoleClaimsDto[] = []
-  public selectedPermissions: RoleClaimsDto[] = []
+  isLoading: boolean = false
+  form: FormGroup
+  btnDisabled = false
+  permissions: RoleClaimsDto[] = []
+  selectedPermissions: RoleClaimsDto[] = []
   formSavedEventEmitter: EventEmitter<any> = new EventEmitter()
 
   constructor(

@@ -1,28 +1,30 @@
-<p-panel [style]="{ 'margin-bottom': '10px' }">
+<p-panel [style]="{ 'margin-bottom': '20px' }">
   <p-header> Roles </p-header>
   <div class="row">
     <div class="col">
-      <button appPermission appPolicy="Permissions.Roles.Create" pButton (click)="showAddModal()"
-        class="p-button-sm p-button-success"><i class="pi pi-plus"></i>&nbsp;Add</button>
-      <button appPermission appPolicy="Permissions.Roles.Delete" pButton *ngIf="selectedItems.length > 0"
-        (click)="deleteItems()" class="p-button-sm p-button-danger ms-1"><i class="pi pi-trash"></i>&nbsp;Delete</button>
-      <button appPermission appPolicy="Permissions.Roles.Edit" pButton *ngIf="selectedItems.length == 1" 
-      (click)="showEditModal()" class="p-button-sm p-button-warning ms-1"><i class="pi pi-pencil"></i>&nbsp;Edit</button>
+      <p-button icon="pi pi-plus" severity="success" label="Add" appPermission appPolicy="Permissions.Roles.Create"
+        (click)="showAddModal()"></p-button>
+
+      <p-button icon="pi pi-trash" severity="danger" label="Delete" class="ms-1" appPermission
+        appPolicy="Permissions.Roles.Delete" *ngIf="selectedItems.length > 0" (click)="deleteItems()"></p-button>
+
+      <p-button icon="pi pi-pencil" severity="warning" label="Edit" class="ms-1" appPermission
+        appPolicy="Permissions.Roles.Edit" *ngIf="selectedItems.length == 1" (click)="showEditModal()"></p-button>
     </div>
     <div class="col">
       <div class="row align-items-center">
         <div class="col">
-          <input id="txtKeyword" pInputText (keyup.enter)="getData()" [(ngModel)]="keyword" placeholder="Name..."
-            type="text" />
+          <input type="text" pInputText id="txtKeyword" placeholder="Enter keywords..." (keyup.enter)="getData()"
+            [(ngModel)]="keyword" />
         </div>
         <div class="col">
-          <button type="button" pButton (click)="getData()"><i class="pi pi-search"></i></button>
+          <p-button icon="pi pi-search" (click)="getData()"></p-button>
         </div>
       </div>
     </div>
   </div>
   <div class="row mt-3">
-    <p-table #dt [value]="data" selectionMode="multiple" dataKey="id" [(selection)]="selectedItems"
+    <p-table [value]="data" selectionMode="multiple" dataKey="id" [(selection)]="selectedItems"
       [metaKeySelection]="true">
       <ng-template pTemplate="header">
         <tr>
@@ -43,7 +45,7 @@
           <td>{{ row.name }}</td>
           <td>{{ row.displayName }}</td>
           <td>
-            <button pButton class="p-button-sm" (click)="showPermissionModal(row.id, row.name)"><i class="pi pi-cog"></i></button>
+            <p-button icon="pi pi-cog" (click)="showPermissionModal(row.id, row.name)"></p-button>
           </td>
         </tr>
       </ng-template>
@@ -55,9 +57,9 @@
   <p-paginator [rows]="pageSize" [totalRecords]="total" (onPageChange)="pageChanged($event)"
     [rowsPerPageOptions]="[10, 20, 50, 100]"></p-paginator>
 
-    <p-blockUI [blocked]="isLoading">
-      <div class="card flex justify-content-center bg-transparent" [style]="{border: 'none'}">
-        <p-progressSpinner strokeWidth="2" animationDuration="1s" />
-      </div>
-    </p-blockUI>
+  <p-blockUI [blocked]="isLoading">
+    <div class="card flex justify-content-center bg-transparent" [style]="{border: 'none'}">
+      <p-progressSpinner strokeWidth="2" animationDuration="1s" />
+    </div>
+  </p-blockUI>
 </p-panel>

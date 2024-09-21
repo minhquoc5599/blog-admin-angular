@@ -36,10 +36,10 @@ export class RoleDetailComponent implements OnInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>()
 
   // Default
-  public isLoading: boolean = false
-  public form: FormGroup
-  public btnDisabled = false
-  public saveBtnName: string
+  isLoading: boolean = false
+  form: FormGroup
+  btnDisabled = false
+  saveBtnName: string
   selectedEntity = {} as RoleResponse
 
   formSavedEventEmitter: EventEmitter<any> = new EventEmitter()

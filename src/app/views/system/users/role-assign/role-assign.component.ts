@@ -30,11 +30,11 @@ export class RoleAssignComponent implements OnInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>()
 
   // Default
-  public isLoading: boolean = false
-  public title: string
-  public btnDisabled = false
-  public availableRoles: string[] = []
-  public seletedRoles: string[] = []
+  isLoading: boolean = false
+  title: string
+  btnDisabled = false
+  availableRoles: string[] = []
+  seletedRoles: string[] = []
   formSavedEventEmitter: EventEmitter<any> = new EventEmitter()
 
   constructor(

@@ -9,9 +9,7 @@
   </p-pickList>
 </div>
 <div class="flex justify-content-end">
-  <button type="button" (click)="save()" pButton [disabled]="btnDisabled">
-    Update
-  </button>
+  <p-button type="button" (click)="save()" [disabled]="btnDisabled" label="Update"></p-button>
 </div>
 
 <p-blockUI [blocked]="isLoading">

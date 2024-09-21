@@ -42,17 +42,17 @@ import { UserDetailComponent } from './user-detail/user-detail.component'
 })
 export class UserComponent implements OnInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>()
-  public isLoading: boolean = false
+  isLoading: boolean = false
 
   //Page setting
-  public pageIndex: number = 1
-  public pageSize: number = 10
-  public totalCount: number
+  pageIndex: number = 1
+  pageSize: number = 10
+  totalCount: number
 
   //Business variables
-  public items: UserResponse[]
-  public selectedItems: UserResponse[] = []
-  public keyword: string = ''
+  items: UserResponse[]
+  selectedItems: UserResponse[] = []
+  keyword: string = ''
 
   constructor(
     private alertService: AlertService,
@@ -60,7 +60,7 @@ export class UserComponent implements OnInit, OnDestroy {
     public dialogService: DialogService,
 
     //Api
-    private userService: AdminApiUserApiClient,
+    private userApiClient: AdminApiUserApiClient,
   ) { }
 
   ngOnInit(): void {
@@ -74,8 +74,7 @@ export class UserComponent implements OnInit, OnDestroy {
 
   getData(selectionId = null) {
     this.isLoading = true
-    this.userService
-      .getUsersPaging(this.keyword, this.pageIndex, this.pageSize)
+    this.userApiClient.getUsersPaging(this.keyword, this.pageIndex, this.pageSize)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (response: UserResponsePagingResponse) => {
@@ -170,7 +169,7 @@ export class UserComponent implements OnInit, OnDestroy {
 
   deleteItemsConfirm(ids: any[]) {
     this.isLoading = true
-    this.userService.deleteUsers(ids).subscribe({
+    this.userApiClient.deleteUsers(ids).subscribe({
       next: () => {
         this.alertService.showSuccess(
           Message.DELETED_OK_MSG
