@@ -1,27 +1,29 @@
-<p-panel [style]="{ 'margin-bottom': '10px' }">
+<p-panel [style]="{ 'margin-bottom': '20px' }">
   <p-header>Posts </p-header>
   <div class="row">
     <div class="col-4">
-      <button appPermission appPolicy="Permissions.Posts.Create" pButton (click)="showAddModal()" icon="pi pi-plus"
-        label="Add" severity="success"></button>
-      <button appPermission appPolicy="Permissions.Posts.Delete" pButton *ngIf="selectedItems.length > 0"
-        (click)="deleteItems()" class="ms-1" icon="pi pi-trash" label="Delete" severity="danger"></button>
-      <button appPermission appPolicy="Permissions.Posts.Edit" pButton *ngIf="selectedItems.length == 1"
-        (click)="showEditModal()" class="ms-1" icon="pi pi-pencil" label="Edit" severity="warning"></button>
+      <p-button icon="pi pi-plus" severity="success" label="Add" appPermission appPolicy="Permissions.Posts.Create"
+        (click)="showAddModal()"></p-button>
+
+      <p-button icon="pi pi-trash" severity="danger" label="Delete" class="ms-1" appPermission
+        appPolicy="Permissions.Posts.Delete" *ngIf="selectedItems.length > 0" (click)="deleteItems()"></p-button>
+
+      <p-button icon="pi pi-pencil" severity="warning" label="Edit" class="ms-1" appPermission
+        appPolicy="Permissions.Posts.Edit" *ngIf="selectedItems.length == 1" (click)="showEditModal()"></p-button>
     </div>
     <div class="col-8">
       <div class="row">
         <div class="col">
-          <input id="txtKeyword" pInputText (keyup.enter)="getData()" [(ngModel)]="keyword"
-            placeholder="Enter a keyword..." type="text" />
+          <input type="text" pInputText id="txtKeyword" placeholder="Enter keywords..." (keyup.enter)="getData()"
+            [(ngModel)]="keyword" />
         </div>
         <div class="col">
-          <p-dropdown [options]="postCategories" [style]="{ width: '100%' }" placeholder="Choose category"
-            [showClear]="true" [(ngModel)]="postCategoryId">
+          <p-dropdown [options]="postCategories" [(ngModel)]="postCategoryId" [showClear]="true"
+            [style]="{ width: '100%' }" placeholder="Choose category" *ngIf="postCategories.length > 0">
           </p-dropdown>
         </div>
         <div class="col">
-          <button pButton (click)="getData()">Search</button>
+          <p-button icon="pi pi-search" (click)="getData()"></p-button>
         </div>
       </div>
     </div>
@@ -53,10 +55,10 @@
           <td>{{ row.viewCount | number }}</td>
           <td>{{ row.dateCreated | date : 'dd-MM-yyyy hh:mm' }}</td>
           <td style="width: 150px">
-            <p-badge *ngIf="row.status == 0" value="Draft" severity="info"></p-badge>
-            <p-badge *ngIf="row.status == 1" value="Waiting" severity="warning"></p-badge>
-            <p-badge *ngIf="row.status == 2" value="Reject" severity="danger"></p-badge>
-            <p-badge *ngIf="row.status == 3" value="Published" severity="success"></p-badge>
+            <p-badge value="Draft" severity="info" *ngIf="row.status == 0"></p-badge>
+            <p-badge value="Waiting" severity="warning" *ngIf="row.status == 1"></p-badge>
+            <p-badge value="Reject" severity="danger" *ngIf="row.status == 2"></p-badge>
+            <p-badge value="Published" severity="success" *ngIf="row.status == 3"></p-badge>
           </td>
           <td>
             <button pButton pRipple icon="pi pi-list" pTooltip="Add to series" tooltipPosition="top"
@@ -76,7 +78,8 @@
               class="p-button-rounded p-button-text p-button-danger"></button>
 
             <button pButton pRipple icon="pi pi-history" pTooltip="Post Activity logs" tooltipPosition="top"
-              (click)="showPostActivityLogs(row.id, row.name)" appPermission appPolicy="Permissons.Posts.GetPostActivityLogs"
+              (click)="showPostActivityLogs(row.id, row.name)" appPermission
+              appPolicy="Permissons.Posts.GetPostActivityLogs"
               class="p-button-rounded p-button-text p-button-info"></button>
           </td>
         </tr>

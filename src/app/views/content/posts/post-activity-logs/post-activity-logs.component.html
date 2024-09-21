@@ -12,16 +12,16 @@
     <ng-template pTemplate="body" let-row>
       <tr>
         <td>
-          <p-badge *ngIf="row.fromStatus == 0" value="Draft" severity="info"></p-badge>
-          <p-badge *ngIf="row.fromStatus == 1" value="Waiting" severity="warning"></p-badge>
-          <p-badge *ngIf="row.fromStatus == 2" value="Reject" severity="danger"></p-badge>
-          <p-badge *ngIf="row.fromStatus == 3" value="Published" severity="success"></p-badge>
+          <p-badge value="Draft" severity="info" *ngIf="row.fromStatus == 0"></p-badge>
+          <p-badge value="Waiting" severity="warning" *ngIf="row.fromStatus == 1"></p-badge>
+          <p-badge value="Reject" severity="danger" *ngIf="row.fromStatus == 2"></p-badge>
+          <p-badge value="Published" severity="success" *ngIf="row.fromStatus == 3"></p-badge>
         </td>
         <td>
-          <p-badge *ngIf="row.toStatus == 0" value="Draft" severity="info"></p-badge>
-          <p-badge *ngIf="row.toStatus == 1" value="Waiting" severity="warning"></p-badge>
-          <p-badge *ngIf="row.toStatus == 2" value="Reject" severity="danger"></p-badge>
-          <p-badge *ngIf="row.toStatus == 3" value="Published" severity="success"></p-badge>
+          <p-badge value="Draft" severity="info" *ngIf="row.toStatus == 0"></p-badge>
+          <p-badge value="Waiting" severity="warning" *ngIf="row.toStatus == 1"></p-badge>
+          <p-badge value="Reject" severity="danger" *ngIf="row.toStatus == 2"></p-badge>
+          <p-badge value="Published" severity="success" *ngIf="row.toStatus == 3"></p-badge>
         </td>
         <td>{{ row.userName }}</td>
         <td>{{ row.dateCreated | date : 'dd-MM-yyyy hh:mm' }}</td>

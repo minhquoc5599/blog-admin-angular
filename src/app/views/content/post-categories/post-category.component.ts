@@ -42,17 +42,17 @@ import { PostCategoryDetailComponent } from './post-category-detail/post-categor
 })
 export class PostCategoryComponent implements OnInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>()
-  public isLoading: boolean = true
+  isLoading: boolean = true
 
   // Page Setting
-  public pageIndex: number = 1
-  public pageSize: number = 10
-  public totalCount: number
+  pageIndex: number = 1
+  pageSize: number = 10
+  totalCount: number
 
   //Business variables
-  public items: PostCategoryResponse[]
-  public selectedItems: PostCategoryResponse[] = []
-  public keyword: string = ''
+  items: PostCategoryResponse[]
+  selectedItems: PostCategoryResponse[] = []
+  keyword: string = ''
 
   constructor(
     public dialogService: DialogService,

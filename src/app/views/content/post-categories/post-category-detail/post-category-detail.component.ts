@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core'
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
-import { ButtonModule } from '@coreui/angular'
 import { BlockUIModule } from 'primeng/blockui'
+import { ButtonModule } from 'primeng/button'
 import { CheckboxModule } from 'primeng/checkbox'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { InputNumberModule } from 'primeng/inputnumber'
@@ -39,10 +39,10 @@ export class PostCategoryDetailComponent implements OnInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>()
 
   // Default
-  public isLoading: boolean = false
-  public form: FormGroup
-  public btnDisabled = false
-  public saveBtnName: string
+  isLoading: boolean = false
+  form: FormGroup
+  btnDisabled = false
+  saveBtnName: string
   selectedEntity = {} as PostCategoryResponse
 
   formSavedEventEmitter: EventEmitter<any> = new EventEmitter()

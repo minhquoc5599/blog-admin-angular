@@ -39,17 +39,17 @@ import { SeriesPostsComponent } from './series-posts/series-posts.component'
 })
 export class SeriesComponent implements OnInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>()
-  public isLoading: boolean = true
+  isLoading: boolean = true
 
   // Page Setting
-  public pageIndex: number = 1
-  public pageSize: number = 10
-  public totalCount: number
+  pageIndex: number = 1
+  pageSize: number = 10
+  totalCount: number
 
   //Business variables
-  public items: SeriesResponse[]
-  public selectedItems: SeriesResponse[] = []
-  public keyword: string = ''
+  items: SeriesResponse[]
+  selectedItems: SeriesResponse[] = []
+  keyword: string = ''
 
   constructor(
     public dialogService: DialogService,

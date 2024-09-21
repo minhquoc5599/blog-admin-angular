@@ -1,11 +1,10 @@
 import { CommonModule } from '@angular/common'
 import { Component, OnDestroy, OnInit } from '@angular/core'
-import { ButtonModule } from '@coreui/angular'
 import { BlockUIModule } from 'primeng/blockui'
+import { ButtonModule } from 'primeng/button'
 import { CheckboxModule } from 'primeng/checkbox'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { KeyFilterModule } from 'primeng/keyfilter'
-import { PanelModule } from 'primeng/panel'
 import { ProgressSpinnerModule } from 'primeng/progressspinner'
 import { TableModule } from 'primeng/table'
 import { Subject, takeUntil } from 'rxjs'
@@ -20,7 +19,6 @@ import { ValidateMessageComponent } from 'src/app/shared/validates/validate-mess
   standalone: true,
   imports: [
     CommonModule,
-    PanelModule,
     TableModule,
     BlockUIModule,
     ProgressSpinnerModule,
@@ -28,8 +26,6 @@ import { ValidateMessageComponent } from 'src/app/shared/validates/validate-mess
     KeyFilterModule,
     ButtonModule,
     ValidateMessageComponent
-  ],
-  providers: [
   ]
 })
 export class SeriesPostsComponent implements OnInit, OnDestroy {
@@ -38,7 +34,6 @@ export class SeriesPostsComponent implements OnInit, OnDestroy {
   // Default
   isLoading: boolean = false
   posts: PostResponse[] = []
-
 
   constructor(
     public ref: DynamicDialogRef,
@@ -84,8 +79,7 @@ export class SeriesPostsComponent implements OnInit, OnDestroy {
       seriesId: this.config.data.id
     });
     this.isLoading = true
-    this.seriesApiClient
-      .deletePostSeries(body)
+    this.seriesApiClient.deletePostSeries(body)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: () => {

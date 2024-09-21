@@ -6,6 +6,7 @@
     <app-validate-message [entityForm]="form" fieldName="name" [validationMessages]="validationMessages">
     </app-validate-message>
   </div>
+
   <div class="mb-3">
     <label for="slug">Slug<span class="required">*</span></label>
     <input id="slug" type="text" pInputText [pKeyFilter]="noSpecial" formControlName="slug"
@@ -13,6 +14,7 @@
     <app-validate-message [entityForm]="form" fieldName="slug"
       [validationMessages]="validationMessages"></app-validate-message>
   </div>
+
   <div class="mb-3">
     <label for="description" class="block">Description <span class="required">*</span></label>
         <textarea id="description" type="text" rows="4" pInputTextarea formControlName="description"
@@ -20,11 +22,13 @@
         <app-validate-message [entityForm]="form" fieldName="description"
           [validationMessages]="validationMessages"></app-validate-message>
   </div>
+
   <div class="mb-3">
     <label for="thumbnailFileContent">Image <span class="required">*</span></label>
     <input type="hidden" formControlName="thumbnail" />
     <input (change)="onFileChange($event)" type="file" class="w-full" />
   </div>
+
   <div *ngIf="thumbnailImage" class="field col-12 md:col-6">
     <p-image [src]="thumbnailImage" [preview]="true" [alt]="selectedEntity.name" width="250">
     </p-image>
@@ -41,14 +45,14 @@
     <textarea id="shortDesc" type="text" rows="4" pInputTextarea [pKeyFilter]="noSpecial"
       formControlName="seoDescription" [style]="{ width: '100%' }"></textarea>
   </div>
+
   <div class="mb-4" [style]="{display: 'flex'}">
     <p-checkbox formControlName="isActive" [binary]="true" id="isActive"></p-checkbox>
     <label for="isActive" class="mx-1">Active</label>
   </div>
+
   <div class="flex justify-content-end">
-    <button type="submit" class="btn btn-primary" [disabled]="!form.valid || btnDisabled">
-      {{ saveBtnName }}
-    </button>
+    <p-button type="submit" [label]="saveBtnName" [disabled]="!form.valid || btnDisabled"></p-button>
   </div>
 
   <p-blockUI [blocked]="isLoading">

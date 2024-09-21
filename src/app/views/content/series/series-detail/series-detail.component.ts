@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common'
 import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core'
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
-import { ButtonModule } from '@coreui/angular'
 import { BlockUIModule } from 'primeng/blockui'
+import { ButtonModule } from 'primeng/button'
 import { CheckboxModule } from 'primeng/checkbox'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { EditorModule } from 'primeng/editor'
@@ -55,7 +55,7 @@ export class SeriesDetailComponent implements OnInit, OnDestroy {
   contentTypes: any[] = []
   series: any[] = []
   selectedEntity = {} as SeriesDetailResponse
-  thumbnailImage
+  thumbnailImage: any
 
   formSavedEventEmitter: EventEmitter<any> = new EventEmitter()
 

@@ -2,30 +2,32 @@
   <p-header> Post Categories</p-header>
   <div class="row">
     <div class="col">
-      <button appPermission appPolicy="Permissions.PostCategories.Create" pButton (click)="showAddModal()"
-        class="p-button-sm p-button-success"><i class="pi pi-plus"></i>&nbsp;Add</button>
-      <button appPermission appPolicy="Permissions.PostCategories.Delete" pButton *ngIf="selectedItems.length > 0"
-        (click)="deleteItems()" class="p-button-sm p-button-danger ms-1"><i
-          class="pi pi-trash"></i>&nbsp;Delete</button>
-      <button appPermission appPolicy="Permissions.PostCategories.Edit" pButton *ngIf="selectedItems.length == 1"
-        (click)="showEditModal()" class="p-button-sm p-button-warning ms-1"><i
-          class="pi pi-pencil"></i>&nbsp;Edit</button>
+      <p-button icon="pi pi-plus" severity="success" label="Add" appPermission
+        appPolicy="Permissions.PostCategories.Create" (click)="showAddModal()"></p-button>
+
+      <p-button icon="pi pi-trash" severity="danger" label="Delete" class="ms-1" appPermission
+        appPolicy="Permissions.PostCategories.Delete" *ngIf="selectedItems.length > 0"
+        (click)="deleteItems()"></p-button>
+
+      <p-button icon="pi pi-pencil" severity="warning" label="Edit" class="ms-1" appPermission
+        appPolicy="Permissions.PostCategories.Edit" *ngIf="selectedItems.length == 1"
+        (click)="showEditModal()"></p-button>
     </div>
     <div class="col">
       <div class="row">
         <div class="col">
-          <input id="txtKeyword" pInputText (keyup.enter)="getData()" pInputText [(ngModel)]="keyword"
-            placeholder="Enter a keyword..." type="text">
+          <input type="text" pInputText id="txtKeyword" placeholder="Enter keywords..." (keyup.enter)="getData()"
+            [(ngModel)]="keyword" />
         </div>
         <div class="col">
-          <button type="button" pButton (click)="getData()">Search</button>
+          <p-button icon="pi pi-search" (click)="getData()"></p-button>
         </div>
       </div>
 
     </div>
   </div>
   <div class="row mt-3">
-    <p-table #dt [value]="items" selectionMode="multiple" dataKey="id" [(selection)]="selectedItems"
+    <p-table [value]="items" selectionMode="multiple" dataKey="id" [(selection)]="selectedItems"
       [metaKeySelection]="true">
       <ng-template pTemplate="header">
         <tr>
@@ -47,8 +49,8 @@
           <td>{{row.slug}}</td>
           <td>{{row.sortOrder | number}}</td>
           <td style="width: 150px">
-            <p-badge *ngIf="row.isActive == 1" value="Active" severity="success"></p-badge>
-            <p-badge *ngIf="row.isActive == 0" value="UnActive" severity="danger"></p-badge>
+            <p-badge value="Active" severity="success" *ngIf="row.isActive == 1"></p-badge>
+            <p-badge value="UnActive" severity="danger" *ngIf="row.isActive == 0"></p-badge>
           </td>
         </tr>
       </ng-template>

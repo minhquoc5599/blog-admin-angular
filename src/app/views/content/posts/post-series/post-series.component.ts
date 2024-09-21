@@ -146,8 +146,7 @@ export class PostSeriesComponent implements OnInit, OnDestroy {
       postId: this.config.data.id,
       seriesId: id
     });
-    this.seriesApiClient
-      .deletePostSeries(body)
+    this.seriesApiClient.deletePostSeries(body)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: () => {

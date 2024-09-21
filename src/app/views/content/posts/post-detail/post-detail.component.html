@@ -18,7 +18,7 @@
   <div class="mb-3">
     <label for="categoryId" class="block">Group</label>
     <p-dropdown id="categoryId" [options]="postCategories" formControlName="categoryId" [showClear]="true"
-      placeholder="Chọn nhóm" autoWidth="false" [style]="{ width: '100%' }">
+      placeholder="Chọn nhóm" autoWidth="false" [style]="{ width: '100%' }" *ngIf="postCategories.length > 0">
     </p-dropdown>
   </div>
 
@@ -59,9 +59,7 @@
   </div>
 
   <div class="flex justify-content-end">
-    <button type="submit" class="btn btn-primary" [disabled]="!form.valid || btnDisabled">
-      {{ saveBtnName }}
-    </button>
+    <p-button type="submit" [label]="saveBtnName" [disabled]="!form.valid || btnDisabled"></p-button>
   </div>
 
   <p-blockUI [blocked]="isLoading">
