@@ -7,6 +7,7 @@ import { ButtonModule } from 'primeng/button'
 import { CheckboxModule } from 'primeng/checkbox'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { ImageModule } from 'primeng/image'
+import { InputNumberModule } from 'primeng/inputnumber'
 import { InputTextModule } from 'primeng/inputtext'
 import { KeyFilterModule } from 'primeng/keyfilter'
 import { ProgressSpinnerModule } from 'primeng/progressspinner'
@@ -24,6 +25,7 @@ import { ValidateMessageComponent } from 'src/app/shared/validates/validate-mess
     CommonModule,
     ReactiveFormsModule,
     InputTextModule,
+    InputNumberModule,
     BlockUIModule,
     ProgressSpinnerModule,
     CheckboxModule,
@@ -146,6 +148,7 @@ export class UserDetailComponent implements OnInit, OnDestroy {
       avatarFile: new FormControl(null),
       avatar: new FormControl(this.selectedEntity.avatar || null),
       isActive: new FormControl(this.selectedEntity.isActive || true),
+      royaltyAmountPerPost: new FormControl(this.selectedEntity.royaltyAmountPerPost)
     })
   }
 

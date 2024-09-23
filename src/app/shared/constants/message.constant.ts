@@ -12,4 +12,6 @@ export class Message {
   public static ROLE_ASSIGN_SUCCESS_MSG = 'Role assigned successfully';
 
   public static POST_ADDED_TO_SERIES_SUCCESS_MSG = 'Post added to series successfully'
+
+  public static CONFIRM_PAY_MSG = 'Are you sure you want to pay?'
 }

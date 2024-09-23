@@ -40,6 +40,7 @@
           <th>Category</th>
           <th>View</th>
           <th>Date created</th>
+          <th>Royalty</th>
           <th style="width: 150px">Published</th>
           <th></th>
         </tr>
@@ -54,6 +55,10 @@
           <td>{{ row.categoryName }}</td>
           <td>{{ row.viewCount | number }}</td>
           <td>{{ row.dateCreated | date : 'dd-MM-yyyy hh:mm' }}</td>
+          <td>
+            <p-badge value="Not paid" severity="danger" *ngIf="row.isPaid == 0" ></p-badge>
+            <p-badge value="Paid" severity="success" *ngIf="row.isPaid == 1" ></p-badge>
+          </td>
           <td style="width: 150px">
             <p-badge value="Draft" severity="info" *ngIf="row.status == 0"></p-badge>
             <p-badge value="Waiting" severity="warning" *ngIf="row.status == 1"></p-badge>

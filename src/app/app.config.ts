@@ -17,6 +17,7 @@ import { IconSetService } from '@coreui/icons-angular';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ADMIN_API_BASE_URL } from 'src/app/api/admin-api.service.generated';
 import { AuthGuard } from 'src/app/shared/guards/auth.guard';
+import { LoggedGuard } from 'src/app/shared/guards/logged.guard';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { environment } from 'src/enviroments/environment';
 import { routes } from './app.routes';
@@ -46,6 +47,7 @@ export const appConfig: ApplicationConfig = {
     MessageService,
     AlertService,
     AuthGuard,
+    LoggedGuard,
     ConfirmationService,
     { provide: ADMIN_API_BASE_URL, useValue: environment.API_URL },
     // {

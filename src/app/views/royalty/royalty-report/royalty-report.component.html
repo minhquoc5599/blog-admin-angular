@@ -1,0 +1,79 @@
+<p-panel [style]="{'margin-bottom':'20px'}">
+  <p-header>
+    Royalty report
+  </p-header>
+  <div class="row">
+    <div class="col">
+      <div class="row">
+        <div class="col-3">
+          <input id="txtUserName" pInputText (keyup.enter)="getData()" pInputText [(ngModel)]="username"
+            placeholder="Enter username..." type="text">
+        </div>
+        <div class="col-3">
+          <p-calendar [(ngModel)]="fromDate" />
+        </div>
+        <div class="col-3">
+          <p-calendar [(ngModel)]="toDate" />
+        </div>
+        <div class="col-2">
+          <p-button icon="pi pi-search" (click)="getData()"></p-button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="row mt-3">
+    <p-table #dt [value]="items" selectionMode="multiple" dataKey="id" [metaKeySelection]="true">
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 10px">
+            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+          </th>
+          <th>Username</th>
+          <th>Draft</th>
+          <th>Waiting</th>
+          <th>Reject</th>
+          <th>Publish</th>
+          <th>Paid</th>
+          <th>Not paid</th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td style="width: 10px"><span class="ui-column-title"></span>
+            <p-tableCheckbox [value]="row"></p-tableCheckbox>
+          </td>
+          <td>{{row.userName}}</td>
+          <td>{{row.numberOfDraftPosts | number}}</td>
+          <td>{{row.numberOfWaitingApprovalPosts | number}}</td>
+          <td>{{row.numberOfRejectedPosts | number}}</td>
+          <td>{{row.numberOfPublishPosts | number}}</td>
+          <td>{{row.numberOfPaidPublishPosts | number}}</td>
+          <td>{{row.numberOfUnpaidPublishPosts | number}}</td>
+          <td>
+            @if (row.numberOfUnpaidPublishPosts > 0) {
+            <p-button icon="pi pi-forward" pTooltip="Deposit money" tooltipPosition="top" [rounded]="true" [text]="true"
+              severity="danger" (click)="payForUser(row.userId)" appPermission
+              appPolicy="Permissons.Royalty.Pay"></p-button>
+            }
+
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="summary">
+        <div style="text-align: left">
+          Total: {{totalCount | number}}
+        </div>
+      </ng-template>
+    </p-table>
+  </div>
+  <p-paginator [rows]="pageSize" [totalRecords]="totalCount" (onPageChange)="pageChanged($event)"
+    [rowsPerPageOptions]="[10, 20, 50, 100]"></p-paginator>
+
+  <p-blockUI [blocked]="isLoading">
+    <div class="card flex justify-content-center bg-transparent" [style]="{border: 'none'}">
+      <p-progressSpinner strokeWidth="2" animationDuration="1s" />
+    </div>
+  </p-blockUI>
+</p-panel>

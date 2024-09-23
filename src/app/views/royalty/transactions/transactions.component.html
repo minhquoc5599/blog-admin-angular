@@ -1,0 +1,67 @@
+<p-panel #pnl [style]="{'margin-bottom':'20px'}">
+  <p-header>
+    Transactions
+  </p-header>
+  <div class="row">
+    <div class="col">
+      <div class="row">
+        <div class="col-3">
+          <input id="txtUserName" pInputText (keyup.enter)="getData()" pInputText [(ngModel)]="username"
+            placeholder="Enter username..." type="text">
+        </div>
+        <div class="col-3">
+          <p-calendar [(ngModel)]="fromDate" />
+        </div>
+        <div class="col-3">
+          <p-calendar [(ngModel)]="toDate" />
+        </div>
+        <div class="col-2">
+          <p-button icon="pi pi-search" (click)="getData()"></p-button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="row mt-3">
+    <p-table #dt [value]="items" selectionMode="multiple" dataKey="id" [metaKeySelection]="true" [responsive]="true">
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 10px">
+            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+          </th>
+          <th>User</th>
+          <th>Amount</th>
+          <th>Date created</th>
+          <th>Transaction type</th>
+          <th>Note</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row>
+        <tr [pSelectableRow]="row">
+          <td style="width: 10px"><span class="ui-column-title"></span>
+            <p-tableCheckbox [value]="row"></p-tableCheckbox>
+          </td>
+          <td>{{row.toUserName}}</td>
+          <td>{{row.amount | number}}</td>
+          <td>{{row.dateCreated | date : 'dd-MM-yyyy hh:mm' }}</td>
+          <td>
+            <p-badge *ngIf="row.transactionType == 0" value="Trả nhuận bút" severity="info"></p-badge>
+          </td>
+          <td>{{row.note}}</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="summary">
+        <div style="text-align: left">
+          Total: {{totalCount | number}}
+        </div>
+      </ng-template>
+    </p-table>
+  </div>
+  <p-paginator [rows]="pageSize" [totalRecords]="totalCount" (onPageChange)="pageChanged($event)"
+    [rowsPerPageOptions]="[10, 20, 50, 100]"></p-paginator>
+
+  <p-blockUI [target]="pnl" [blocked]="isLoading">
+    <p-progressSpinner [style]="{width: '100px', height: '100px', position:'absolute',top:'25%',left:'50%'}"
+      strokeWidth="2" animationDuration=".5s"></p-progressSpinner>
+  </p-blockUI>
+</p-panel>

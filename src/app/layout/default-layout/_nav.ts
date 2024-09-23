@@ -14,9 +14,32 @@ export const navItems: INavData[] = [
     }
   },
   {
+    name: 'System',
+    url: '/system',
+    iconComponent: { name: 'cil-settings' },
+    children: [
+      {
+        name: 'Roles',
+        url: '/system/roles',
+        icon: 'nav-icon-bullet',
+        attributes: {
+          policyName: 'Permissions.Roles.View'
+        }
+      },
+      {
+        name: 'Users',
+        url: '/system/users',
+        icon: 'nav-icon-bullet',
+        attributes: {
+          policyName: 'Permissions.Users.View'
+        }
+      },
+    ]
+  },
+  {
     name: 'Content',
     url: '/content',
-    iconComponent: { name: 'cil-puzzle' },
+    iconComponent: { name: 'cil-pencil' },
     children: [
       {
         name: 'Categories',
@@ -38,41 +61,33 @@ export const navItems: INavData[] = [
         name: 'Series',
         url: '/content/series',
         icon: 'nav-icon-bullet',
-        attributes:{
+        attributes: {
           policyName: 'Permissions.Series.View'
         }
-      },
-      {
-        name: 'Royalty',
-        url: '/content/royalty',
-        icon: 'nav-icon-bullet',
-        attributes:{
-          policyName: 'Permissions.Royalty.View'
-        }
-      },
+      }
     ]
   },
   {
-    name: 'System',
-    url: '/system',
-    iconComponent: { name: 'cil-notes' },
+    name: 'Royalty',
+    url: '/royalty',
+    iconComponent: { name: 'cil-description' },
     children: [
       {
-        name: 'Roles',
-        url: '/system/roles',
+        name: 'Royalty report',
+        url: '/royalty/royalty-report',
         icon: 'nav-icon-bullet',
-        attributes:{
-          policyName: 'Permissions.Roles.View'
+        attributes: {
+          "policyName": "Permissions.Royalty.GetRoyaltyReport"
         }
       },
       {
-        name: 'Users',
-        url: '/system/users',
+        name: 'Transactions',
+        url: '/royalty/transactions',
         icon: 'nav-icon-bullet',
-        attributes:{
-          policyName: 'Permissions.Users.View'
+        attributes: {
+          "policyName": "Permissions.Royalty.GetTransactions"
         }
-      },
-    ]
+      }
+    ],
   },
 ];

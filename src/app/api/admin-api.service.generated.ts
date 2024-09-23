@@ -8,10 +8,10 @@
 /* eslint-disable */
 // ReSharper disable InconsistentNaming
 
+import { mergeMap as _observableMergeMap, catchError as _observableCatch } from 'rxjs/operators';
+import { Observable, throwError as _observableThrow, of as _observableOf } from 'rxjs';
+import { Injectable, Inject, Optional, InjectionToken } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angular/common/http';
-import { Inject, Injectable, InjectionToken, Optional } from '@angular/core';
-import { Observable, of as _observableOf, throwError as _observableThrow } from 'rxjs';
-import { catchError as _observableCatch, mergeMap as _observableMergeMap } from 'rxjs/operators';
 
 export const ADMIN_API_BASE_URL = new InjectionToken<string>('ADMIN_API_BASE_URL');
 
@@ -1544,6 +1544,208 @@ export class AdminApiRoleApiClient {
     }
 
     protected processSavePermission(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+}
+
+@Injectable()
+export class AdminApiRoyaltyApiClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(ADMIN_API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ?? "";
+    }
+
+    /**
+     * @param keyword (optional) 
+     * @param fromDate (optional) 
+     * @param toDate (optional) 
+     * @param pageIndex (optional) 
+     * @param pageSize (optional) 
+     * @return Success
+     */
+    getTransactions(keyword?: string | null | undefined, fromDate?: string | null | undefined, toDate?: string | null | undefined, pageIndex?: number | undefined, pageSize?: number | undefined): Observable<TransactionResponsePagingResponse> {
+        let url_ = this.baseUrl + "/api/admin/royalty/transaction?";
+        if (keyword !== undefined && keyword !== null)
+            url_ += "keyword=" + encodeURIComponent("" + keyword) + "&";
+        if (fromDate !== undefined && fromDate !== null)
+            url_ += "fromDate=" + encodeURIComponent("" + fromDate) + "&";
+        if (toDate !== undefined && toDate !== null)
+            url_ += "toDate=" + encodeURIComponent("" + toDate) + "&";
+        if (pageIndex === null)
+            throw new Error("The parameter 'pageIndex' cannot be null.");
+        else if (pageIndex !== undefined)
+            url_ += "pageIndex=" + encodeURIComponent("" + pageIndex) + "&";
+        if (pageSize === null)
+            throw new Error("The parameter 'pageSize' cannot be null.");
+        else if (pageSize !== undefined)
+            url_ += "pageSize=" + encodeURIComponent("" + pageSize) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetTransactions(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetTransactions(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<TransactionResponsePagingResponse>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<TransactionResponsePagingResponse>;
+        }));
+    }
+
+    protected processGetTransactions(response: HttpResponseBase): Observable<TransactionResponsePagingResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = TransactionResponsePagingResponse.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param username (optional) 
+     * @param fromDate (optional) 
+     * @param toDate (optional) 
+     * @param pageIndex (optional) 
+     * @param pageSize (optional) 
+     * @return Success
+     */
+    getRoyaltyReport(username?: string | null | undefined, fromDate?: string | null | undefined, toDate?: string | null | undefined, pageIndex?: number | undefined, pageSize?: number | undefined): Observable<RoyaltyReportResponsePagingResponse> {
+        let url_ = this.baseUrl + "/api/admin/royalty/royalty-report?";
+        if (username !== undefined && username !== null)
+            url_ += "username=" + encodeURIComponent("" + username) + "&";
+        if (fromDate !== undefined && fromDate !== null)
+            url_ += "fromDate=" + encodeURIComponent("" + fromDate) + "&";
+        if (toDate !== undefined && toDate !== null)
+            url_ += "toDate=" + encodeURIComponent("" + toDate) + "&";
+        if (pageIndex === null)
+            throw new Error("The parameter 'pageIndex' cannot be null.");
+        else if (pageIndex !== undefined)
+            url_ += "pageIndex=" + encodeURIComponent("" + pageIndex) + "&";
+        if (pageSize === null)
+            throw new Error("The parameter 'pageSize' cannot be null.");
+        else if (pageSize !== undefined)
+            url_ += "pageSize=" + encodeURIComponent("" + pageSize) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetRoyaltyReport(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetRoyaltyReport(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<RoyaltyReportResponsePagingResponse>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<RoyaltyReportResponsePagingResponse>;
+        }));
+    }
+
+    protected processGetRoyaltyReport(response: HttpResponseBase): Observable<RoyaltyReportResponsePagingResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = RoyaltyReportResponsePagingResponse.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    payRoyalty(userId: string): Observable<void> {
+        let url_ = this.baseUrl + "/api/admin/royalty/{userId}";
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined.");
+        url_ = url_.replace("{userId}", encodeURIComponent("" + userId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processPayRoyalty(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processPayRoyalty(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processPayRoyalty(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -3098,6 +3300,7 @@ export class CreateUserRequest implements ICreateUserRequest {
     dob?: Date | undefined;
     avatar?: string | undefined;
     isActive?: boolean;
+    royaltyAmountPerPost?: number;
 
     constructor(data?: ICreateUserRequest) {
         if (data) {
@@ -3119,6 +3322,7 @@ export class CreateUserRequest implements ICreateUserRequest {
             this.dob = _data["dob"] ? new Date(_data["dob"].toString()) : <any>undefined;
             this.avatar = _data["avatar"];
             this.isActive = _data["isActive"];
+            this.royaltyAmountPerPost = _data["royaltyAmountPerPost"];
         }
     }
 
@@ -3140,6 +3344,7 @@ export class CreateUserRequest implements ICreateUserRequest {
         data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
         data["avatar"] = this.avatar;
         data["isActive"] = this.isActive;
+        data["royaltyAmountPerPost"] = this.royaltyAmountPerPost;
         return data;
     }
 }
@@ -3154,6 +3359,7 @@ export interface ICreateUserRequest {
     dob?: Date | undefined;
     avatar?: string | undefined;
     isActive?: boolean;
+    royaltyAmountPerPost?: number;
 }
 
 export class LoginRequest implements ILoginRequest {
@@ -3449,6 +3655,9 @@ export class PostDetailResponse implements IPostDetailResponse {
     authorUserName?: string | undefined;
     authorName?: string | undefined;
     status?: PostStatus;
+    isPaid?: boolean;
+    royaltyAmount?: number;
+    paidDate?: Date | undefined;
     categoryId?: string;
     content?: string | undefined;
     authorUserId?: string;
@@ -3456,8 +3665,6 @@ export class PostDetailResponse implements IPostDetailResponse {
     tags?: string | undefined;
     seoDescription?: string | undefined;
     dateModified?: Date | undefined;
-    isPaid?: boolean;
-    royaltyAmount?: number;
 
     constructor(data?: IPostDetailResponse) {
         if (data) {
@@ -3482,6 +3689,9 @@ export class PostDetailResponse implements IPostDetailResponse {
             this.authorUserName = _data["authorUserName"];
             this.authorName = _data["authorName"];
             this.status = _data["status"];
+            this.isPaid = _data["isPaid"];
+            this.royaltyAmount = _data["royaltyAmount"];
+            this.paidDate = _data["paidDate"] ? new Date(_data["paidDate"].toString()) : <any>undefined;
             this.categoryId = _data["categoryId"];
             this.content = _data["content"];
             this.authorUserId = _data["authorUserId"];
@@ -3489,8 +3699,6 @@ export class PostDetailResponse implements IPostDetailResponse {
             this.tags = _data["tags"];
             this.seoDescription = _data["seoDescription"];
             this.dateModified = _data["dateModified"] ? new Date(_data["dateModified"].toString()) : <any>undefined;
-            this.isPaid = _data["isPaid"];
-            this.royaltyAmount = _data["royaltyAmount"];
         }
     }
 
@@ -3515,6 +3723,9 @@ export class PostDetailResponse implements IPostDetailResponse {
         data["authorUserName"] = this.authorUserName;
         data["authorName"] = this.authorName;
         data["status"] = this.status;
+        data["isPaid"] = this.isPaid;
+        data["royaltyAmount"] = this.royaltyAmount;
+        data["paidDate"] = this.paidDate ? this.paidDate.toISOString() : <any>undefined;
         data["categoryId"] = this.categoryId;
         data["content"] = this.content;
         data["authorUserId"] = this.authorUserId;
@@ -3522,8 +3733,6 @@ export class PostDetailResponse implements IPostDetailResponse {
         data["tags"] = this.tags;
         data["seoDescription"] = this.seoDescription;
         data["dateModified"] = this.dateModified ? this.dateModified.toISOString() : <any>undefined;
-        data["isPaid"] = this.isPaid;
-        data["royaltyAmount"] = this.royaltyAmount;
         return data;
     }
 }
@@ -3541,6 +3750,9 @@ export interface IPostDetailResponse {
     authorUserName?: string | undefined;
     authorName?: string | undefined;
     status?: PostStatus;
+    isPaid?: boolean;
+    royaltyAmount?: number;
+    paidDate?: Date | undefined;
     categoryId?: string;
     content?: string | undefined;
     authorUserId?: string;
@@ -3548,8 +3760,6 @@ export interface IPostDetailResponse {
     tags?: string | undefined;
     seoDescription?: string | undefined;
     dateModified?: Date | undefined;
-    isPaid?: boolean;
-    royaltyAmount?: number;
 }
 
 export class PostResponse implements IPostResponse {
@@ -3565,6 +3775,9 @@ export class PostResponse implements IPostResponse {
     authorUserName?: string | undefined;
     authorName?: string | undefined;
     status?: PostStatus;
+    isPaid?: boolean;
+    royaltyAmount?: number;
+    paidDate?: Date | undefined;
 
     constructor(data?: IPostResponse) {
         if (data) {
@@ -3589,6 +3802,9 @@ export class PostResponse implements IPostResponse {
             this.authorUserName = _data["authorUserName"];
             this.authorName = _data["authorName"];
             this.status = _data["status"];
+            this.isPaid = _data["isPaid"];
+            this.royaltyAmount = _data["royaltyAmount"];
+            this.paidDate = _data["paidDate"] ? new Date(_data["paidDate"].toString()) : <any>undefined;
         }
     }
 
@@ -3613,6 +3829,9 @@ export class PostResponse implements IPostResponse {
         data["authorUserName"] = this.authorUserName;
         data["authorName"] = this.authorName;
         data["status"] = this.status;
+        data["isPaid"] = this.isPaid;
+        data["royaltyAmount"] = this.royaltyAmount;
+        data["paidDate"] = this.paidDate ? this.paidDate.toISOString() : <any>undefined;
         return data;
     }
 }
@@ -3630,6 +3849,9 @@ export interface IPostResponse {
     authorUserName?: string | undefined;
     authorName?: string | undefined;
     status?: PostStatus;
+    isPaid?: boolean;
+    royaltyAmount?: number;
+    paidDate?: Date | undefined;
 }
 
 export class PostResponsePagingResponse implements IPostResponsePagingResponse {
@@ -3909,6 +4131,142 @@ export interface IRoleResponsePagingResponse {
     lastRowOnPage?: number;
     additionalData?: string | undefined;
     results?: RoleResponse[] | undefined;
+}
+
+export class RoyaltyReportResponse implements IRoyaltyReportResponse {
+    userId?: string;
+    userName?: string | undefined;
+    numberOfDraftPosts?: number;
+    numberOfWaitingApprovalPosts?: number;
+    numberOfRejectedPosts?: number;
+    numberOfUnpaidPublishPosts?: number;
+    numberOfPaidPublishPosts?: number;
+    numberOfPublishPosts?: number;
+
+    constructor(data?: IRoyaltyReportResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.userId = _data["userId"];
+            this.userName = _data["userName"];
+            this.numberOfDraftPosts = _data["numberOfDraftPosts"];
+            this.numberOfWaitingApprovalPosts = _data["numberOfWaitingApprovalPosts"];
+            this.numberOfRejectedPosts = _data["numberOfRejectedPosts"];
+            this.numberOfUnpaidPublishPosts = _data["numberOfUnpaidPublishPosts"];
+            this.numberOfPaidPublishPosts = _data["numberOfPaidPublishPosts"];
+            this.numberOfPublishPosts = _data["numberOfPublishPosts"];
+        }
+    }
+
+    static fromJS(data: any): RoyaltyReportResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new RoyaltyReportResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        data["userName"] = this.userName;
+        data["numberOfDraftPosts"] = this.numberOfDraftPosts;
+        data["numberOfWaitingApprovalPosts"] = this.numberOfWaitingApprovalPosts;
+        data["numberOfRejectedPosts"] = this.numberOfRejectedPosts;
+        data["numberOfUnpaidPublishPosts"] = this.numberOfUnpaidPublishPosts;
+        data["numberOfPaidPublishPosts"] = this.numberOfPaidPublishPosts;
+        data["numberOfPublishPosts"] = this.numberOfPublishPosts;
+        return data;
+    }
+}
+
+export interface IRoyaltyReportResponse {
+    userId?: string;
+    userName?: string | undefined;
+    numberOfDraftPosts?: number;
+    numberOfWaitingApprovalPosts?: number;
+    numberOfRejectedPosts?: number;
+    numberOfUnpaidPublishPosts?: number;
+    numberOfPaidPublishPosts?: number;
+    numberOfPublishPosts?: number;
+}
+
+export class RoyaltyReportResponsePagingResponse implements IRoyaltyReportResponsePagingResponse {
+    currentPage?: number;
+    pageCount?: number;
+    pageSize?: number;
+    rowCount?: number;
+    readonly firstRowOnPage?: number;
+    readonly lastRowOnPage?: number;
+    additionalData?: string | undefined;
+    results?: RoyaltyReportResponse[] | undefined;
+
+    constructor(data?: IRoyaltyReportResponsePagingResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.currentPage = _data["currentPage"];
+            this.pageCount = _data["pageCount"];
+            this.pageSize = _data["pageSize"];
+            this.rowCount = _data["rowCount"];
+            (<any>this).firstRowOnPage = _data["firstRowOnPage"];
+            (<any>this).lastRowOnPage = _data["lastRowOnPage"];
+            this.additionalData = _data["additionalData"];
+            if (Array.isArray(_data["results"])) {
+                this.results = [] as any;
+                for (let item of _data["results"])
+                    this.results!.push(RoyaltyReportResponse.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): RoyaltyReportResponsePagingResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new RoyaltyReportResponsePagingResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["currentPage"] = this.currentPage;
+        data["pageCount"] = this.pageCount;
+        data["pageSize"] = this.pageSize;
+        data["rowCount"] = this.rowCount;
+        data["firstRowOnPage"] = this.firstRowOnPage;
+        data["lastRowOnPage"] = this.lastRowOnPage;
+        data["additionalData"] = this.additionalData;
+        if (Array.isArray(this.results)) {
+            data["results"] = [];
+            for (let item of this.results)
+                data["results"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IRoyaltyReportResponsePagingResponse {
+    currentPage?: number;
+    pageCount?: number;
+    pageSize?: number;
+    rowCount?: number;
+    firstRowOnPage?: number;
+    lastRowOnPage?: number;
+    additionalData?: string | undefined;
+    results?: RoyaltyReportResponse[] | undefined;
 }
 
 export class SeriesDetailResponse implements ISeriesDetailResponse {
@@ -4191,6 +4549,150 @@ export interface ITokenRequest {
     refreshToken?: string | undefined;
 }
 
+export class TransactionResponse implements ITransactionResponse {
+    id?: string;
+    fromUserId?: string;
+    fromUserName?: string | undefined;
+    toUserId?: string;
+    toUserName?: string | undefined;
+    amount?: number;
+    transactionType?: TransactionType;
+    dateCreated?: Date;
+    note?: string | undefined;
+
+    constructor(data?: ITransactionResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.fromUserId = _data["fromUserId"];
+            this.fromUserName = _data["fromUserName"];
+            this.toUserId = _data["toUserId"];
+            this.toUserName = _data["toUserName"];
+            this.amount = _data["amount"];
+            this.transactionType = _data["transactionType"];
+            this.dateCreated = _data["dateCreated"] ? new Date(_data["dateCreated"].toString()) : <any>undefined;
+            this.note = _data["note"];
+        }
+    }
+
+    static fromJS(data: any): TransactionResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new TransactionResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["fromUserId"] = this.fromUserId;
+        data["fromUserName"] = this.fromUserName;
+        data["toUserId"] = this.toUserId;
+        data["toUserName"] = this.toUserName;
+        data["amount"] = this.amount;
+        data["transactionType"] = this.transactionType;
+        data["dateCreated"] = this.dateCreated ? this.dateCreated.toISOString() : <any>undefined;
+        data["note"] = this.note;
+        return data;
+    }
+}
+
+export interface ITransactionResponse {
+    id?: string;
+    fromUserId?: string;
+    fromUserName?: string | undefined;
+    toUserId?: string;
+    toUserName?: string | undefined;
+    amount?: number;
+    transactionType?: TransactionType;
+    dateCreated?: Date;
+    note?: string | undefined;
+}
+
+export class TransactionResponsePagingResponse implements ITransactionResponsePagingResponse {
+    currentPage?: number;
+    pageCount?: number;
+    pageSize?: number;
+    rowCount?: number;
+    readonly firstRowOnPage?: number;
+    readonly lastRowOnPage?: number;
+    additionalData?: string | undefined;
+    results?: TransactionResponse[] | undefined;
+
+    constructor(data?: ITransactionResponsePagingResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.currentPage = _data["currentPage"];
+            this.pageCount = _data["pageCount"];
+            this.pageSize = _data["pageSize"];
+            this.rowCount = _data["rowCount"];
+            (<any>this).firstRowOnPage = _data["firstRowOnPage"];
+            (<any>this).lastRowOnPage = _data["lastRowOnPage"];
+            this.additionalData = _data["additionalData"];
+            if (Array.isArray(_data["results"])) {
+                this.results = [] as any;
+                for (let item of _data["results"])
+                    this.results!.push(TransactionResponse.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): TransactionResponsePagingResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new TransactionResponsePagingResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["currentPage"] = this.currentPage;
+        data["pageCount"] = this.pageCount;
+        data["pageSize"] = this.pageSize;
+        data["rowCount"] = this.rowCount;
+        data["firstRowOnPage"] = this.firstRowOnPage;
+        data["lastRowOnPage"] = this.lastRowOnPage;
+        data["additionalData"] = this.additionalData;
+        if (Array.isArray(this.results)) {
+            data["results"] = [];
+            for (let item of this.results)
+                data["results"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface ITransactionResponsePagingResponse {
+    currentPage?: number;
+    pageCount?: number;
+    pageSize?: number;
+    rowCount?: number;
+    firstRowOnPage?: number;
+    lastRowOnPage?: number;
+    additionalData?: string | undefined;
+    results?: TransactionResponse[] | undefined;
+}
+
+export enum TransactionType {
+    _0 = 0,
+}
+
 export class UpdateUserRequest implements IUpdateUserRequest {
     firstName?: string | undefined;
     lastName?: string | undefined;
@@ -4198,6 +4700,7 @@ export class UpdateUserRequest implements IUpdateUserRequest {
     dob?: Date | undefined;
     avatar?: string | undefined;
     isActive?: boolean;
+    royaltyAmountPerPost?: number;
 
     constructor(data?: IUpdateUserRequest) {
         if (data) {
@@ -4216,6 +4719,7 @@ export class UpdateUserRequest implements IUpdateUserRequest {
             this.dob = _data["dob"] ? new Date(_data["dob"].toString()) : <any>undefined;
             this.avatar = _data["avatar"];
             this.isActive = _data["isActive"];
+            this.royaltyAmountPerPost = _data["royaltyAmountPerPost"];
         }
     }
 
@@ -4234,6 +4738,7 @@ export class UpdateUserRequest implements IUpdateUserRequest {
         data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
         data["avatar"] = this.avatar;
         data["isActive"] = this.isActive;
+        data["royaltyAmountPerPost"] = this.royaltyAmountPerPost;
         return data;
     }
 }
@@ -4245,6 +4750,7 @@ export interface IUpdateUserRequest {
     dob?: Date | undefined;
     avatar?: string | undefined;
     isActive?: boolean;
+    royaltyAmountPerPost?: number;
 }
 
 export class UserResponse implements IUserResponse {
@@ -4262,6 +4768,8 @@ export class UserResponse implements IUserResponse {
     vipStartDate?: Date | undefined;
     vipExpireDate?: Date | undefined;
     lastLoginDate?: Date | undefined;
+    balance?: number;
+    royaltyAmountPerPost?: number;
 
     constructor(data?: IUserResponse) {
         if (data) {
@@ -4292,6 +4800,8 @@ export class UserResponse implements IUserResponse {
             this.vipStartDate = _data["vipStartDate"] ? new Date(_data["vipStartDate"].toString()) : <any>undefined;
             this.vipExpireDate = _data["vipExpireDate"] ? new Date(_data["vipExpireDate"].toString()) : <any>undefined;
             this.lastLoginDate = _data["lastLoginDate"] ? new Date(_data["lastLoginDate"].toString()) : <any>undefined;
+            this.balance = _data["balance"];
+            this.royaltyAmountPerPost = _data["royaltyAmountPerPost"];
         }
     }
 
@@ -4322,6 +4832,8 @@ export class UserResponse implements IUserResponse {
         data["vipStartDate"] = this.vipStartDate ? this.vipStartDate.toISOString() : <any>undefined;
         data["vipExpireDate"] = this.vipExpireDate ? this.vipExpireDate.toISOString() : <any>undefined;
         data["lastLoginDate"] = this.lastLoginDate ? this.lastLoginDate.toISOString() : <any>undefined;
+        data["balance"] = this.balance;
+        data["royaltyAmountPerPost"] = this.royaltyAmountPerPost;
         return data;
     }
 }
@@ -4341,6 +4853,8 @@ export interface IUserResponse {
     vipStartDate?: Date | undefined;
     vipExpireDate?: Date | undefined;
     lastLoginDate?: Date | undefined;
+    balance?: number;
+    royaltyAmountPerPost?: number;
 }
 
 export class UserResponsePagingResponse implements IUserResponsePagingResponse {
