@@ -45,7 +45,8 @@
           <td>{{ row.name }}</td>
           <td>{{ row.displayName }}</td>
           <td>
-            <p-button icon="pi pi-cog" (click)="showPermissionModal(row.id, row.name)"></p-button>
+            <p-button icon="pi pi-cog" appPermission appPolicy="Permissions.Roles.ViewRolePermissions"
+              (click)="showPermissionModal(row.id, row.name)"></p-button>
           </td>
         </tr>
       </ng-template>

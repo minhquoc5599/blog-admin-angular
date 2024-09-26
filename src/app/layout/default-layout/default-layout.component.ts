@@ -60,14 +60,21 @@ export class DefaultLayoutComponent implements OnInit {
   ngOnInit(): void {
     let user = this.storage.getUser()
     if (user == null) this.router.navigate([Url.LOGIN])
-    let permissions = JSON.parse(user?.permissions)
+    let permissions: string[] = JSON.parse(user?.permissions)
     for (let i = 0; i < navItems.length; i++) {
-      for (let child = 0; child < navItems[i].children?.length; child++) {
-        if (navItems[i].children[child].attributes
-          && permissions.filter((p: string) => p === navItems[i].children[child].attributes['policyName']).length === 0) {
-          navItems[i].children[child].class = 'hidden'
+      // parent
+      if (navItems[i].attributes && permissions.filter((p: string) => p === navItems[i].attributes['policyName']).length === 0) {
+        navItems[i].class = 'hidden'
+      } else {
+        // Children
+        for (let child = 0; child < navItems[i].children?.length; child++) {
+          if (navItems[i].children[child].attributes
+            && permissions.filter((p: string) => p === navItems[i].children[child].attributes['policyName']).length === 0) {
+            navItems[i].children[child].class = 'hidden'
+          }
         }
       }
+
     }
     this.navItems = navItems
   }

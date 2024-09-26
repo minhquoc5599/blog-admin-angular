@@ -1,5 +1,6 @@
 import { Directive, ElementRef, Input, OnInit } from '@angular/core';
-import { StorageService } from './../services/storage.service';
+import { UserModel } from 'src/app/shared/models/user.model';
+import { StorageService } from 'src/app/shared/services/storage.service';
 
 @Directive({
   selector: '[appPermission]',
@@ -11,16 +12,20 @@ export class PermissionDirective implements OnInit {
   constructor(private el: ElementRef, private storageService: StorageService) { }
 
   ngOnInit(): void {
-    var loggedInUser = this.storageService.getUser()
-    if (loggedInUser) {
-      var listPermission = loggedInUser.permissions
-      if (listPermission != null && listPermission != '' && listPermission.filter((x: string) => x === this.appPolicy).length > 0) {
-        this.el.nativeElement.style.display = ''
-      } else {
+    if (this.appPolicy !== '') {
+      var loggedInUser: UserModel = this.storageService.getUser()
+      if (loggedInUser) {
+        var listPermission = JSON.parse(loggedInUser.permissions)
+        if (listPermission !== null && listPermission !== '' && listPermission.filter((x: string) => x === this.appPolicy).length > 0) {
+          this.el.nativeElement.style.display = ''
+        } else {
+          this.el.nativeElement.style.display = 'none'
+        }
+      }
+      else {
         this.el.nativeElement.style.display = 'none'
       }
-    }
-    else {
+    } else {
       this.el.nativeElement.style.display = 'none'
     }
   }

@@ -17,6 +17,7 @@ import {
   PostCategoryResponsePagingResponse
 } from 'src/app/api/admin-api.service.generated'
 import { Message } from 'src/app/shared/constants/message.constant'
+import { PermissionDirective } from 'src/app/shared/directives/permission.directive'
 import { AlertService } from 'src/app/shared/services/alert.service'
 import { PostCategoryDetailComponent } from './post-category-detail/post-category-detail.component'
 
@@ -33,7 +34,8 @@ import { PostCategoryDetailComponent } from './post-category-detail/post-categor
     PanelModule,
     InputTextModule,
     ButtonModule,
-    BadgeModule
+    BadgeModule,
+    PermissionDirective
   ],
   providers: [
     DialogService,

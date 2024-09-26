@@ -22,6 +22,7 @@ import {
   PostResponsePagingResponse
 } from 'src/app/api/admin-api.service.generated';
 import { Message } from 'src/app/shared/constants/message.constant';
+import { PermissionDirective } from 'src/app/shared/directives/permission.directive';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { PostActivityLogsComponent } from './post-activity-logs/post-activity-logs.component';
 import { PostDetailComponent } from './post-detail/post-detail.component';
@@ -44,7 +45,8 @@ import { PostSeriesComponent } from './post-series/post-series.component';
     InputTextModule,
     ButtonModule,
     BadgeModule,
-    TooltipModule
+    TooltipModule,
+    PermissionDirective
   ],
   providers: [
     DialogService,

@@ -1,20 +1,21 @@
-import { CommonModule } from '@angular/common'
-import { Component, OnDestroy, OnInit } from '@angular/core'
-import { ConfirmationService } from 'primeng/api'
-import { BlockUIModule } from 'primeng/blockui'
-import { ButtonModule } from 'primeng/button'
-import { DialogService } from 'primeng/dynamicdialog'
-import { InputTextModule } from 'primeng/inputtext'
-import { PaginatorModule } from 'primeng/paginator'
-import { PanelModule } from 'primeng/panel'
-import { ProgressSpinnerModule } from 'primeng/progressspinner'
-import { TableModule } from 'primeng/table'
-import { Subject, takeUntil } from 'rxjs'
-import { AdminApiRoleApiClient, RoleResponse, RoleResponsePagingResponse } from 'src/app/api/admin-api.service.generated'
-import { Message } from 'src/app/shared/constants/message.constant'
-import { AlertService } from 'src/app/shared/services/alert.service'
-import { PermissionComponent } from './permission/permission.component'
-import { RoleDetailComponent } from './role-detail/role-detail.component'
+import { CommonModule } from '@angular/common';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ConfirmationService } from 'primeng/api';
+import { BlockUIModule } from 'primeng/blockui';
+import { ButtonModule } from 'primeng/button';
+import { DialogService } from 'primeng/dynamicdialog';
+import { InputTextModule } from 'primeng/inputtext';
+import { PaginatorModule } from 'primeng/paginator';
+import { PanelModule } from 'primeng/panel';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { TableModule } from 'primeng/table';
+import { Subject, takeUntil } from 'rxjs';
+import { AdminApiRoleApiClient, RoleResponse, RoleResponsePagingResponse } from 'src/app/api/admin-api.service.generated';
+import { Message } from 'src/app/shared/constants/message.constant';
+import { PermissionDirective } from 'src/app/shared/directives/permission.directive';
+import { AlertService } from 'src/app/shared/services/alert.service';
+import { PermissionComponent } from './permission/permission.component';
+import { RoleDetailComponent } from './role-detail/role-detail.component';
 
 @Component({
   selector: 'app-role',
@@ -28,7 +29,8 @@ import { RoleDetailComponent } from './role-detail/role-detail.component'
     PaginatorModule,
     PanelModule,
     InputTextModule,
-    ButtonModule
+    ButtonModule,
+    PermissionDirective
   ],
   providers: [
     AdminApiRoleApiClient,

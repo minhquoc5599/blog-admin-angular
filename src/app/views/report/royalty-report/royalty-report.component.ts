@@ -13,6 +13,7 @@ import { TableModule } from 'primeng/table'
 import { Subject, takeUntil } from 'rxjs'
 import { AdminApiRoyaltyApiClient, RoyaltyReportResponse, RoyaltyReportResponsePagingResponse } from 'src/app/api/admin-api.service.generated'
 import { Message } from 'src/app/shared/constants/message.constant'
+import { PermissionDirective } from 'src/app/shared/directives/permission.directive'
 import { AlertService } from 'src/app/shared/services/alert.service'
 
 @Component({
@@ -28,7 +29,8 @@ import { AlertService } from 'src/app/shared/services/alert.service'
     ProgressSpinnerModule,
     CalendarModule,
     InputTextModule,
-    PaginatorModule
+    PaginatorModule,
+    PermissionDirective
   ],
   providers: [AdminApiRoyaltyApiClient],
   templateUrl: './royalty-report.component.html',

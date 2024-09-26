@@ -67,24 +67,25 @@
           </td>
           <td>
             <button pButton pRipple icon="pi pi-list" pTooltip="Add to series" tooltipPosition="top"
+            appPermission appPolicy="Permissions.Posts.GetSeries"
               (click)="showAddPostToSeriesModal(row.id, row.name)" class="p-button-rounded p-button-text"></button>
 
-            <button *ngIf="row.status != 3" pButton appPermission appPolicy="Permissons.Posts.Approve" pRipple
+            <button *ngIf="row.status != 3" pButton appPermission appPolicy="Permissions.Posts.Approve" pRipple
               icon="pi pi-check" pTooltip="Approve" tooltipPosition="top" (click)="approve(row.id)"
               class="p-button-rounded p-button-text p-button-success"></button>
 
             <button *ngIf="row.status != 3 && row.status != 1" pButton pRipple icon="pi pi-forward"
               pTooltip="Send to approve" tooltipPosition="top" (click)="sendToApprove(row.id)" appPermission
-              appPolicy="Permissons.Posts.SubmitForApproval"
+              appPolicy="Permissions.Posts.SubmitForApproval"
               class="p-button-rounded p-button-text p-button-danger"></button>
 
             <button *ngIf="row.status != 3" pButton pRipple icon="pi pi-backward" pTooltip="Reject"
-              tooltipPosition="top" (click)="reject(row.id, row.name)" appPermission appPolicy="Permissons.Posts.Reject"
+              tooltipPosition="top" (click)="reject(row.id, row.name)" appPermission appPolicy="Permissions.Posts.Reject"
               class="p-button-rounded p-button-text p-button-danger"></button>
 
             <button pButton pRipple icon="pi pi-history" pTooltip="Post Activity logs" tooltipPosition="top"
               (click)="showPostActivityLogs(row.id, row.name)" appPermission
-              appPolicy="Permissons.Posts.GetPostActivityLogs"
+              appPolicy="Permissions.Posts.GetPostActivityLogs"
               class="p-button-rounded p-button-text p-button-info"></button>
           </td>
         </tr>

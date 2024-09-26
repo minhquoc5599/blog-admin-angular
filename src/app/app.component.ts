@@ -3,7 +3,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { delay, filter, map, tap } from 'rxjs/operators';
-import { PermissionDirective } from './shared/directives/permission.directive';
 
 import { ColorModeService } from '@coreui/angular';
 import { IconSetService } from '@coreui/icons-angular';
@@ -18,7 +17,7 @@ import { iconSubset } from './icons/icon-subset';
   <p-confirmDialog />
   <router-outlet />`,
   standalone: true,
-  imports: [RouterOutlet, ToastModule, ConfirmDialogModule, PermissionDirective]
+  imports: [RouterOutlet, ToastModule, ConfirmDialogModule]
 })
 export class AppComponent implements OnInit {
   title = 'Blog Admin';

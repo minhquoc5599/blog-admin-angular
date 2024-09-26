@@ -59,13 +59,13 @@
           </td>
           <td>
             <p-button icon="pi pi-key" pTooltip="Set password" tooltipPosition="top" [rounded]="true" [text]="true"
-              (click)="setPassword(row.id, row.userName)"></p-button>
+            appPermission appPolicy="Permissions.Users.SetPassword" (click)="setPassword(row.id, row.userName)"></p-button>
 
             <p-button icon="pi pi-envelope" pTooltip="Change email" tooltipPosition="top" [rounded]="true" [text]="true"
-              (click)="changeEmail(row.id)"></p-button>
+            appPermission appPolicy="Permissions.Users.ChangeEmail" (click)="changeEmail(row.id)"></p-button>
 
             <p-button icon="pi pi-users" pTooltip="Role assign" tooltipPosition="top" [rounded]="true" [text]="true"
-              (click)="assignRole(row.id)"></p-button>
+            appPermission appPolicy="Permissions.Users.AssignRolesToUser" (click)="assignRole(row.id)"></p-button>
           </td>
         </tr>
       </ng-template>

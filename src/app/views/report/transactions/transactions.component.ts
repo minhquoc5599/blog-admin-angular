@@ -12,6 +12,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner'
 import { TableModule } from 'primeng/table'
 import { Subject, takeUntil } from 'rxjs'
 import { AdminApiRoyaltyApiClient, TransactionResponse, TransactionResponsePagingResponse } from 'src/app/api/admin-api.service.generated'
+import { PermissionDirective } from 'src/app/shared/directives/permission.directive'
 
 @Component({
   selector: 'app-transactions',
@@ -27,7 +28,8 @@ import { AdminApiRoyaltyApiClient, TransactionResponse, TransactionResponsePagin
     CalendarModule,
     InputTextModule,
     PaginatorModule,
-    BadgeModule
+    BadgeModule,
+    PermissionDirective
   ],
   providers: [AdminApiRoyaltyApiClient],
   templateUrl: './transactions.component.html',

@@ -14,6 +14,7 @@ import { TableModule } from 'primeng/table'
 import { Subject, takeUntil } from 'rxjs'
 import { AdminApiUserApiClient, UserResponse, UserResponsePagingResponse } from 'src/app/api/admin-api.service.generated'
 import { Message } from 'src/app/shared/constants/message.constant'
+import { PermissionDirective } from 'src/app/shared/directives/permission.directive'
 import { AlertService } from 'src/app/shared/services/alert.service'
 import { ChangeEmailComponent } from './change-email/change-email.component'
 import { RoleAssignComponent } from './role-assign/role-assign.component'
@@ -34,7 +35,9 @@ import { UserDetailComponent } from './user-detail/user-detail.component'
     PaginatorModule,
     BlockUIModule,
     ProgressSpinnerModule,
-    ButtonModule],
+    ButtonModule,
+    PermissionDirective
+  ],
   providers: [
     AdminApiUserApiClient,
     DialogService,

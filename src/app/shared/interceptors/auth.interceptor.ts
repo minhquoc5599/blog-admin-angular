@@ -80,7 +80,7 @@ const handleError = async (error: HttpErrorResponse, request: HttpRequest<any>, 
       break
 
     case 403: // Forbidden
-      logout(storageService, router)
+      alertService.showError(await (new Response(error.error)).text())
       break
 
     case 404: // Not found

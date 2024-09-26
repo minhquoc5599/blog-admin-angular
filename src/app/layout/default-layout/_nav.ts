@@ -5,10 +5,6 @@ export const navItems: INavData[] = [
     name: 'Dashboard',
     url: '/dashboard',
     iconComponent: { name: 'cil-speedometer' },
-    badge: {
-      color: 'info',
-      text: 'NEW'
-    },
     attributes: {
       policyName: 'Permissions.Dashboard.View'
     }
@@ -17,6 +13,9 @@ export const navItems: INavData[] = [
     name: 'System',
     url: '/system',
     iconComponent: { name: 'cil-settings' },
+    attributes: {
+      policyName: 'Permissions.System.View'
+    },
     children: [
       {
         name: 'Roles',
@@ -40,6 +39,9 @@ export const navItems: INavData[] = [
     name: 'Content',
     url: '/content',
     iconComponent: { name: 'cil-pencil' },
+    attributes: {
+      policyName: 'Permissions.Content.View'
+    },
     children: [
       {
         name: 'Categories',
@@ -68,13 +70,16 @@ export const navItems: INavData[] = [
     ]
   },
   {
-    name: 'Royalty',
-    url: '/royalty',
+    name: 'Report',
+    url: '/report',
     iconComponent: { name: 'cil-description' },
+    attributes: {
+      policyName: 'Permissions.Report.View'
+    },
     children: [
       {
         name: 'Royalty report',
-        url: '/royalty/royalty-report',
+        url: '/report/royalty-report',
         icon: 'nav-icon-bullet',
         attributes: {
           "policyName": "Permissions.Royalty.GetRoyaltyReport"
@@ -82,7 +87,7 @@ export const navItems: INavData[] = [
       },
       {
         name: 'Transactions',
-        url: '/royalty/transactions',
+        url: '/report/transactions',
         icon: 'nav-icon-bullet',
         attributes: {
           "policyName": "Permissions.Royalty.GetTransactions"
