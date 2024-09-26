@@ -12,7 +12,7 @@ export class StorageService {
 
   constructor() { }
 
-  signOut(): void {
+  logout(): void {
     localStorage.clear()
   }
 
@@ -49,11 +49,11 @@ export class StorageService {
   }
 
   getUser(): UserModel | null {
-    const base64User = localStorage.getItem(USER)
-    if (!base64User) {
+    const token = localStorage.getItem(TOKEN)
+    if (!token) {
       return null
     }
-    const base64Url = base64User.split('.')[1]
+    const base64Url = token.split('.')[1]
     const base64 = base64Url.replace('-', '+').replace('_', '/')
     const user: UserModel = JSON.parse(this.base64Decode(base64))
     return user

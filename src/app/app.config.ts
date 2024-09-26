@@ -8,8 +8,7 @@ import {
   withRouterConfig,
   withViewTransitions
 } from '@angular/router';
-import { ErrorInterceptor } from './shared/interceptors/error.interceptor';
-import { TokenInterceptor } from './shared/interceptors/token.interceptor';
+import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
 
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { DropdownModule, SidebarModule } from '@coreui/angular';
@@ -19,6 +18,7 @@ import { ADMIN_API_BASE_URL } from 'src/app/api/admin-api.service.generated';
 import { AuthGuard } from 'src/app/shared/guards/auth.guard';
 import { LoggedGuard } from 'src/app/shared/guards/logged.guard';
 import { AlertService } from 'src/app/shared/services/alert.service';
+import { LoadingService } from 'src/app/shared/services/loading.service';
 import { environment } from 'src/enviroments/environment';
 import { routes } from './app.routes';
 
@@ -40,7 +40,7 @@ export const appConfig: ApplicationConfig = {
     IconSetService,
     provideAnimations(),
     provideHttpClient(
-      withInterceptors([TokenInterceptor, ErrorInterceptor]),
+      withInterceptors([AuthInterceptor]),
     ),
 
     // Shared service
@@ -49,16 +49,7 @@ export const appConfig: ApplicationConfig = {
     AuthGuard,
     LoggedGuard,
     ConfirmationService,
+    LoadingService,
     { provide: ADMIN_API_BASE_URL, useValue: environment.API_URL },
-    // {
-    //   provide: HTTP_INTERCEPTORS,
-    //   useClass: TokenInterceptor,
-    //   multi: true
-    // },
-    // {
-    //   provide: HTTP_INTERCEPTORS,
-    //   useClass: GlobalHttpInterceptorService,
-    //   multi: true
-    // },
   ]
 };

@@ -57,9 +57,12 @@
   <div class="flex align-items-center mb-3">
     <label for="royaltyAmountPerPost">Royalty Amount</label>
     <p-inputNumber id="royaltyAmountPerPost" formControlName="royaltyAmountPerPost"
-        [style]="{ width: '100%', marginLeft: '10px' }">
+      [style]="{ width: '100%', marginLeft: '10px' }">
     </p-inputNumber>
-</div>
+    <app-validate-message [entityForm]="form" fieldName="royaltyAmountPerPost"
+      [validationMessages]="validationMessages">
+    </app-validate-message>
+  </div>
 
   <div class="flex align-items-center mb-4" [style]="{display: 'flex'}">
     <p-checkbox formControlName="isActive" [binary]="true" id="isActive"></p-checkbox>

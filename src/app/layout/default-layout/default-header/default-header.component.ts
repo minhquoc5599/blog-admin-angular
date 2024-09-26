@@ -57,7 +57,7 @@ export class DefaultHeaderComponent extends HeaderComponent {
   }
 
   logout(): void {
-    this.storage.signOut()
+    this.storage.logout()
     this.router.navigate([Url.LOGIN])
   }
 

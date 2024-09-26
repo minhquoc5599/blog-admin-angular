@@ -66,6 +66,7 @@ export class UserDetailComponent implements OnInit, OnDestroy {
       },
     ],
     phoneNumber: [{ type: 'required', message: 'You must enter a phone number' }],
+    royaltyAmountPerPost: [{ type: 'required', message: 'You must enter a royalty amount' }],
   }
 
   constructor(
@@ -148,7 +149,7 @@ export class UserDetailComponent implements OnInit, OnDestroy {
       avatarFile: new FormControl(null),
       avatar: new FormControl(this.selectedEntity.avatar || null),
       isActive: new FormControl(this.selectedEntity.isActive || true),
-      royaltyAmountPerPost: new FormControl(this.selectedEntity.royaltyAmountPerPost)
+      royaltyAmountPerPost: new FormControl(this.selectedEntity.royaltyAmountPerPost || 0, Validators.required)
     })
   }
 

@@ -1,28 +1,29 @@
-import { StorageService } from 'src/app/shared/services/storage.service'
-import { Url } from 'src/app/shared/constants/url.constant'
-import { AlertService } from 'src/app/shared/services/alert.service'
-import { AdminApiAuthApiClient, LoginRequest, AuthenticatedResponse } from 'src/app/api/admin-api.service.generated'
-import { Component, OnDestroy } from '@angular/core'
 import { NgStyle } from '@angular/common'
-import { IconDirective } from '@coreui/icons-angular'
+import { Component, OnDestroy, OnInit } from '@angular/core'
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
+import { Router } from '@angular/router'
 import {
-  ContainerComponent,
-  RowComponent,
-  ColComponent,
-  CardGroupComponent,
-  TextColorDirective,
-  CardComponent,
+  ButtonDirective,
   CardBodyComponent,
+  CardComponent,
+  CardGroupComponent,
+  ColComponent,
+  ContainerComponent,
+  FormControlDirective,
   FormDirective,
   InputGroupComponent,
   InputGroupTextDirective,
-  FormControlDirective,
-  ButtonDirective
+  RowComponent,
+  TextColorDirective
 } from '@coreui/angular'
-import { FormBuilder, FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms'
+import { IconDirective } from '@coreui/icons-angular'
 import { ToastModule } from 'primeng/toast'
-import { Router } from '@angular/router'
 import { Subject, takeUntil } from 'rxjs'
+import { AdminApiAuthApiClient, AuthenticatedResponse, LoginRequest } from 'src/app/api/admin-api.service.generated'
+import { Url } from 'src/app/shared/constants/url.constant'
+import { AlertService } from 'src/app/shared/services/alert.service'
+import { LoadingService } from 'src/app/shared/services/loading.service'
+import { StorageService } from 'src/app/shared/services/storage.service'
 
 @Component({
   selector: 'app-login',
@@ -48,26 +49,33 @@ import { Subject, takeUntil } from 'rxjs'
     ToastModule,
   ],
   providers: [
-    AlertService,
     AdminApiAuthApiClient,
     StorageService
   ]
 })
 
-export class LoginComponent implements OnDestroy {
+export class LoginComponent implements OnInit, OnDestroy {
   loginForm: FormGroup
   private ngUnsubsribe = new Subject<void>()
-  loading = false
+  isLoading = false
 
   constructor(
-    private fb: FormBuilder,
-    private authApi: AdminApiAuthApiClient,
-    private alertService: AlertService,
     private router: Router,
-    private storageService: StorageService) {
-    this.loginForm = this.fb.group({
-      username: new FormControl('', Validators.required),
-      password: new FormControl('', Validators.required)
+    private fb: FormBuilder,
+    private alertService: AlertService,
+    private storageService: StorageService,
+    private loadingService: LoadingService,
+
+    // Api
+    private authApi: AdminApiAuthApiClient,
+  ) {
+
+  }
+
+  ngOnInit(): void {
+    this.builForm()
+    this.loadingService.httpError.asObservable().subscribe(loading => {
+      this.isLoading = loading
     })
   }
 
@@ -76,8 +84,15 @@ export class LoginComponent implements OnDestroy {
     this.ngUnsubsribe.complete()
   }
 
+  builForm(): void {
+    this.loginForm = this.fb.group({
+      username: new FormControl('', Validators.required),
+      password: new FormControl('', Validators.required)
+    })
+  }
+
   login(): void {
-    this.loading = true
+    this.isLoading = true
     let request: LoginRequest = new LoginRequest({
       userName: this.loginForm.controls['username'].value,
       password: this.loginForm.controls['password'].value
@@ -93,8 +108,8 @@ export class LoginComponent implements OnDestroy {
           this.router.navigate([Url.DASHBOARD])
         },
         error: (error: any) => {
-          this.alertService.showError("Login invalid")
-          this.loading = false
+          this.alertService.showError(error)
+          this.isLoading = false
         }
       })
   }
