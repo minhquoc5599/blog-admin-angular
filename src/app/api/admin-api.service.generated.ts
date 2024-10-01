@@ -4510,7 +4510,6 @@ export interface ISetPasswordRequest {
 }
 
 export class TokenRequest implements ITokenRequest {
-    accessToken?: string | undefined;
     refreshToken?: string | undefined;
 
     constructor(data?: ITokenRequest) {
@@ -4524,7 +4523,6 @@ export class TokenRequest implements ITokenRequest {
 
     init(_data?: any) {
         if (_data) {
-            this.accessToken = _data["accessToken"];
             this.refreshToken = _data["refreshToken"];
         }
     }
@@ -4538,14 +4536,12 @@ export class TokenRequest implements ITokenRequest {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["accessToken"] = this.accessToken;
         data["refreshToken"] = this.refreshToken;
         return data;
     }
 }
 
 export interface ITokenRequest {
-    accessToken?: string | undefined;
     refreshToken?: string | undefined;
 }
 

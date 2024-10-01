@@ -8,7 +8,7 @@ import {
   withRouterConfig,
   withViewTransitions
 } from '@angular/router';
-import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
+import { ErrorInterceptor } from './shared/interceptors/error.interceptor';
 
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { DropdownModule, SidebarModule } from '@coreui/angular';
@@ -40,7 +40,7 @@ export const appConfig: ApplicationConfig = {
     IconSetService,
     provideAnimations(),
     provideHttpClient(
-      withInterceptors([AuthInterceptor]),
+      withInterceptors([ErrorInterceptor]),
     ),
 
     // Shared service
@@ -52,4 +52,4 @@ export const appConfig: ApplicationConfig = {
     LoadingService,
     { provide: ADMIN_API_BASE_URL, useValue: environment.API_URL },
   ]
-};
+}

@@ -3,5 +3,6 @@ export interface UserModel {
   email: string;
   firstName: string;
   roles: string[]
+  userName: string;
   permissions: any
 }

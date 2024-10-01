@@ -82,6 +82,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.ngUnsubsribe.next()
     this.ngUnsubsribe.complete()
+    this.loadingService.httpError.unsubscribe()
   }
 
   builForm(): void {
@@ -92,7 +93,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   login(): void {
-    this.isLoading = true
+    this.loadingService.httpError.next(true)
     let request: LoginRequest = new LoginRequest({
       userName: this.loginForm.controls['username'].value,
       password: this.loginForm.controls['password'].value
@@ -104,13 +105,11 @@ export class LoginComponent implements OnInit, OnDestroy {
           // Store token and refresh token to local storage
           this.storageService.saveToken(res.token)
           this.storageService.saveRefreshToken(res.refreshToken)
-          this.storageService.saveUser(res)
+
+          this.loadingService.httpError.next(false)
           this.router.navigate([Url.DASHBOARD])
         },
-        error: (error: any) => {
-          this.alertService.showError(error)
-          this.isLoading = false
-        }
+        error: () => { }
       })
   }
 }

@@ -1,16 +1,19 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { isUndefined } from 'lodash-es';
+import { Observable } from 'rxjs';
+import { TokenRequest } from 'src/app/api/admin-api.service.generated';
 import { UserModel } from 'src/app/shared/models/user.model';
+import { environment } from 'src/enviroments/environment';
 const TOKEN = 'token'
 const REFRESH_TOKEN = 'refresh-token'
-const USER = 'user'
 
 @Injectable({
   providedIn: 'root'
 })
 export class StorageService {
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
   logout(): void {
     localStorage.clear()
@@ -28,11 +31,6 @@ export class StorageService {
     if (!isUndefined(token)) {
       localStorage.removeItem(TOKEN)
       localStorage.setItem(TOKEN, token)
-
-      const user = this.getUser()
-      if (user?.id) {
-        this.saveUser({ ...user, accessToken: token })
-      }
     }
   }
 
@@ -41,11 +39,6 @@ export class StorageService {
       localStorage.removeItem(REFRESH_TOKEN)
       localStorage.setItem(REFRESH_TOKEN, token)
     }
-  }
-
-  saveUser(user: any): void {
-    localStorage.removeItem(USER)
-    localStorage.setItem(USER, JSON.stringify(user))
   }
 
   getUser(): UserModel | null {
@@ -65,5 +58,21 @@ export class StorageService {
       (c) => {
         return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
       }).join(''))
+  }
+
+  // Call api
+  refresh(): Observable<any> {
+    const refreshToken = this.getRefreshToken()
+    const tokenRequest = new TokenRequest({
+      refreshToken: refreshToken!,
+    })
+
+    return this.http.post(environment.API_URL + "/api/admin/token/refresh", tokenRequest)
+      // .pipe(
+      //   tap((response: AuthenticatedResponse) => {
+      //     this.saveToken(response.token)
+      //     this.saveRefreshToken(response.refreshToken)
+      //   }),
+      // )
   }
 }
