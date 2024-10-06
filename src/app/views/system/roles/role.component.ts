@@ -1,20 +1,17 @@
 import { CommonModule } from '@angular/common'
 import { Component, OnDestroy, OnInit } from '@angular/core'
 import { ConfirmationService } from 'primeng/api'
-import { BlockUIModule } from 'primeng/blockui'
 import { ButtonModule } from 'primeng/button'
 import { DialogService } from 'primeng/dynamicdialog'
 import { InputTextModule } from 'primeng/inputtext'
 import { PaginatorModule } from 'primeng/paginator'
 import { PanelModule } from 'primeng/panel'
-import { ProgressSpinnerModule } from 'primeng/progressspinner'
 import { TableModule } from 'primeng/table'
 import { Subject, takeUntil } from 'rxjs'
 import { AdminApiRoleApiClient, RoleResponse, RoleResponsePagingResponse } from 'src/app/api/admin-api.service.generated'
 import { Message } from 'src/app/shared/constants/message.constant'
 import { PermissionDirective } from 'src/app/shared/directives/permission.directive'
 import { AlertService } from 'src/app/shared/services/alert.service'
-import { LoadingService } from 'src/app/shared/services/loading.service'
 import { PermissionComponent } from './permission/permission.component'
 import { RoleDetailComponent } from './role-detail/role-detail.component'
 
@@ -25,8 +22,6 @@ import { RoleDetailComponent } from './role-detail/role-detail.component'
   imports: [
     CommonModule,
     TableModule,
-    ProgressSpinnerModule,
-    BlockUIModule,
     PaginatorModule,
     PanelModule,
     InputTextModule,
@@ -40,7 +35,6 @@ import { RoleDetailComponent } from './role-detail/role-detail.component'
 })
 export class RoleComponent implements OnInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>()
-  isLoading: boolean = false
 
   //Page setting
   pageIndex: number = 1
@@ -56,7 +50,6 @@ export class RoleComponent implements OnInit, OnDestroy {
     private alertService: AlertService,
     private dialogService: DialogService,
     private confirmationService: ConfirmationService,
-    private loadingService: LoadingService,
 
     // Api
     private roleApiClient: AdminApiRoleApiClient,
@@ -65,25 +58,19 @@ export class RoleComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.ngUnsubscribe.next()
     this.ngUnsubscribe.complete()
-    this.loadingService.httpError.unsubscribe();
   }
 
   ngOnInit(): void {
-    this.loadingService.httpError.asObservable().subscribe(loading => {
-      this.isLoading = loading
-    })
     this.getData()
   }
 
-  getData() {
-    this.loadingService.httpError.next(true)
+  getData(): void {
     this.roleApiClient.getRolesPaging(this.keyword, this.pageIndex, this.pageSize)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (response: RoleResponsePagingResponse) => {
           this.data = response.results
           this.total = response.rowCount
-          this.loadingService.httpError.next(false)
         },
         error: () => { }
       })
@@ -175,8 +162,7 @@ export class RoleComponent implements OnInit, OnDestroy {
     })
   }
 
-  deleteItemsConfirm(ids: any[]) {
-    this.isLoading = true
+  private deleteItemsConfirm(ids: any[]): void {
 
     this.roleApiClient.deleteRoles(ids).subscribe({
       next: () => {
@@ -185,11 +171,8 @@ export class RoleComponent implements OnInit, OnDestroy {
         )
         this.getData()
         this.selectedItems = []
-        this.isLoading = false
       },
-      error: () => {
-        this.isLoading = false
-      },
+      error: () => { },
     })
   }
 }

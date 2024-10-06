@@ -1,18 +1,13 @@
 <form class="form-horizontal form-label-left" skipValidation [formGroup]="form" (ngSubmit)="save()">
-  <div [id]="permission.value" *ngFor="let permission of permissions; let i = index" style="display: flex !important"
-    class="my-2">
+  @for (permission of permissions; track $index) {
+  <div [id]="permission.value" style="display: flex !important" class="my-2">
     <p-checkbox [value]="permission" [(ngModel)]="selectedPermissions" [inputId]="permission.value"
       [ngModelOptions]="{ standalone: true }"></p-checkbox>
     <label for="permission.value" class="mx-2">{{ permission.displayName }}</label>
   </div>
+  }
 
   <div class="flex justify-content-end mt-3">
     <p-button type="submit" [disabled]="!form.valid || btnDisabled" label="Update"></p-button>
   </div>
-
-  <p-blockUI [blocked]="isLoading">
-    <div class="card flex justify-content-center bg-transparent" [style]="{border: 'none'}">
-      <p-progressSpinner strokeWidth="2" animationDuration="1s" />
-    </div>
-  </p-blockUI>
 </form>

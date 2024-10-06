@@ -2,13 +2,11 @@ import { CommonModule } from '@angular/common'
 import { Component, OnDestroy, OnInit } from '@angular/core'
 import { ConfirmationService } from 'primeng/api'
 import { BadgeModule } from 'primeng/badge'
-import { BlockUIModule } from 'primeng/blockui'
 import { ButtonModule } from 'primeng/button'
 import { DialogService } from 'primeng/dynamicdialog'
 import { InputTextModule } from 'primeng/inputtext'
 import { PaginatorModule } from 'primeng/paginator'
 import { PanelModule } from 'primeng/panel'
-import { ProgressSpinnerModule } from 'primeng/progressspinner'
 import { TableModule } from 'primeng/table'
 import { Subject, takeUntil } from 'rxjs'
 import {
@@ -28,8 +26,6 @@ import { PostCategoryDetailComponent } from './post-category-detail/post-categor
   imports: [
     CommonModule,
     TableModule,
-    ProgressSpinnerModule,
-    BlockUIModule,
     PaginatorModule,
     PanelModule,
     InputTextModule,
@@ -44,7 +40,6 @@ import { PostCategoryDetailComponent } from './post-category-detail/post-categor
 })
 export class PostCategoryComponent implements OnInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>()
-  isLoading: boolean = true
 
   // Page Setting
   pageIndex: number = 1
@@ -57,7 +52,7 @@ export class PostCategoryComponent implements OnInit, OnDestroy {
   keyword: string = ''
 
   constructor(
-    public dialogService: DialogService,
+    private dialogService: DialogService,
     private alertService: AlertService,
     private confirmationService: ConfirmationService,
 
@@ -75,21 +70,14 @@ export class PostCategoryComponent implements OnInit, OnDestroy {
   }
 
   getData(): void {
-    this.isLoading = true
-
     this.postCategoryApiClient.getPostCategoriesPaging(this.keyword, this.pageIndex, this.pageSize)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (response: PostCategoryResponsePagingResponse) => {
           this.items = response.results
           this.totalCount = response.rowCount
-
-          this.isLoading = false
         },
-        error: (error) => {
-          this.isLoading = false
-          this.alertService.showError(error)
-        }
+        error: () => { }
       })
   }
 
@@ -104,7 +92,7 @@ export class PostCategoryComponent implements OnInit, OnDestroy {
       header: 'Add Post Category',
       width: '40%'
     })
-    
+
     ref.onClose.subscribe((data: PostCategoryResponse) => {
       if (data) {
         this.alertService.showSuccess(Message.CREATED_OK_MSG)
@@ -128,7 +116,7 @@ export class PostCategoryComponent implements OnInit, OnDestroy {
       header: 'Update post category',
       width: '40%'
     })
-   
+
     ref.onClose.subscribe((data: PostCategoryResponse) => {
       if (data) {
         this.alertService.showSuccess(Message.UPDATED_OK_MSG)
@@ -159,20 +147,15 @@ export class PostCategoryComponent implements OnInit, OnDestroy {
     })
   }
 
-  deleteItemsConfirm(ids: any[]) {
-    this.isLoading = true
-
+  private deleteItemsConfirm(ids: any[]): void {
     this.postCategoryApiClient.deletePostCategory(ids)
       .subscribe({
         next: () => {
           this.alertService.showSuccess(Message.DELETED_OK_MSG)
           this.getData()
           this.selectedItems = []
-          this.isLoading = false
         },
-        error: () => {
-          this.isLoading = false
-        }
+        error: () => { }
       })
   }
 }

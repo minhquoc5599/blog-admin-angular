@@ -1,7 +1,7 @@
 import { HttpErrorResponse, HttpHandlerFn, HttpInterceptorFn, HttpRequest } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, Observable, switchMap, throwError } from 'rxjs';
+import { catchError, finalize, Observable, switchMap, throwError } from 'rxjs';
 import { AuthenticatedResponse } from 'src/app/api/admin-api.service.generated';
 import { Url } from 'src/app/shared/constants/url.constant';
 import { AlertService } from 'src/app/shared/services/alert.service';
@@ -94,7 +94,8 @@ export const ErrorInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next:
   if (token != null) {
     req = addTokenHeader(req, token)
   }
-
+  
+  loadingService.showLoader();
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       //return from(handleError(error, req, next, alertService, loadingService, storageService, router))
@@ -102,7 +103,6 @@ export const ErrorInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next:
         switch (error.status) {
           case 401: // Unauthorized
             if (!router.url.includes('auth/login')) {
-              loadingService.httpError.next(false)
               return storageService.refresh().pipe(
                 switchMap((response: AuthenticatedResponse) => {
                   storageService.saveToken(response.token)
@@ -112,7 +112,7 @@ export const ErrorInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next:
                   return next(req)
                 }),
                 catchError((error) => {
-                  if(error.status === '401'){
+                  if (error.status === '401') {
                     logout(storageService, router)
                   }
                   return throwError(() => error)
@@ -143,9 +143,13 @@ export const ErrorInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next:
             alertService.showError(ErrorMessage.OTHER_ERROR_MSG)
             break
         }
-        loadingService.httpError.next(false)
       }
       return throwError(() => error)
+    }),
+    finalize(() => {
+      setTimeout(() => {
+        loadingService.hideLoader()
+      }, 500);
     })
   )
 }

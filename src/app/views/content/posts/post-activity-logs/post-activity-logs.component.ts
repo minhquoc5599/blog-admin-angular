@@ -1,9 +1,7 @@
 import { CommonModule } from '@angular/common'
-import { Component, OnDestroy, OnInit } from '@angular/core'
+import { AfterContentInit, Component, OnDestroy, OnInit } from '@angular/core'
 import { BadgeModule } from 'primeng/badge'
-import { BlockUIModule } from 'primeng/blockui'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
-import { ProgressSpinnerModule } from 'primeng/progressspinner'
 import { TableModule } from 'primeng/table'
 import { Subject, takeUntil } from 'rxjs'
 import { AdminApiPostApiClient, PostActivityLogResponse } from 'src/app/api/admin-api.service.generated'
@@ -15,21 +13,19 @@ import { AdminApiPostApiClient, PostActivityLogResponse } from 'src/app/api/admi
   imports: [
     CommonModule,
     TableModule,
-    BlockUIModule,
-    ProgressSpinnerModule,
     BadgeModule,
   ]
 })
-export class PostActivityLogsComponent implements OnInit, OnDestroy {
+export class PostActivityLogsComponent implements OnInit, AfterContentInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>()
+  private timeoutId: number
 
   // Default
-  isLoading: boolean = false
   items: PostActivityLogResponse[] = []
 
   constructor(
-    public ref: DynamicDialogRef,
-    public config: DynamicDialogConfig,
+    private ref: DynamicDialogRef,
+    private config: DynamicDialogConfig,
 
     // Api
     private postApiClient: AdminApiPostApiClient,
@@ -41,25 +37,26 @@ export class PostActivityLogsComponent implements OnInit, OnDestroy {
     }
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
+
+    clearTimeout(this.timeoutId)
   }
 
-  ngOnInit() {
-    this.getData(this.config.data?.id)
+  ngOnInit(): void { }
+
+  ngAfterContentInit(): void {
+    this.timeoutId = setTimeout(() => {
+      this.getData()
+    }, 0)
   }
 
-  getData(id: string) {
-    this.isLoading = true
-
+  private getData(): void {
     this.postApiClient.getPostActivityLogs(this.config.data.id)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (repsonse: PostActivityLogResponse[]) => {
           this.items = repsonse;
-          this.isLoading = false
         },
-        error: () => {
-          this.isLoading = false
-        },
+        error: () => { },
       });
   }
 }

@@ -1,7 +1,5 @@
-import { CommonModule } from '@angular/common'
-import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core'
+import { AfterContentInit, Component, OnDestroy, OnInit } from '@angular/core'
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
-import { BlockUIModule } from 'primeng/blockui'
 import { ButtonModule } from 'primeng/button'
 import { CheckboxModule } from 'primeng/checkbox'
 import { DropdownModule } from 'primeng/dropdown'
@@ -12,11 +10,9 @@ import { InputNumberModule } from 'primeng/inputnumber'
 import { InputTextModule } from 'primeng/inputtext'
 import { InputTextareaModule } from 'primeng/inputtextarea'
 import { KeyFilterModule } from 'primeng/keyfilter'
-import { ProgressSpinnerModule } from 'primeng/progressspinner'
 import { Subject, takeUntil } from 'rxjs'
 import { AdminApiPostApiClient, AdminApiPostCategoryApiClient, PostDetailResponse } from 'src/app/api/admin-api.service.generated'
 import { UploadApiService } from 'src/app/api/upload-api.service'
-import { AlertService } from 'src/app/shared/services/alert.service'
 import { UtilityService } from 'src/app/shared/services/utility.service'
 import { ValidateMessageComponent } from 'src/app/shared/validates/validate-message/validate-message.component'
 import { environment } from 'src/enviroments/environment'
@@ -26,13 +22,10 @@ import { environment } from 'src/enviroments/environment'
   templateUrl: './post-detail.component.html',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     InputTextModule,
     InputNumberModule,
     InputTextareaModule,
-    BlockUIModule,
-    ProgressSpinnerModule,
     CheckboxModule,
     KeyFilterModule,
     ButtonModule,
@@ -45,11 +38,11 @@ import { environment } from 'src/enviroments/environment'
     UtilityService
   ]
 })
-export class PostDetailComponent implements OnInit, OnDestroy {
+export class PostDetailComponent implements OnInit, AfterContentInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>()
+  private timeoutId: number
 
   // Default
-  isLoading: boolean = false
   form: FormGroup
   btnDisabled = false
   saveBtnName: string
@@ -57,8 +50,6 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   series: any[] = []
   selectedEntity = {} as PostDetailResponse
   thumbnailImage: any
-
-  formSavedEventEmitter: EventEmitter<any> = new EventEmitter()
 
   // Validate
   noSpecial: RegExp = /^[^<>*!_~]+$/
@@ -73,11 +64,10 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   }
 
   constructor(
-    public ref: DynamicDialogRef,
-    public config: DynamicDialogConfig,
+    private ref: DynamicDialogRef,
+    private config: DynamicDialogConfig,
     private utilityService: UtilityService,
     private fb: FormBuilder,
-    private alertService: AlertService,
 
     // Api
     private uploadApiService: UploadApiService,
@@ -91,27 +81,32 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     }
     this.ngUnsubscribe.next()
     this.ngUnsubscribe.complete()
+
+    clearTimeout(this.timeoutId)
   }
 
-  ngOnInit() {
-    this.loading(true)
+  ngOnInit(): void {
     this.buildForm()
-    this.loadPostCategories();
-    if (this.utilityService.isEmpty(this.config.data?.id) == false) {
-      this.loadDetail(this.config.data.id)
-      this.saveBtnName = 'Update'
-    } else {
-      this.saveBtnName = 'Add'
-    }
-    this.loading(false)
   }
 
-  generateSlug() {
+  ngAfterContentInit(): void {
+    this.timeoutId = setTimeout(() => {
+      this.loadPostCategories()
+      if (this.utilityService.isEmpty(this.config.data?.id) == false) {
+        this.loadDetail(this.config.data.id)
+        this.saveBtnName = 'Update'
+      } else {
+        this.saveBtnName = 'Add'
+      }
+    }, 0)
+  }
+
+  generateSlug(): void {
     var slug = this.utilityService.makeSeoTitle(this.form.get('name').value)
     this.form.controls['slug'].setValue(slug)
   }
 
-  buildForm() {
+  private buildForm(): void {
     this.form = this.fb.group({
       name: new FormControl(this.selectedEntity.name || null, Validators.compose([
         Validators.required,
@@ -131,7 +126,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     }
   }
 
-  loadPostCategories(): void {
+  private loadPostCategories(): void {
     this.postCategoryApiClient.getPostCategories()
       .subscribe((response: PostDetailResponse[]) => {
         response.forEach(item => {
@@ -143,21 +138,19 @@ export class PostDetailComponent implements OnInit, OnDestroy {
       })
   }
 
-  loadDetail(id: any) {
+  private loadDetail(id: any): void {
     this.postApiClient.getPostById(id)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (response: PostDetailResponse) => {
           this.selectedEntity = response
           this.buildForm()
-
-        }
-        , error: () => {
-        }
+        },
+        error: () => { }
       })
   }
 
-  onFileChange(event) {
+  onFileChange(event: any): void {
     if (event.target.files && event.target.files.length) {
       this.uploadApiService.uploadImage('posts', event.target.files)
         .subscribe({
@@ -165,26 +158,23 @@ export class PostDetailComponent implements OnInit, OnDestroy {
             this.form.controls['thumbnail'].setValue(response.path)
             this.thumbnailImage = environment.API_URL + response.path
           },
-          error: (error: any) => {
-            this.alertService.showError(error)
-          }
+          error: () => { }
         })
     }
   }
 
-  save() {
-    this.loading(true)
+  save(): void {
+    this.btnDisabled = true
     if (this.utilityService.isEmpty(this.config.data?.id)) {
       this.postApiClient.createPost(this.form.value)
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: () => {
+            this.btnDisabled = false
             this.ref.close(this.form.value)
-            this.loading(false)
-
-          }, error: (error) => {
-            this.loading(false)
-            this.alertService.showError(error)
+          },
+          error: () => {
+            this.btnDisabled = false
           }
         })
     }
@@ -193,18 +183,13 @@ export class PostDetailComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: () => {
-            this.loading(false)
+            this.btnDisabled = false
             this.ref.close(this.form.value)
-          }, error: (error) => {
-            this.loading(false)
-            this.alertService.showError(error)
+          },
+          error: () => {
+            this.btnDisabled = false
           }
         })
     }
-  }
-
-  private loading(enable: boolean) {
-    this.isLoading = enable
-    this.btnDisabled = enable
   }
 }

@@ -1,5 +1,5 @@
 <div class="row">
-  <p-table [value]="posts" selectionMode="multiple" dataKey="id" [metaKeySelection]="true" [responsive]="true">
+  <p-table [value]="posts" selectionMode="multiple" dataKey="id" [metaKeySelection]="true">
     <ng-template pTemplate="header">
       <tr>
         <th style="width: 10px">
@@ -20,15 +20,10 @@
         <td>{{ row.sortOrder }}</td>
         <td>
           <p-button icon="pi pi-trash" pTooltip="Delete" tooltipPosition="top" [rounded]="true" [text]="true"
-            severity="danger" (click)="removePost(row.id)" appPermission appPolicy="Permissons.Series.DeletePostInSeries"></p-button>
+            severity="danger" (click)="removePost(row.id)" appPermission
+            appPolicy="Permissons.Series.DeletePostInSeries"></p-button>
         </td>
       </tr>
     </ng-template>
   </p-table>
 </div>
-
-<p-blockUI [blocked]="isLoading">
-  <div class="card flex justify-content-center bg-transparent" [style]="{border: 'none'}">
-    <p-progressSpinner strokeWidth="2" animationDuration="1s" />
-  </div>
-</p-blockUI>

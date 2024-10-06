@@ -1,14 +1,11 @@
-import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core'
+import { Component, OnDestroy, OnInit } from '@angular/core'
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms'
-import { BlockUIModule } from 'primeng/blockui'
 import { ButtonModule } from 'primeng/button'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { InputTextModule } from 'primeng/inputtext'
 import { KeyFilterModule } from 'primeng/keyfilter'
-import { ProgressSpinnerModule } from 'primeng/progressspinner'
 import { Subject, takeUntil } from 'rxjs'
 import { AdminApiUserApiClient } from 'src/app/api/admin-api.service.generated'
-import { AlertService } from 'src/app/shared/services/alert.service'
 import { ValidateMessageComponent } from 'src/app/shared/validates/validate-message/validate-message.component'
 
 @Component({
@@ -17,8 +14,6 @@ import { ValidateMessageComponent } from 'src/app/shared/validates/validate-mess
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    BlockUIModule,
-    ProgressSpinnerModule,
     KeyFilterModule,
     InputTextModule,
     ButtonModule,
@@ -29,11 +24,9 @@ export class SetPasswordComponent implements OnInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>()
 
   // Default
-  isLoading: boolean = false
   form: FormGroup
   btnDisabled = false
   email: string
-  formSavedEventEmitter: EventEmitter<any> = new EventEmitter()
 
   // Validate
   noSpecial: RegExp = /^[^<>*!_~]+$/
@@ -49,10 +42,9 @@ export class SetPasswordComponent implements OnInit, OnDestroy {
   }
 
   constructor(
-    public ref: DynamicDialogRef,
-    public config: DynamicDialogConfig,
+    private ref: DynamicDialogRef,
+    private config: DynamicDialogConfig,
     private fb: FormBuilder,
-    private alertService: AlertService,
 
     // Api
     private userApiClient: AdminApiUserApiClient,
@@ -64,15 +56,13 @@ export class SetPasswordComponent implements OnInit, OnDestroy {
     }
     this.ngUnsubscribe.next()
     this.ngUnsubscribe.complete()
-
   }
 
   ngOnInit(): void {
     this.buildForm()
   }
 
-
-  buildForm() {
+  private buildForm(): void {
     this.form = this.fb.group(
       {
         newPassword: new FormControl(
@@ -84,7 +74,7 @@ export class SetPasswordComponent implements OnInit, OnDestroy {
             ),
           ])
         ),
-        confirmNewPassword: new FormControl(null),
+        confirmNewPassword: new FormControl(null, Validators.compose([Validators.required])),
       },
       {
         validators: passwordMatchingValidatior
@@ -92,24 +82,18 @@ export class SetPasswordComponent implements OnInit, OnDestroy {
     )
   }
 
-  save() {
-    this.loading(true)
+  save(): void {
+    this.btnDisabled = true
     this.userApiClient.setPassword(this.config.data.id, this.form.value)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: () => {
-          this.loading(false)
+          this.btnDisabled = false
           this.ref.close(this.form.value)
-        }, error: (error) => {
-          this.loading(false)
-          this.alertService.showError(error)
+        }, error: () => {
+          this.btnDisabled = false
         }
       })
-  }
-
-  private loading(enable: boolean) {
-    this.isLoading = enable
-    this.btnDisabled = enable
   }
 }
 

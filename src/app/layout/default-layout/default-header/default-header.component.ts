@@ -1,5 +1,5 @@
 import { NgStyle, NgTemplateOutlet } from '@angular/common';
-import { Component, computed, inject, input, OnInit } from '@angular/core';
+import { Component, computed, inject, input, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 import {
@@ -27,6 +27,8 @@ import {
 } from '@coreui/angular';
 
 import { IconDirective } from '@coreui/icons-angular';
+import { Subject, takeUntil } from 'rxjs';
+import { AdminApiTokenApiClient } from 'src/app/api/admin-api.service.generated';
 import { Url } from 'src/app/shared/constants/url.constant';
 import { UserModel } from 'src/app/shared/models/user.model';
 import { StorageService } from 'src/app/shared/services/storage.service';
@@ -35,9 +37,10 @@ import { StorageService } from 'src/app/shared/services/storage.service';
   selector: 'app-default-header',
   templateUrl: './default-header.component.html',
   standalone: true,
-  imports: [ContainerComponent, HeaderTogglerDirective, SidebarToggleDirective, IconDirective, HeaderNavComponent, NavItemComponent, NavLinkDirective, RouterLink, RouterLinkActive, NgTemplateOutlet, BreadcrumbRouterComponent, ThemeDirective, DropdownComponent, DropdownToggleDirective, TextColorDirective, AvatarComponent, DropdownMenuDirective, DropdownHeaderDirective, DropdownItemDirective, BadgeComponent, DropdownDividerDirective, ProgressBarDirective, ProgressComponent, NgStyle]
+  imports: [ContainerComponent, HeaderTogglerDirective, SidebarToggleDirective, IconDirective, HeaderNavComponent, NavItemComponent, NavLinkDirective, RouterLink, RouterLinkActive, NgTemplateOutlet, BreadcrumbRouterComponent, ThemeDirective, DropdownComponent, DropdownToggleDirective, TextColorDirective, AvatarComponent, DropdownMenuDirective, DropdownHeaderDirective, DropdownItemDirective, BadgeComponent, DropdownDividerDirective, ProgressBarDirective, ProgressComponent, NgStyle],
+  providers: [AdminApiTokenApiClient]
 })
-export class DefaultHeaderComponent extends HeaderComponent implements OnInit {
+export class DefaultHeaderComponent extends HeaderComponent implements OnInit, OnDestroy {
 
   readonly #colorModeService = inject(ColorModeService);
   readonly colorMode = this.#colorModeService.colorMode;
@@ -54,8 +57,14 @@ export class DefaultHeaderComponent extends HeaderComponent implements OnInit {
   });
 
   user: UserModel
+  private ngUnsubsribe = new Subject<void>()
 
-  constructor(private storage: StorageService, private router: Router) {
+  constructor(
+    private storage: StorageService,
+    private router: Router,
+
+    // Api
+    private tokenApiClient: AdminApiTokenApiClient) {
     super();
   }
 
@@ -63,9 +72,19 @@ export class DefaultHeaderComponent extends HeaderComponent implements OnInit {
     this.user = this.storage.getUser()
   }
 
+  ngOnDestroy(): void {
+    this.ngUnsubsribe.next()
+    this.ngUnsubsribe.complete()
+  }
+
   logout(): void {
-    this.storage.logout()
-    this.router.navigate([Url.LOGIN])
+    this.tokenApiClient.revoke().pipe(takeUntil(this.ngUnsubsribe)).subscribe({
+      next: () => {
+        this.storage.logout()
+        this.router.navigate([Url.LOGIN])
+      },
+      error: () => { }
+    })
   }
 
   sidebarId = input('sidebar1');

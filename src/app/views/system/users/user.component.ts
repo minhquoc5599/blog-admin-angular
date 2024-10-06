@@ -1,15 +1,12 @@
 import { CommonModule } from '@angular/common'
 import { Component, OnDestroy, OnInit } from '@angular/core'
-import { FormsModule } from '@angular/forms'
 import { ConfirmationService } from 'primeng/api'
 import { BadgeModule } from 'primeng/badge'
-import { BlockUIModule } from 'primeng/blockui'
 import { ButtonModule } from 'primeng/button'
 import { DialogService } from 'primeng/dynamicdialog'
 import { InputTextModule } from 'primeng/inputtext'
 import { PaginatorModule } from 'primeng/paginator'
 import { PanelModule } from 'primeng/panel'
-import { ProgressSpinnerModule } from 'primeng/progressspinner'
 import { TableModule } from 'primeng/table'
 import { Subject, takeUntil } from 'rxjs'
 import { AdminApiUserApiClient, UserResponse, UserResponsePagingResponse } from 'src/app/api/admin-api.service.generated'
@@ -27,14 +24,11 @@ import { UserDetailComponent } from './user-detail/user-detail.component'
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
     PanelModule,
     TableModule,
     InputTextModule,
     BadgeModule,
     PaginatorModule,
-    BlockUIModule,
-    ProgressSpinnerModule,
     ButtonModule,
     PermissionDirective
   ],
@@ -45,7 +39,6 @@ import { UserDetailComponent } from './user-detail/user-detail.component'
 })
 export class UserComponent implements OnInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>()
-  isLoading: boolean = false
 
   //Page setting
   pageIndex: number = 1
@@ -60,7 +53,7 @@ export class UserComponent implements OnInit, OnDestroy {
   constructor(
     private alertService: AlertService,
     private confirmationService: ConfirmationService,
-    public dialogService: DialogService,
+    private dialogService: DialogService,
 
     //Api
     private userApiClient: AdminApiUserApiClient,
@@ -75,8 +68,7 @@ export class UserComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe.complete()
   }
 
-  getData(selectionId = null) {
-    this.isLoading = true
+  getData(selectionId = null): void {
     this.userApiClient.getUsersPaging(this.keyword, this.pageIndex, this.pageSize)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
@@ -88,10 +80,8 @@ export class UserComponent implements OnInit, OnDestroy {
               (x) => x.id == selectionId
             )
           }
-          this.isLoading = false
         },
         error: (error) => {
-          this.isLoading = false
           this.alertService.showError(error)
         },
       })
@@ -147,7 +137,7 @@ export class UserComponent implements OnInit, OnDestroy {
     })
   }
 
-  deleteItems() {
+  deleteItems(): void {
     if (this.selectedItems.length == 0) {
       this.alertService.showError(
         Message.NOT_CHOOSE_ANY_RECORD
@@ -170,8 +160,7 @@ export class UserComponent implements OnInit, OnDestroy {
     })
   }
 
-  deleteItemsConfirm(ids: any[]) {
-    this.isLoading = true
+  private deleteItemsConfirm(ids: any[]): void {
     this.userApiClient.deleteUsers(ids).subscribe({
       next: () => {
         this.alertService.showSuccess(
@@ -179,15 +168,12 @@ export class UserComponent implements OnInit, OnDestroy {
         )
         this.getData()
         this.selectedItems = []
-        this.isLoading = false
       },
-      error: () => {
-        this.isLoading = false
-      },
+      error: () => { },
     })
   }
 
-  setPassword(id: string, userName: string) {
+  setPassword(id: string, userName: string): void {
     const ref = this.dialogService.open(SetPasswordComponent, {
       data: {
         id: id,
@@ -207,7 +193,7 @@ export class UserComponent implements OnInit, OnDestroy {
     })
   }
 
-  changeEmail(id: string) {
+  changeEmail(id: string): void {
     const ref = this.dialogService.open(ChangeEmailComponent, {
       data: {
         id: id,
@@ -227,7 +213,7 @@ export class UserComponent implements OnInit, OnDestroy {
     })
   }
 
-  assignRole(id: string) {
+  assignRole(id: string): void {
     const ref = this.dialogService.open(RoleAssignComponent, {
       data: {
         id: id,

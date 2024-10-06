@@ -2,13 +2,11 @@ import { CommonModule } from '@angular/common'
 import { Component, OnDestroy, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { ConfirmationService } from 'primeng/api'
-import { BlockUIModule } from 'primeng/blockui'
 import { ButtonModule } from 'primeng/button'
 import { CalendarModule } from 'primeng/calendar'
 import { InputTextModule } from 'primeng/inputtext'
 import { PaginatorModule } from 'primeng/paginator'
 import { PanelModule } from 'primeng/panel'
-import { ProgressSpinnerModule } from 'primeng/progressspinner'
 import { TableModule } from 'primeng/table'
 import { Subject, takeUntil } from 'rxjs'
 import { AdminApiRoyaltyApiClient, RoyaltyReportResponse, RoyaltyReportResponsePagingResponse } from 'src/app/api/admin-api.service.generated'
@@ -25,8 +23,6 @@ import { AlertService } from 'src/app/shared/services/alert.service'
     TableModule,
     CommonModule,
     FormsModule,
-    BlockUIModule,
-    ProgressSpinnerModule,
     CalendarModule,
     InputTextModule,
     PaginatorModule,
@@ -44,7 +40,6 @@ export class RoyaltyReportComponent implements OnInit, OnDestroy {
   totalCount: number
 
   // Default
-  isLoading: boolean = false
   items: RoyaltyReportResponse[] = []
   username: string = ''
   toDate: Date = new Date()
@@ -63,25 +58,21 @@ export class RoyaltyReportComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe.complete()
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.getData()
   }
 
   getData(): void {
     const fromDateFormat = this.formatDate(this.fromDate)
     const toDateFormat = this.formatDate(this.toDate)
-    this.isLoading = true
     this.royaltyApiClient.getRoyaltyReport(this.username, fromDateFormat, toDateFormat)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (response: RoyaltyReportResponsePagingResponse) => {
           this.items = response.results
           this.totalCount = response.rowCount
-          this.isLoading = false
         },
-        error: () => {
-          this.isLoading = false
-        }
+        error: () => { }
       })
   }
 
@@ -91,7 +82,7 @@ export class RoyaltyReportComponent implements OnInit, OnDestroy {
     this.getData()
   }
 
-  formatDate(date: Date) {
+  private formatDate(date: Date): string {
     const month = date.getMonth() + 1
     const day = date.getDate()
     return [date.getFullYear(), (month > 9 ? '' : '0') + month, (day > 9 ? '' : '0') + day].join('-')
@@ -110,19 +101,14 @@ export class RoyaltyReportComponent implements OnInit, OnDestroy {
     })
   }
 
-  payConfirm(id: string) {
-    this.isLoading = true
-
+  private payConfirm(id: string): void {
     this.royaltyApiClient.payRoyalty(id)
       .subscribe({
         next: () => {
           this.alertService.showSuccess(Message.UPDATED_OK_MSG)
           this.getData()
-          this.isLoading = false
         },
-        error: () => {
-          this.isLoading = false
-        }
+        error: () => { }
       })
   }
 }

@@ -1,11 +1,9 @@
 import { CommonModule } from '@angular/common'
-import { Component, OnDestroy, OnInit } from '@angular/core'
-import { BlockUIModule } from 'primeng/blockui'
+import { AfterContentInit, Component, OnDestroy, OnInit } from '@angular/core'
 import { ButtonModule } from 'primeng/button'
 import { CheckboxModule } from 'primeng/checkbox'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { KeyFilterModule } from 'primeng/keyfilter'
-import { ProgressSpinnerModule } from 'primeng/progressspinner'
 import { TableModule } from 'primeng/table'
 import { Subject, takeUntil } from 'rxjs'
 import { AddPostSeriesRequest, AdminApiSeriesApiClient, PostResponse, } from 'src/app/api/admin-api.service.generated'
@@ -20,24 +18,22 @@ import { ValidateMessageComponent } from 'src/app/shared/validates/validate-mess
   imports: [
     CommonModule,
     TableModule,
-    BlockUIModule,
-    ProgressSpinnerModule,
     CheckboxModule,
     KeyFilterModule,
     ButtonModule,
     ValidateMessageComponent
   ]
 })
-export class SeriesPostsComponent implements OnInit, OnDestroy {
+export class SeriesPostsComponent implements OnInit, AfterContentInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>()
+  private timeoutId: number
 
   // Default
-  isLoading: boolean = false
   posts: PostResponse[] = []
 
   constructor(
-    public ref: DynamicDialogRef,
-    public config: DynamicDialogConfig,
+    private ref: DynamicDialogRef,
+    private config: DynamicDialogConfig,
     private alertService: AlertService,
 
     // Api
@@ -46,50 +42,46 @@ export class SeriesPostsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.ref) {
-      this.ref.close();
+      this.ref.close()
     }
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
+    this.ngUnsubscribe.next()
+    this.ngUnsubscribe.complete()
+
+    clearTimeout(this.timeoutId)
   }
 
-  ngOnInit() {
-    this.getData(this.config.data?.id)
+  ngOnInit(): void { }
+
+  ngAfterContentInit(): void {
+    this.timeoutId = setTimeout(() => {
+      this.getData(this.config.data?.id)
+    }, 0)
   }
 
-  getData(id: string) {
-    this.isLoading = true
-
+  private getData(id: string): void {
     this.seriesApiClient.getPostsInSeries(id)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (response: PostResponse[]) => {
-          this.posts = response;
-          this.isLoading = false
+          this.posts = response
         },
-        error: (error) => {
-          this.isLoading = false
-        }
-      }
-      );
+        error: () => { }
+      })
   }
 
-  removePost(id: string) {
+  removePost(id: string): void {
     var body: AddPostSeriesRequest = new AddPostSeriesRequest({
       postId: id,
       seriesId: this.config.data.id
-    });
-    this.isLoading = true
+    })
     this.seriesApiClient.deletePostSeries(body)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: () => {
-          this.alertService.showSuccess(Message.DELETED_OK_MSG);
-          this.getData(this.config.data?.id);
-          this.isLoading = false
+          this.alertService.showSuccess(Message.DELETED_OK_MSG)
+          this.getData(this.config.data?.id)
         },
-        error: () => {
-          this.isLoading = false;
-        },
-      });
+        error: () => { },
+      })
   }
 }

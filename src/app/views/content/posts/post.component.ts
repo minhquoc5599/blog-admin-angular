@@ -1,33 +1,31 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { ConfirmationService } from 'primeng/api';
-import { BadgeModule } from 'primeng/badge';
-import { BlockUIModule } from 'primeng/blockui';
-import { ButtonModule } from 'primeng/button';
-import { DropdownModule } from 'primeng/dropdown';
-import { DialogService } from 'primeng/dynamicdialog';
-import { InputTextModule } from 'primeng/inputtext';
-import { PaginatorModule } from 'primeng/paginator';
-import { PanelModule } from 'primeng/panel';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { TableModule } from 'primeng/table';
-import { TooltipModule } from 'primeng/tooltip';
-import { Subject, takeUntil } from 'rxjs';
+import { CommonModule } from '@angular/common'
+import { Component, OnDestroy, OnInit } from '@angular/core'
+import { FormsModule } from '@angular/forms'
+import { ConfirmationService } from 'primeng/api'
+import { BadgeModule } from 'primeng/badge'
+import { ButtonModule } from 'primeng/button'
+import { DropdownModule } from 'primeng/dropdown'
+import { DialogService } from 'primeng/dynamicdialog'
+import { InputTextModule } from 'primeng/inputtext'
+import { PaginatorModule } from 'primeng/paginator'
+import { PanelModule } from 'primeng/panel'
+import { TableModule } from 'primeng/table'
+import { TooltipModule } from 'primeng/tooltip'
+import { Subject, takeUntil } from 'rxjs'
 import {
   AdminApiPostApiClient,
   AdminApiPostCategoryApiClient,
   PostCategoryResponse,
   PostDetailResponse,
   PostResponsePagingResponse
-} from 'src/app/api/admin-api.service.generated';
-import { Message } from 'src/app/shared/constants/message.constant';
-import { PermissionDirective } from 'src/app/shared/directives/permission.directive';
-import { AlertService } from 'src/app/shared/services/alert.service';
-import { PostActivityLogsComponent } from './post-activity-logs/post-activity-logs.component';
-import { PostDetailComponent } from './post-detail/post-detail.component';
-import { PostRejectReasonComponent } from './post-reject-reason/post-reject-reason.component';
-import { PostSeriesComponent } from './post-series/post-series.component';
+} from 'src/app/api/admin-api.service.generated'
+import { Message } from 'src/app/shared/constants/message.constant'
+import { PermissionDirective } from 'src/app/shared/directives/permission.directive'
+import { AlertService } from 'src/app/shared/services/alert.service'
+import { PostActivityLogsComponent } from './post-activity-logs/post-activity-logs.component'
+import { PostDetailComponent } from './post-detail/post-detail.component'
+import { PostRejectReasonComponent } from './post-reject-reason/post-reject-reason.component'
+import { PostSeriesComponent } from './post-series/post-series.component'
 
 @Component({
   selector: 'app-post',
@@ -38,8 +36,6 @@ import { PostSeriesComponent } from './post-series/post-series.component';
     CommonModule,
     DropdownModule,
     TableModule,
-    ProgressSpinnerModule,
-    BlockUIModule,
     PaginatorModule,
     PanelModule,
     InputTextModule,
@@ -56,7 +52,6 @@ import { PostSeriesComponent } from './post-series/post-series.component';
 })
 export class PostComponent implements OnInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>()
-  isLoading: boolean = true
 
   // Page Setting
   pageIndex: number = 1
@@ -72,7 +67,7 @@ export class PostComponent implements OnInit, OnDestroy {
   postCategories: any[] = []
 
   constructor(
-    public dialogService: DialogService,
+    private dialogService: DialogService,
     private alertService: AlertService,
     private confirmationService: ConfirmationService,
 
@@ -104,20 +99,14 @@ export class PostComponent implements OnInit, OnDestroy {
   }
 
   getData(): void {
-    this.isLoading = true
     this.postApiClient.getPostsPaging(this.keyword, this.postCategoryId, this.pageIndex, this.pageSize)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (response: PostResponsePagingResponse) => {
           this.items = response.results
           this.totalCount = response.rowCount
-
-          this.isLoading = false
         },
-        error: (error) => {
-          this.isLoading = false
-          this.alertService.showError(error)
-        }
+        error: () => { }
       })
   }
 
@@ -187,20 +176,15 @@ export class PostComponent implements OnInit, OnDestroy {
     })
   }
 
-  deleteItemsConfirm(ids: any[]) {
-    this.isLoading = true
-
+  private deleteItemsConfirm(ids: any[]): void {
     this.postApiClient.deletePosts(ids)
       .subscribe({
         next: () => {
           this.alertService.showSuccess(Message.DELETED_OK_MSG)
           this.getData()
           this.selectedItems = []
-          this.isLoading = false
         },
-        error: () => {
-          this.isLoading = false
-        }
+        error: () => { }
       })
   }
 
@@ -211,45 +195,37 @@ export class PostComponent implements OnInit, OnDestroy {
       },
       header: `Add ${name} to series`,
       width: '50%'
-    });
+    })
 
     ref.onClose.subscribe((data: PostDetailResponse) => {
       if (data) {
-        this.alertService.showSuccess(Message.UPDATED_OK_MSG);
-        this.selectedItems = [];
-        this.getData();
+        this.alertService.showSuccess(Message.UPDATED_OK_MSG)
+        this.selectedItems = []
+        this.getData()
       }
-    });
+    })
   }
 
   approve(id: string): void {
-    this.isLoading = true
     this.postApiClient.approvePost(id).subscribe({
       next: () => {
-        this.alertService.showSuccess(Message.UPDATED_OK_MSG);
-        this.getData();
-        this.selectedItems = [];
-        this.isLoading = false;
+        this.alertService.showSuccess(Message.UPDATED_OK_MSG)
+        this.getData()
+        this.selectedItems = []
       },
-      error: () => {
-        this.isLoading = false;
-      }
-    });
+      error: () => { }
+    })
   }
 
   sendToApprove(id: string): void {
-    this.isLoading = true;
     this.postApiClient.sendToApprove(id).subscribe({
       next: () => {
-        this.alertService.showSuccess(Message.UPDATED_OK_MSG);
-        this.getData();
-        this.selectedItems = [];
-        this.isLoading = false;
+        this.alertService.showSuccess(Message.UPDATED_OK_MSG)
+        this.getData()
+        this.selectedItems = []
       },
-      error: () => {
-        this.isLoading = false;
-      }
-    });
+      error: () => { }
+    })
   }
 
   reject(id: string, name: string): void {
@@ -259,15 +235,15 @@ export class PostComponent implements OnInit, OnDestroy {
       },
       header: `Reject post for ${name}`,
       width: '40%'
-    });
+    })
 
     ref.onClose.subscribe((data: any) => {
       if (data) {
-        this.alertService.showSuccess(Message.UPDATED_OK_MSG);
-        this.selectedItems = [];
-        this.getData();
+        this.alertService.showSuccess(Message.UPDATED_OK_MSG)
+        this.selectedItems = []
+        this.getData()
       }
-    });
+    })
   }
 
   showPostActivityLogs(id: string, name: string): void {
@@ -277,14 +253,14 @@ export class PostComponent implements OnInit, OnDestroy {
       },
       header: `Post Activity Logs for ${name}`,
       width: '70%'
-    });
-    
+    })
+
     ref.onClose.subscribe((data: any) => {
       if (data) {
-        this.alertService.showSuccess(Message.UPDATED_OK_MSG);
-        this.selectedItems = [];
-        this.getData();
+        this.alertService.showSuccess(Message.UPDATED_OK_MSG)
+        this.selectedItems = []
+        this.getData()
       }
-    });
+    })
   }
 }

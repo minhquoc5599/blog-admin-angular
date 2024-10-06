@@ -1,14 +1,10 @@
-import { CommonModule } from '@angular/common'
-import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core'
+import { AfterContentInit, Component, OnDestroy, OnInit } from '@angular/core'
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms'
-import { BlockUIModule } from 'primeng/blockui'
 import { ButtonModule } from 'primeng/button'
 import { CheckboxModule } from 'primeng/checkbox'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
-import { ProgressSpinnerModule } from 'primeng/progressspinner'
 import { Subject, takeUntil } from 'rxjs'
 import { AdminApiRoleApiClient, PermissionModel, RoleClaimsDto } from 'src/app/api/admin-api.service.generated'
-import { AlertService } from 'src/app/shared/services/alert.service'
 
 @Component({
   selector: 'app-permission',
@@ -17,29 +13,24 @@ import { AlertService } from 'src/app/shared/services/alert.service'
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    CommonModule,
-    BlockUIModule,
-    ProgressSpinnerModule,
     CheckboxModule,
     ButtonModule
   ]
 })
-export class PermissionComponent implements OnInit, OnDestroy {
+export class PermissionComponent implements OnInit, AfterContentInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>()
+  private timeoutId: number
 
   // Default
-  isLoading: boolean = false
   form: FormGroup
   btnDisabled = false
   permissions: RoleClaimsDto[] = []
   selectedPermissions: RoleClaimsDto[] = []
-  formSavedEventEmitter: EventEmitter<any> = new EventEmitter()
 
   constructor(
-    public ref: DynamicDialogRef,
-    public config: DynamicDialogConfig,
+    private ref: DynamicDialogRef,
+    private config: DynamicDialogConfig,
     private fb: FormBuilder,
-    private alertService: AlertService,
 
     // Api
     private roleApiClient: AdminApiRoleApiClient,
@@ -51,15 +42,21 @@ export class PermissionComponent implements OnInit, OnDestroy {
     }
     this.ngUnsubscribe.next()
     this.ngUnsubscribe.complete()
+
+    clearTimeout(this.timeoutId)
   }
 
   ngOnInit() {
     this.buildForm()
-    this.loadDetail(this.config.data.id)
   }
 
-  loadDetail(roleId: string) {
-    this.loading(true)
+  ngAfterContentInit(): void {
+    this.timeoutId = setTimeout(() => {
+      this.loadDetail(this.config.data.id)
+    }, 0)
+  }
+
+  private loadDetail(roleId: string): void {
     this.roleApiClient
       .getAllRolePermissions(roleId)
       .pipe(takeUntil(this.ngUnsubscribe))
@@ -67,15 +64,12 @@ export class PermissionComponent implements OnInit, OnDestroy {
         next: (response: PermissionModel) => {
           this.permissions = response.roleClaims ? response.roleClaims : []
           this.buildForm()
-          this.loading(false)
         },
-        error: () => {
-          this.loading(false)
-        },
+        error: () => { }
       })
   }
 
-  buildForm() {
+  private buildForm(): void {
     this.form = this.fb.group({})
 
     for (let index = 0; index < this.permissions.length; index++) {
@@ -91,8 +85,8 @@ export class PermissionComponent implements OnInit, OnDestroy {
     }
   }
 
-  save() {
-    this.loading(true)
+  save(): void {
+    this.btnDisabled = true
     var roleClaims: RoleClaimsDto[] = []
     for (let index = 0; index < this.permissions.length; index++) {
       const isGranted = this.selectedPermissions.filter((x) => x.value == this.permissions[index].value).length > 0
@@ -112,18 +106,12 @@ export class PermissionComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: () => {
-          this.loading(false)
+          this.btnDisabled = false
           this.ref.close(this.form.value)
         },
-        error: (error) => {
-          this.loading(false)
-          this.alertService.showError(error)
+        error: () => {
+          this.btnDisabled = false
         }
       })
-  }
-
-  private loading(enable: boolean) {
-    this.isLoading = enable
-    this.btnDisabled = enable
   }
 }

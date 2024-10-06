@@ -1,6 +1,5 @@
-import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core'
+import { AfterContentInit, Component, OnDestroy, OnInit } from '@angular/core'
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
-import { BlockUIModule } from 'primeng/blockui'
 import { ButtonModule } from 'primeng/button'
 import { CheckboxModule } from 'primeng/checkbox'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
@@ -8,10 +7,8 @@ import { InputNumberModule } from 'primeng/inputnumber'
 import { InputTextModule } from 'primeng/inputtext'
 import { InputTextareaModule } from 'primeng/inputtextarea'
 import { KeyFilterModule } from 'primeng/keyfilter'
-import { ProgressSpinnerModule } from 'primeng/progressspinner'
 import { Subject, takeUntil } from 'rxjs'
 import { AdminApiPostCategoryApiClient, PostCategoryResponse } from 'src/app/api/admin-api.service.generated'
-import { AlertService } from 'src/app/shared/services/alert.service'
 import { UtilityService } from 'src/app/shared/services/utility.service'
 import { ValidateMessageComponent } from 'src/app/shared/validates/validate-message/validate-message.component'
 
@@ -24,8 +21,6 @@ import { ValidateMessageComponent } from 'src/app/shared/validates/validate-mess
     InputTextModule,
     InputNumberModule,
     InputTextareaModule,
-    BlockUIModule,
-    ProgressSpinnerModule,
     CheckboxModule,
     KeyFilterModule,
     ButtonModule,
@@ -35,17 +30,14 @@ import { ValidateMessageComponent } from 'src/app/shared/validates/validate-mess
     UtilityService
   ]
 })
-export class PostCategoryDetailComponent implements OnInit, OnDestroy {
+export class PostCategoryDetailComponent implements OnInit, AfterContentInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>()
-
+  private timeoutId: number
   // Default
-  isLoading: boolean = false
   form: FormGroup
   btnDisabled = false
   saveBtnName: string
-  selectedEntity = {} as PostCategoryResponse
-
-  formSavedEventEmitter: EventEmitter<any> = new EventEmitter()
+  private selectedEntity = {} as PostCategoryResponse
 
   // Validate
   noSpecial: RegExp = /^[^<>*!_~]+$/
@@ -64,11 +56,10 @@ export class PostCategoryDetailComponent implements OnInit, OnDestroy {
   }
 
   constructor(
-    public ref: DynamicDialogRef,
-    public config: DynamicDialogConfig,
+    private ref: DynamicDialogRef,
+    private config: DynamicDialogConfig,
     private utilityService: UtilityService,
     private fb: FormBuilder,
-    private alertService: AlertService,
 
     // Api
     private postCategoryApiClient: AdminApiPostCategoryApiClient
@@ -80,24 +71,32 @@ export class PostCategoryDetailComponent implements OnInit, OnDestroy {
     }
     this.ngUnsubscribe.next()
     this.ngUnsubscribe.complete()
+
+    clearTimeout(this.timeoutId)
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.buildForm()
-    if (this.utilityService.isEmpty(this.config.data?.id) == false) {
-      this.loadDetail(this.config.data.id)
-      this.saveBtnName = 'Update'
-    } else {
-      this.saveBtnName = 'Add'
-    }
+
   }
 
-  public generateSlug() {
+  ngAfterContentInit(): void {
+    this.timeoutId = setTimeout(() => {
+      if (this.utilityService.isEmpty(this.config.data?.id) == false) {
+        this.loadDetail(this.config.data.id)
+        this.saveBtnName = 'Update'
+      } else {
+        this.saveBtnName = 'Add'
+      }
+    }, 0)
+  }
+
+  generateSlug(): void {
     var slug = this.utilityService.makeSeoTitle(this.form.get('name').value);
     this.form.controls['slug'].setValue(slug)
   }
 
-  buildForm() {
+  private buildForm(): void {
     this.form = this.fb.group({
       name: new FormControl(this.selectedEntity.name || null, Validators.compose([
         Validators.required,
@@ -111,36 +110,30 @@ export class PostCategoryDetailComponent implements OnInit, OnDestroy {
     })
   }
 
-  loadDetail(id: any) {
-    this.loading(true)
+  private loadDetail(id: any): void {
     this.postCategoryApiClient.getPostCategoryById(id)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (response: PostCategoryResponse) => {
           this.selectedEntity = response
           this.buildForm()
-          this.loading(false)
-
         }
-        , error: () => {
-          this.loadDetail(false)
-        }
+        , error: () => { }
       })
   }
 
-  save() {
-    this.loading(true)
+  save(): void {
+    this.btnDisabled = true
     if (this.utilityService.isEmpty(this.config.data?.id)) {
       this.postCategoryApiClient.createPostCategory(this.form.value)
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: () => {
+            this.btnDisabled = false
             this.ref.close(this.form.value)
-            this.loading(false)
 
-          }, error: (error) => {
-            this.loading(false)
-            this.alertService.showError(error)
+          }, error: () => {
+            this.btnDisabled = false
           }
         })
     }
@@ -149,18 +142,12 @@ export class PostCategoryDetailComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: () => {
-            this.loading(false)
+            this.btnDisabled = false
             this.ref.close(this.form.value)
-          }, error: (error) => {
-            this.loading(false)
-            this.alertService.showError(error)
+          }, error: () => {
+            this.btnDisabled = false
           }
         })
     }
-  }
-
-  private loading(enable: boolean) {
-    this.isLoading = enable
-    this.btnDisabled = enable
   }
 }

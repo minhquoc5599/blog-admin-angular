@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { delay, filter, map, tap } from 'rxjs/operators';
+import { LoadingComponent } from './shared/components/loading/loading.component';
 
 import { ColorModeService } from '@coreui/angular';
 import { IconSetService } from '@coreui/icons-angular';
@@ -15,9 +16,10 @@ import { iconSubset } from './icons/icon-subset';
   template: `
   <p-toast position="top-center"></p-toast>
   <p-confirmDialog />
+  <app-loading/>
   <router-outlet />`,
   standalone: true,
-  imports: [RouterOutlet, ToastModule, ConfirmDialogModule]
+  imports: [RouterOutlet, ToastModule, ConfirmDialogModule, LoadingComponent]
 })
 export class AppComponent implements OnInit {
   title = 'Blog Admin';

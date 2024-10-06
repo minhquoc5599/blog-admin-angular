@@ -1,6 +1,6 @@
 <form class="form-horizontal form-label-left" skipValidation [formGroup]="form" (ngSubmit)="save()">
   <div class="flex align-items-center mb-3">
-    <label for="username">Username <span class="required">*</span></label>
+    <label for="userName">Username <span class="required">*</span></label>
     <input id="userName" type="text" pInputText [pKeyFilter]="noSpecial" formControlName="userName"
       [style]="{ width: '100%' }" />
     <app-validate-message [entityForm]="form" fieldName="userName" [validationMessages]="validationMessages">
@@ -47,12 +47,18 @@
     <input id="dob" type="date" pInputText [pKeyFilter]="noSpecial" formControlName="dob" [style]="{ width: '100%' }" />
   </div>
 
-  <div class="flex align-items-center mb-3">
-    <label for="avatarFile">Avatar</label>
-    <input id="avatarFile" (change)="onFileChange($event)" type="file" [style]="{ width: '100%' }" />
-    <p-image *ngIf="avatarImage" [src]="avatarImage" [preview]="true" width="250">
+  <div class="mb-3">
+    <label for="AvatarContent">Avatar <span class="required">*</span></label>
+    <input type="hidden" formControlName="avatar" />
+    <input (change)="onFileChange($event)" type="file" class="w-full" />
+  </div>
+
+  @if (avatarImage) {
+  <div class="field col-12 md:col-6">
+    <p-image [src]="avatarImage" [preview]="true" [alt]="selectedEntity.userName" width="250">
     </p-image>
   </div>
+  }
 
   <div class="flex align-items-center mb-3">
     <label for="royaltyAmountPerPost">Royalty Amount</label>
@@ -72,10 +78,4 @@
   <div class="flex justify-content-end">
     <p-button type="submit" [disabled]="!form.valid || btnDisabled" label="Update"></p-button>
   </div>
-
-  <p-blockUI [blocked]="isLoading">
-    <div class="card flex justify-content-center bg-transparent" [style]="{border: 'none'}">
-      <p-progressSpinner strokeWidth="2" animationDuration="1s" />
-    </div>
-  </p-blockUI>
 </form>

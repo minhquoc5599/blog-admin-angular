@@ -17,9 +17,11 @@
 
   <div class="mb-3">
     <label for="categoryId" class="block">Group</label>
+    @if (postCategories.length > 0) {
     <p-dropdown id="categoryId" [options]="postCategories" formControlName="categoryId" [showClear]="true"
-      placeholder="Chọn nhóm" autoWidth="false" [style]="{ width: '100%' }" *ngIf="postCategories.length > 0">
+      placeholder="Chọn nhóm" autoWidth="false" [style]="{ width: '100%' }">
     </p-dropdown>
+    }
   </div>
 
   <div class="mb-3">
@@ -35,10 +37,13 @@
     <input type="hidden" formControlName="thumbnail" />
     <input (change)="onFileChange($event)" type="file" class="w-full" />
   </div>
-  <div *ngIf="thumbnailImage" class="field col-12 md:col-6">
+
+  @if (thumbnailImage) {
+  <div class="field col-12 md:col-6">
     <p-image [src]="thumbnailImage" [preview]="true" [alt]="selectedEntity.name" width="250">
     </p-image>
   </div>
+  }
 
   <div class="mb-3 col-12">
     <label for="content">Content</label>
@@ -61,10 +66,4 @@
   <div class="flex justify-content-end">
     <p-button type="submit" [label]="saveBtnName" [disabled]="!form.valid || btnDisabled"></p-button>
   </div>
-
-  <p-blockUI [blocked]="isLoading">
-    <div class="card flex justify-content-center bg-transparent" [style]="{border: 'none'}">
-      <p-progressSpinner strokeWidth="2" animationDuration="1s" />
-    </div>
-  </p-blockUI>
 </form>

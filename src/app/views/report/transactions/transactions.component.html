@@ -1,4 +1,4 @@
-<p-panel #pnl [style]="{'margin-bottom':'20px'}">
+<p-panel [style]="{'margin-bottom':'20px'}">
   <p-header>
     Transactions
   </p-header>
@@ -59,9 +59,4 @@
   </div>
   <p-paginator [rows]="pageSize" [totalRecords]="totalCount" (onPageChange)="pageChanged($event)"
     [rowsPerPageOptions]="[10, 20, 50, 100]"></p-paginator>
-
-  <p-blockUI [target]="pnl" [blocked]="isLoading">
-    <p-progressSpinner [style]="{width: '100px', height: '100px', position:'absolute',top:'25%',left:'50%'}"
-      strokeWidth="2" animationDuration=".5s"></p-progressSpinner>
-  </p-blockUI>
 </p-panel>

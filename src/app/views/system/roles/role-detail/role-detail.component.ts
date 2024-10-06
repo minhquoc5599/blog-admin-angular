@@ -1,48 +1,39 @@
-import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core'
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms'
-import { BlockUIModule } from 'primeng/blockui'
+import { AfterContentInit, Component, OnDestroy, OnInit } from '@angular/core'
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
 import { ButtonModule } from 'primeng/button'
 import { DialogModule } from 'primeng/dialog'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { InputTextModule } from 'primeng/inputtext'
 import { KeyFilterModule } from 'primeng/keyfilter'
-import { ProgressSpinnerModule } from 'primeng/progressspinner'
 import { Subject, takeUntil } from 'rxjs'
 import { AdminApiRoleApiClient, RoleResponse } from 'src/app/api/admin-api.service.generated'
-import { AlertService } from 'src/app/shared/services/alert.service'
 import { UtilityService } from 'src/app/shared/services/utility.service'
 import { ValidateMessageComponent } from 'src/app/shared/validates/validate-message/validate-message.component'
-
 
 @Component({
   selector: 'app-role-detail',
   templateUrl: './role-detail.component.html',
   standalone: true,
   imports: [
-    FormsModule,
     ReactiveFormsModule,
     DialogModule,
     InputTextModule,
     KeyFilterModule,
-    BlockUIModule,
-    ProgressSpinnerModule,
     ButtonModule,
     ValidateMessageComponent],
   providers: [
     UtilityService
   ]
 })
-export class RoleDetailComponent implements OnInit, OnDestroy {
+export class RoleDetailComponent implements OnInit, AfterContentInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>()
+  private timeoutId: number
 
   // Default
-  isLoading: boolean = false
   form: FormGroup
-  btnDisabled = false
+  btnDisabled: boolean = false
   saveBtnName: string
-  selectedEntity = {} as RoleResponse
-
-  formSavedEventEmitter: EventEmitter<any> = new EventEmitter()
+  private selectedEntity = {} as RoleResponse
 
   // Validate
   noSpecial: RegExp = /^[^<>*!_~]+$/
@@ -56,10 +47,9 @@ export class RoleDetailComponent implements OnInit, OnDestroy {
   }
 
   constructor(
-    public ref: DynamicDialogRef,
-    public config: DynamicDialogConfig,
+    private ref: DynamicDialogRef,
+    private config: DynamicDialogConfig,
     private utilityService: UtilityService,
-    private alertService: AlertService,
     private fb: FormBuilder,
 
     // Api
@@ -72,19 +62,26 @@ export class RoleDetailComponent implements OnInit, OnDestroy {
     }
     this.ngUnsubscribe.next()
     this.ngUnsubscribe.complete()
+
+    clearTimeout(this.timeoutId)
   }
 
   ngOnInit() {
     this.buildForm()
-    if (!this.utilityService.isEmpty(this.config.data?.id)) {
-      this.loadDetail(this.config.data.id)
-      this.saveBtnName = 'Update'
-    } else {
-      this.saveBtnName = 'Add'
-    }
   }
 
-  buildForm() {
+  ngAfterContentInit(): void {
+    this.timeoutId = setTimeout(() => {
+      if (!this.utilityService.isEmpty(this.config.data?.id)) {
+        this.loadDetail(this.config.data.id)
+        this.saveBtnName = 'Update'
+      } else {
+        this.saveBtnName = 'Add'
+      }
+    }, 0)
+  }
+
+  private buildForm(): void {
     this.form = this.fb.group({
       name: new FormControl(
         this.selectedEntity.name || null,
@@ -101,57 +98,44 @@ export class RoleDetailComponent implements OnInit, OnDestroy {
     })
   }
 
-  loadDetail(id: any) {
-    this.loading(true)
-
-    // Call api
+  private loadDetail(id: any): void {
     this.roleApiClient.getRoleById(id)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (response: RoleResponse) => {
           this.selectedEntity = response
           this.buildForm()
-          this.loading(false)
         },
-        error: () => {
-          this.loading(false)
-        },
+        error: () => { },
       })
   }
 
-  save() {
-    this.loading(true)
+  save(): void {
+    this.btnDisabled = true
     if (this.utilityService.isEmpty(this.config.data?.id)) {
       this.roleApiClient.createRole(this.form.value)
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: () => {
+            this.btnDisabled = false
             this.ref.close(this.form.value)
-            this.loading(false)
           },
-          error: (error) => {
-            this.loading(false)
-            this.alertService.showError(error)
-          }
+          error: () => {
+            this.btnDisabled = false
+          },
         })
     } else {
       this.roleApiClient.updateRole(this.config.data.id, this.form.value)
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: () => {
-            this.loading(false)
+            this.btnDisabled = false
             this.ref.close(this.form.value)
           },
-          error: (error) => {
-            this.loading(false)
-            this.alertService.showError(error)
-          }
+          error: () => {
+            this.btnDisabled = false
+          },
         })
     }
-  }
-
-  private loading(enable: boolean) {
-    this.isLoading = enable
-    this.btnDisabled = enable
   }
 }

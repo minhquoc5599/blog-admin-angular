@@ -1,14 +1,11 @@
-import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core'
+import { AfterContentInit, Component, OnDestroy, OnInit } from '@angular/core'
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
-import { BlockUIModule } from 'primeng/blockui'
 import { ButtonModule } from 'primeng/button'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { InputTextModule } from 'primeng/inputtext'
 import { KeyFilterModule } from 'primeng/keyfilter'
-import { ProgressSpinnerModule } from 'primeng/progressspinner'
 import { Subject, takeUntil } from 'rxjs'
 import { AdminApiUserApiClient, UserResponse } from 'src/app/api/admin-api.service.generated'
-import { AlertService } from 'src/app/shared/services/alert.service'
 import { ValidateMessageComponent } from 'src/app/shared/validates/validate-message/validate-message.component'
 
 @Component({
@@ -17,23 +14,20 @@ import { ValidateMessageComponent } from 'src/app/shared/validates/validate-mess
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    BlockUIModule,
-    ProgressSpinnerModule,
     KeyFilterModule,
     InputTextModule,
     ButtonModule,
     ValidateMessageComponent,
   ]
 })
-export class ChangeEmailComponent implements OnInit, OnDestroy {
+export class ChangeEmailComponent implements OnInit, AfterContentInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>()
+  private timeoutId: number
 
   // Default
-  isLoading: boolean = false
   form: FormGroup
   btnDisabled = false
   email: string
-  formSavedEventEmitter: EventEmitter<any> = new EventEmitter()
 
   // Validate
   noSpecial: RegExp = /^[^<>*!_~]+$/
@@ -45,10 +39,9 @@ export class ChangeEmailComponent implements OnInit, OnDestroy {
   }
 
   constructor(
-    public ref: DynamicDialogRef,
-    public config: DynamicDialogConfig,
+    private ref: DynamicDialogRef,
+    private config: DynamicDialogConfig,
     private fb: FormBuilder,
-    private alertService: AlertService,
 
     // Api
     private userApiClient: AdminApiUserApiClient,
@@ -61,14 +54,20 @@ export class ChangeEmailComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe.next()
     this.ngUnsubscribe.complete()
 
+    clearTimeout(this.timeoutId)
   }
 
   ngOnInit(): void {
     this.buildForm()
-    this.loadDetail(this.config.data.id)
   }
 
-  buildForm() {
+  ngAfterContentInit(): void {
+    this.timeoutId = setTimeout(() => {
+      this.loadDetail(this.config.data.id)
+    }, 0)
+  }
+
+  private buildForm(): void {
     this.form = this.fb.group({
       email: new FormControl(
         this.email || null,
@@ -77,8 +76,7 @@ export class ChangeEmailComponent implements OnInit, OnDestroy {
     })
   }
 
-  loadDetail(id: any) {
-    this.loading(true)
+  private loadDetail(id: any): void {
     this.userApiClient
       .getUserById(id)
       .pipe(takeUntil(this.ngUnsubscribe))
@@ -86,32 +84,23 @@ export class ChangeEmailComponent implements OnInit, OnDestroy {
         next: (response: UserResponse) => {
           this.email = response.email === undefined ? '' : response.email
           this.buildForm()
-          this.loading(false)
         },
-        error: () => {
-          this.loading(false)
-        },
+        error: () => { },
       })
   }
 
-  save() {
-    this.loading(true)
+  save(): void {
+    this.btnDisabled = true
     this.userApiClient.changeEmail(this.config.data.id, this.form.value)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: () => {
-          this.loading(false)
+          this.btnDisabled = false
           this.ref.close(this.form.value)
         },
-        error: (error) => {
-          this.loading(false)
-          this.alertService.showError(error)
+        error: () => {
+          this.btnDisabled = false
         }
       })
-  }
-
-  private loading(enable: boolean) {
-    this.isLoading = enable
-    this.btnDisabled = enable
   }
 }

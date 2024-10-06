@@ -1,7 +1,5 @@
-import { CommonModule } from '@angular/common'
-import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core'
+import { AfterContentInit, Component, OnDestroy, OnInit } from '@angular/core'
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
-import { BlockUIModule } from 'primeng/blockui'
 import { ButtonModule } from 'primeng/button'
 import { CheckboxModule } from 'primeng/checkbox'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
@@ -11,11 +9,9 @@ import { InputNumberModule } from 'primeng/inputnumber'
 import { InputTextModule } from 'primeng/inputtext'
 import { InputTextareaModule } from 'primeng/inputtextarea'
 import { KeyFilterModule } from 'primeng/keyfilter'
-import { ProgressSpinnerModule } from 'primeng/progressspinner'
 import { Subject, takeUntil } from 'rxjs'
 import { AdminApiSeriesApiClient, PostCategoryResponse, SeriesDetailResponse } from 'src/app/api/admin-api.service.generated'
 import { UploadApiService } from 'src/app/api/upload-api.service'
-import { AlertService } from 'src/app/shared/services/alert.service'
 import { UtilityService } from 'src/app/shared/services/utility.service'
 import { ValidateMessageComponent } from 'src/app/shared/validates/validate-message/validate-message.component'
 import { environment } from 'src/enviroments/environment'
@@ -25,13 +21,10 @@ import { environment } from 'src/enviroments/environment'
   templateUrl: './series-detail.component.html',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     InputTextModule,
     InputNumberModule,
     InputTextareaModule,
-    BlockUIModule,
-    ProgressSpinnerModule,
     CheckboxModule,
     KeyFilterModule,
     ButtonModule,
@@ -43,11 +36,11 @@ import { environment } from 'src/enviroments/environment'
     UtilityService
   ]
 })
-export class SeriesDetailComponent implements OnInit, OnDestroy {
+export class SeriesDetailComponent implements OnInit, AfterContentInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>()
+  private timeoutId: number
 
   // Default
-  isLoading: boolean = false
   form: FormGroup
   btnDisabled = false
   saveBtnName: string
@@ -56,8 +49,6 @@ export class SeriesDetailComponent implements OnInit, OnDestroy {
   series: any[] = []
   selectedEntity = {} as SeriesDetailResponse
   thumbnailImage: any
-
-  formSavedEventEmitter: EventEmitter<any> = new EventEmitter()
 
   // Validate
   noSpecial: RegExp = /^[^<>*!_~]+$/
@@ -76,11 +67,10 @@ export class SeriesDetailComponent implements OnInit, OnDestroy {
   }
 
   constructor(
-    public ref: DynamicDialogRef,
-    public config: DynamicDialogConfig,
+    private ref: DynamicDialogRef,
+    private config: DynamicDialogConfig,
     private utilityService: UtilityService,
     private fb: FormBuilder,
-    private alertService: AlertService,
 
     // Api
     private uploadApiService: UploadApiService,
@@ -93,24 +83,32 @@ export class SeriesDetailComponent implements OnInit, OnDestroy {
     }
     this.ngUnsubscribe.next()
     this.ngUnsubscribe.complete()
+
+    clearTimeout(this.timeoutId)
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.buildForm()
-    if (this.utilityService.isEmpty(this.config.data?.id) == false) {
-      this.loadDetail(this.config.data.id)
-      this.saveBtnName = 'Update'
-    } else {
-      this.saveBtnName = 'Add'
-    }
+
   }
 
-  generateSlug() {
+  ngAfterContentInit(): void {
+    this.timeoutId = setTimeout(() => {
+      if (this.utilityService.isEmpty(this.config.data?.id) == false) {
+        this.loadDetail(this.config.data.id)
+        this.saveBtnName = 'Update'
+      } else {
+        this.saveBtnName = 'Add'
+      }
+    }, 0)
+  }
+
+  generateSlug(): void {
     var slug = this.utilityService.makeSeoTitle(this.form.get('name').value)
     this.form.controls['slug'].setValue(slug)
   }
 
-  buildForm() {
+  private buildForm(): void {
     this.form = this.fb.group({
       name: new FormControl(this.selectedEntity.name || null, Validators.compose([
         Validators.required,
@@ -129,51 +127,43 @@ export class SeriesDetailComponent implements OnInit, OnDestroy {
     }
   }
 
-  loadDetail(id: any) {
-    this.loading(true)
+  private loadDetail(id: any): void {
     this.seriesApiClient.getSeriesById(id)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (response: PostCategoryResponse) => {
           this.selectedEntity = response
           this.buildForm()
-          this.loading(false)
-
         }
-        , error: () => {
-          this.loadDetail(false)
-        }
+        , error: () => { }
       })
   }
 
-  onFileChange(event) {
+  onFileChange(event: any): void {
     if (event.target.files && event.target.files.length) {
-      this.uploadApiService.uploadImage('posts', event.target.files)
+      this.uploadApiService.uploadImage('series', event.target.files)
         .subscribe({
           next: (response: any) => {
             this.form.controls['thumbnail'].setValue(response.path)
             this.thumbnailImage = environment.API_URL + response.path
           },
-          error: (error: any) => {
-            this.alertService.showError(error)
-          }
+          error: () => { }
         })
     }
   }
 
-  save() {
-    this.loading(true)
+  save(): void {
+    this.btnDisabled = true
     if (this.utilityService.isEmpty(this.config.data?.id)) {
       this.seriesApiClient.createSeries(this.form.value)
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: () => {
+            this.btnDisabled = false
             this.ref.close(this.form.value)
-            this.loading(false)
 
-          }, error: (error) => {
-            this.loading(false)
-            this.alertService.showError(error)
+          }, error: () => {
+            this.btnDisabled = false
           }
         })
     }
@@ -182,18 +172,12 @@ export class SeriesDetailComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe({
           next: () => {
-            this.loading(false)
+            this.btnDisabled = false
             this.ref.close(this.form.value)
-          }, error: (error) => {
-            this.loading(false)
-            this.alertService.showError(error)
+          }, error: () => {
+            this.btnDisabled = false
           }
         })
     }
-  }
-
-  private loading(enable: boolean) {
-    this.isLoading = enable
-    this.btnDisabled = enable
   }
 }

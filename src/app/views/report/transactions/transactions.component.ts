@@ -2,13 +2,11 @@ import { CommonModule } from '@angular/common'
 import { Component, OnDestroy, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { BadgeModule } from 'primeng/badge'
-import { BlockUIModule } from 'primeng/blockui'
 import { ButtonModule } from 'primeng/button'
 import { CalendarModule } from 'primeng/calendar'
 import { InputTextModule } from 'primeng/inputtext'
 import { PaginatorModule } from 'primeng/paginator'
 import { PanelModule } from 'primeng/panel'
-import { ProgressSpinnerModule } from 'primeng/progressspinner'
 import { TableModule } from 'primeng/table'
 import { Subject, takeUntil } from 'rxjs'
 import { AdminApiRoyaltyApiClient, TransactionResponse, TransactionResponsePagingResponse } from 'src/app/api/admin-api.service.generated'
@@ -23,8 +21,6 @@ import { PermissionDirective } from 'src/app/shared/directives/permission.direct
     TableModule,
     CommonModule,
     FormsModule,
-    BlockUIModule,
-    ProgressSpinnerModule,
     CalendarModule,
     InputTextModule,
     PaginatorModule,
@@ -43,7 +39,6 @@ export class TransactionsComponent implements OnInit, OnDestroy {
   totalCount: number
 
   // Default
-  isLoading: boolean = false
   items: TransactionResponse[] = []
   username: string = ''
   toDate: Date = new Date()
@@ -59,25 +54,21 @@ export class TransactionsComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe.complete()
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.getData()
   }
 
   getData(): void {
     const fromDateFormat = this.formatDate(this.fromDate)
     const toDateFormat = this.formatDate(this.toDate)
-    this.isLoading = true
     this.royaltyApiClient.getTransactions(this.username, fromDateFormat, toDateFormat)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (response: TransactionResponsePagingResponse) => {
           this.items = response.results
           this.totalCount = response.rowCount
-          this.isLoading = false
         },
-        error: () => {
-          this.isLoading = false
-        }
+        error: () => { }
       })
   }
 
@@ -87,7 +78,7 @@ export class TransactionsComponent implements OnInit, OnDestroy {
     this.getData()
   }
 
-  formatDate(date: Date) {
+  private formatDate(date: Date): string {
     const month = date.getMonth() + 1
     const day = date.getDate()
     return [date.getFullYear(), (month > 9 ? '' : '0') + month, (day > 9 ? '' : '0') + day].join('-')

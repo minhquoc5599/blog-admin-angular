@@ -2,13 +2,11 @@ import { CommonModule } from '@angular/common'
 import { Component, OnDestroy, OnInit } from '@angular/core'
 import { ConfirmationService } from 'primeng/api'
 import { BadgeModule } from 'primeng/badge'
-import { BlockUIModule } from 'primeng/blockui'
 import { ButtonModule } from 'primeng/button'
 import { DialogService } from 'primeng/dynamicdialog'
 import { InputTextModule } from 'primeng/inputtext'
 import { PaginatorModule } from 'primeng/paginator'
 import { PanelModule } from 'primeng/panel'
-import { ProgressSpinnerModule } from 'primeng/progressspinner'
 import { TableModule } from 'primeng/table'
 import { Subject, takeUntil } from 'rxjs'
 import { AdminApiSeriesApiClient, SeriesResponse, SeriesResponsePagingResponse } from 'src/app/api/admin-api.service.generated'
@@ -25,8 +23,6 @@ import { SeriesPostsComponent } from './series-posts/series-posts.component'
   imports: [
     CommonModule,
     TableModule,
-    BlockUIModule,
-    ProgressSpinnerModule,
     PaginatorModule,
     PanelModule,
     InputTextModule,
@@ -41,7 +37,6 @@ import { SeriesPostsComponent } from './series-posts/series-posts.component'
 })
 export class SeriesComponent implements OnInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>()
-  isLoading: boolean = true
 
   // Page Setting
   pageIndex: number = 1
@@ -54,7 +49,7 @@ export class SeriesComponent implements OnInit, OnDestroy {
   keyword: string = ''
 
   constructor(
-    public dialogService: DialogService,
+    private dialogService: DialogService,
     private alertService: AlertService,
     private confirmationService: ConfirmationService,
 
@@ -71,22 +66,16 @@ export class SeriesComponent implements OnInit, OnDestroy {
     this.getData()
   }
 
-  getData(selectionId = null) {
-    this.isLoading = true
-
+  getData(): void {
     this.seriesApiClient.getSeriesPaging(this.keyword, this.pageIndex, this.pageSize)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe({
         next: (response: SeriesResponsePagingResponse) => {
           this.items = response.results
           this.totalCount = response.rowCount
-          this.isLoading = false
         }
         ,
-        error: (error) => {
-          this.isLoading = false
-          this.alertService.showError(error)
-        }
+        error: () => { }
       })
   }
 
@@ -129,12 +118,12 @@ export class SeriesComponent implements OnInit, OnDestroy {
       if (data) {
         this.alertService.showSuccess(Message.UPDATED_OK_MSG)
         this.selectedItems = []
-        this.getData(data.id)
+        this.getData()
       }
     })
   }
 
-  deleteItems() {
+  deleteItems(): void {
     if (this.selectedItems.length == 0) {
       this.alertService.showError(Message.NOT_CHOOSE_ANY_RECORD)
       return
@@ -155,20 +144,15 @@ export class SeriesComponent implements OnInit, OnDestroy {
     })
   }
 
-  deleteItemsConfirm(ids: any[]) {
-    this.isLoading = true
-
+  private deleteItemsConfirm(ids: any[]): void {
     this.seriesApiClient.deleteSeries(ids)
       .subscribe({
         next: () => {
           this.alertService.showSuccess(Message.DELETED_OK_MSG)
           this.getData()
           this.selectedItems = []
-          this.isLoading = false
         },
-        error: () => {
-          this.isLoading = false
-        }
+        error: () => { }
       })
   }
 
@@ -185,14 +169,13 @@ export class SeriesComponent implements OnInit, OnDestroy {
       header: 'Post list',
       width: '70%'
     })
-    
+
     ref.onClose.subscribe((data: SeriesResponse) => {
       if (data) {
         this.alertService.showSuccess(Message.UPDATED_OK_MSG)
         this.selectedItems = []
-        this.getData(data.id)
+        this.getData()
       }
     })
   }
-
 }

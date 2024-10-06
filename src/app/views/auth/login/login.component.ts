@@ -1,4 +1,4 @@
-import { NgStyle } from '@angular/common'
+import { CommonModule, NgStyle } from '@angular/common'
 import { Component, OnDestroy, OnInit } from '@angular/core'
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
 import { Router } from '@angular/router'
@@ -21,7 +21,6 @@ import { ToastModule } from 'primeng/toast'
 import { Subject, takeUntil } from 'rxjs'
 import { AdminApiAuthApiClient, AuthenticatedResponse, LoginRequest } from 'src/app/api/admin-api.service.generated'
 import { Url } from 'src/app/shared/constants/url.constant'
-import { AlertService } from 'src/app/shared/services/alert.service'
 import { LoadingService } from 'src/app/shared/services/loading.service'
 import { StorageService } from 'src/app/shared/services/storage.service'
 
@@ -31,6 +30,7 @@ import { StorageService } from 'src/app/shared/services/storage.service'
   styleUrls: ['./login.component.scss'],
   standalone: true,
   imports: [
+    CommonModule,
     ContainerComponent,
     RowComponent,
     ColComponent,
@@ -50,39 +50,34 @@ import { StorageService } from 'src/app/shared/services/storage.service'
   ],
   providers: [
     AdminApiAuthApiClient,
-    StorageService
+    StorageService,
+    LoadingService
   ]
 })
 
 export class LoginComponent implements OnInit, OnDestroy {
   loginForm: FormGroup
   private ngUnsubsribe = new Subject<void>()
-  isLoading = false
 
   constructor(
     private router: Router,
     private fb: FormBuilder,
-    private alertService: AlertService,
     private storageService: StorageService,
-    private loadingService: LoadingService,
+    public loadingService: LoadingService,
 
     // Api
-    private authApi: AdminApiAuthApiClient,
+    private authApiClient: AdminApiAuthApiClient,
   ) {
 
   }
 
   ngOnInit(): void {
     this.builForm()
-    this.loadingService.httpError.asObservable().subscribe(loading => {
-      this.isLoading = loading
-    })
   }
 
   ngOnDestroy(): void {
     this.ngUnsubsribe.next()
     this.ngUnsubsribe.complete()
-    this.loadingService.httpError.unsubscribe()
   }
 
   builForm(): void {
@@ -93,12 +88,11 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   login(): void {
-    this.loadingService.httpError.next(true)
     let request: LoginRequest = new LoginRequest({
       userName: this.loginForm.controls['username'].value,
       password: this.loginForm.controls['password'].value
     })
-    this.authApi.login(request)
+    this.authApiClient.login(request)
       .pipe(takeUntil(this.ngUnsubsribe))
       .subscribe({
         next: (res: AuthenticatedResponse) => {
@@ -106,7 +100,6 @@ export class LoginComponent implements OnInit, OnDestroy {
           this.storageService.saveToken(res.token)
           this.storageService.saveRefreshToken(res.refreshToken)
 
-          this.loadingService.httpError.next(false)
           this.router.navigate([Url.DASHBOARD])
         },
         error: () => { }

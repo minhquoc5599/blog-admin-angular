@@ -57,10 +57,4 @@
   </div>
   <p-paginator [rows]="pageSize" [totalRecords]="total" (onPageChange)="pageChanged($event)"
     [rowsPerPageOptions]="[10, 20, 50, 100]"></p-paginator>
-
-  <p-blockUI [blocked]="isLoading">
-    <div class="card flex justify-content-center bg-transparent" [style]="{border: 'none'}">
-      <p-progressSpinner strokeWidth="2" animationDuration="1s" />
-    </div>
-  </p-blockUI>
 </p-panel>
