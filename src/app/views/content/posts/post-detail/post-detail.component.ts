@@ -1,5 +1,6 @@
 import { AfterContentInit, Component, OnDestroy, OnInit } from '@angular/core'
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
+import { AutoCompleteModule } from 'primeng/autocomplete'
 import { ButtonModule } from 'primeng/button'
 import { CheckboxModule } from 'primeng/checkbox'
 import { DropdownModule } from 'primeng/dropdown'
@@ -16,6 +17,10 @@ import { UploadApiService } from 'src/app/api/upload-api.service'
 import { UtilityService } from 'src/app/shared/services/utility.service'
 import { ValidateMessageComponent } from 'src/app/shared/validates/validate-message/validate-message.component'
 import { environment } from 'src/enviroments/environment'
+interface AutoCompleteCompleteEvent {
+  originalEvent: Event
+  query: string
+}
 
 @Component({
   selector: 'app-post-detail',
@@ -32,6 +37,7 @@ import { environment } from 'src/enviroments/environment'
     ImageModule,
     EditorModule,
     DropdownModule,
+    AutoCompleteModule,
     ValidateMessageComponent
   ],
   providers: [
@@ -63,6 +69,11 @@ export class PostDetailComponent implements OnInit, AfterContentInit, OnDestroy 
     description: [{ type: 'required', message: 'You must enter description' }]
   }
 
+  // Tags
+  tags: string[] | undefined
+  filteredTags: string[] | undefined
+  postTags: string[]
+
   constructor(
     private ref: DynamicDialogRef,
     private config: DynamicDialogConfig,
@@ -91,9 +102,15 @@ export class PostDetailComponent implements OnInit, AfterContentInit, OnDestroy 
 
   ngAfterContentInit(): void {
     this.timeoutId = setTimeout(() => {
+      this.loadTags()
       this.loadPostCategories()
       if (this.utilityService.isEmpty(this.config.data?.id) == false) {
-        this.loadDetail(this.config.data.id)
+        this.postApiClient.getTagsByPostId(this.config.data.id)
+          .subscribe((response: string[]) => {
+            this.postTags = response
+            this.loadDetail(this.config.data.id)
+          })
+
         this.saveBtnName = 'Update'
       } else {
         this.saveBtnName = 'Add'
@@ -117,13 +134,20 @@ export class PostDetailComponent implements OnInit, AfterContentInit, OnDestroy 
       categoryId: new FormControl(this.selectedEntity.categoryId || null, Validators.required),
       description: new FormControl(this.selectedEntity.description || null, Validators.required),
       seoDescription: new FormControl(this.selectedEntity.seoDescription || null),
-      tags: new FormControl(this.selectedEntity.tags || null),
+      tags: new FormControl(this.postTags),
       content: new FormControl(this.selectedEntity.content || null),
       thumbnail: new FormControl(this.selectedEntity.thumbnail || null),
     })
     if (this.selectedEntity.thumbnail) {
       this.thumbnailImage = environment.API_URL + this.selectedEntity.thumbnail
     }
+  }
+
+  private loadTags(): void {
+    this.postApiClient.getTags()
+      .subscribe((response: string[]) => {
+        this.tags = response
+      })
   }
 
   private loadPostCategories(): void {
@@ -191,5 +215,23 @@ export class PostDetailComponent implements OnInit, AfterContentInit, OnDestroy 
           }
         })
     }
+  }
+
+  filterTag(event: AutoCompleteCompleteEvent): void {
+    let filtered: string[] = []
+    let query = event.query
+
+    for (let i = 0; i < (this.tags as string[]).length; i++) {
+      let tag = (this.tags as string[])[i]
+      if (tag.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+        filtered.push(tag)
+      }
+    }
+
+    if (filtered.length === 0) {
+      filtered.push(query)
+    }
+
+    this.filteredTags = filtered
   }
 }

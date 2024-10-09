@@ -7,12 +7,10 @@ export class LoadingService {
   isLoading$ = this.isLoadingSubject.asObservable()
 
   showLoader() {
-    console.log('show loading')
     this.isLoadingSubject.next(true)
   }
 
   hideLoader() {
-    console.log('hide loading')
     this.isLoadingSubject.next(false)
   }
 }

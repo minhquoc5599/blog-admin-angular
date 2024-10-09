@@ -58,9 +58,9 @@
   </div>
 
   <div class="mb-4">
-    <label for="tags">Tags</label>
-    <input id="tags" type="text" pInputText [pKeyFilter]="noSpecial" formControlName="tags"
-      [style]="{ width: '100%' }" />
+    <label for="tags">Tags <span class="required">*</span></label>
+    <p-autoComplete formControlName="tags" [suggestions]="filteredTags" (completeMethod)="filterTag($event)"
+      [multiple]="true" [style]="{ marginLeft: '10px' }" />
   </div>
 
   <div class="flex justify-content-end">
